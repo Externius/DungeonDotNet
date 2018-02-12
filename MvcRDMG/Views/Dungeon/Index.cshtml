@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Generate Dungeon";
+}
+@section Scripts {
+    <script src="~/js/utils.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-route.min.js"></script>
+    <script src="~/js/dungeon-generator.js"></script>
+    <script src="~/js/dungeonDrawController.js"></script>
+    <script src="~/js/simpleControls.js"></script>
+}
+<div class="row" ng-app="dungeon-generator">
+    <div ng-view></div>
+</div>

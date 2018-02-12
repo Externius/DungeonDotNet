@@ -1,0 +1,11 @@
+<div class="col-md-8 col-md-offset-2">
+    <div class="text-danger" ng-show="vm.errorMessage"> {{ vm.errorMessage }}</div>
+    <wait-cursor display-when="vm.isBusy"></wait-cursor>
+  <table class="table table-responsive table-striped">
+    <tr ng-repeat="option in vm.options">
+      <td>{{ option.dungeonName }}</td>
+      <td>{{ option.created | date:'yyyy-MM-dd' }}</td>
+      <td><a ng-href="#!editor/{{ option.dungeonName }}" class="btn btn-sm btn-primary">Load Dungeon</a></td>
+    </tr>
+  </table>
+</div>
