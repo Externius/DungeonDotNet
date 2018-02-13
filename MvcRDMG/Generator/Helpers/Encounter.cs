@@ -147,45 +147,21 @@ namespace MvcRDMG.Generator.Helpers
         }
         private List<Monster> GetMonsters()
         {
-            var result = new List<Monster>();
             if (object.Equals(Utils.Instance.MonsterType, "any"))
             {
-
-                foreach (Monster monster in Utils.Instance.MonsterList)
-                {
-                    if (Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
-                        Parse(monster.Challenge_Rating) >= Utils.Instance.PartyLevel / 4)
-                    {
-                        result.Add(monster);
-                    }
-                }
-                /* 
                 return Utils.Instance.MonsterList
                     .Where(monster => Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
                     Parse(monster.Challenge_Rating) >= Utils.Instance.PartyLevel / 4)
                     .ToList();
-                */
             }
             else
             {
-                foreach (Monster monster in Utils.Instance.MonsterList)
-                {
-                    if (Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
-                        Parse(monster.Challenge_Rating) >= Utils.Instance.PartyLevel / 4 &&
-                        monster.Type.Equals(Utils.Instance.MonsterType))
-                    {
-                        result.Add(monster);
-                    }
-                }
-                /* 
                 return Utils.Instance.MonsterList
-                .Where(monster => Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
-                Parse(monster.Challenge_Rating) >= Utils.Instance.PartyLevel / 4 &&
-                monster.Type.Equals(Utils.Instance.MonsterType))
-                .ToList();
-                */
+                    .Where(monster => Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
+                    Parse(monster.Challenge_Rating) >= Utils.Instance.PartyLevel / 4 &&
+                    monster.Type.Equals(Utils.Instance.MonsterType))
+                    .ToList();
             }
-            return result;
         }
         private double Parse(string ratio)
         {
