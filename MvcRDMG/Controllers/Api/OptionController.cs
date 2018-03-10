@@ -14,18 +14,18 @@ namespace MvcRDMG.Controllers.Api
     [Route("api/options")]
     public class OptionController : Controller
     {
-        private IDungeonRepository _repositroy;
+        private IDungeonRepository _repository;
         private ILogger<OptionController> _logger;
 
         public OptionController(IDungeonRepository repository, ILogger<OptionController> logger)
         {
-            _repositroy = repository;
+            _repository = repository;
             _logger = logger;
         }
         [HttpGet("")]
         public JsonResult Get()
         {
-            var options = _repositroy.GetUserOptionsWithSavedDungeons(User.Identity.Name);
+            var options = _repository.GetUserOptionsWithSavedDungeons(User.Identity.Name);
             var result = Mapper.Map<IEnumerable<OptionViewModel>>(options);
             return Json(result);
         }
@@ -40,8 +40,8 @@ namespace MvcRDMG.Controllers.Api
                     var dungeonOption = Mapper.Map<Option>(viewmodel);
                     dungeonOption.UserName = User.Identity.Name;
                     _logger.LogInformation("Attempting save dungeon");
-                    _repositroy.AddDungeonOption(dungeonOption);
-                    if (_repositroy.SaveAll())
+                    _repository.AddDungeonOption(dungeonOption);
+                    if (_repository.SaveAll())
                     {
                         Response.StatusCode = (int)HttpStatusCode.Created;
                         return Json(Mapper.Map<OptionViewModel>(dungeonOption));
