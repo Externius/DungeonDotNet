@@ -111,5 +111,13 @@ namespace MvcRDMG.Tests
             Assert.IsTrue(result[0] != null);
 
         }
+        [TestMethod]
+        public void TestMonsterType()
+        {
+            Utils.Instance.MonsterType = "NonE";
+            var result = Utils.Instance.EncouterGenerator.GetMonster();
+            Trace.WriteLine(result);
+            Assert.IsTrue(result.Equals("Monster: None"));
+        }
     }
 }

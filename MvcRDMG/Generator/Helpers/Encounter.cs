@@ -88,7 +88,7 @@ namespace MvcRDMG.Generator.Helpers
         }
         public string GetMonster()
         {
-            if (Utils.Instance.GetRandomInt(0, 101) > Utils.Instance.GetMonsterPercentage())
+            if (Utils.Instance.GetRandomInt(0, 101) > Utils.Instance.GetMonsterPercentage() || Utils.Instance.MonsterType.Equals("none", StringComparison.OrdinalIgnoreCase))
             {
                 return "Monster: None";
             }
@@ -147,7 +147,7 @@ namespace MvcRDMG.Generator.Helpers
         }
         private List<Monster> GetMonsters()
         {
-            if (object.Equals(Utils.Instance.MonsterType, "any"))
+            if (Utils.Instance.MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
             {
                 return Utils.Instance.MonsterList
                     .Where(monster => Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
@@ -159,7 +159,7 @@ namespace MvcRDMG.Generator.Helpers
                 return Utils.Instance.MonsterList
                     .Where(monster => Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
                     Parse(monster.Challenge_Rating) >= Utils.Instance.PartyLevel / 4 &&
-                    monster.Type.Equals(Utils.Instance.MonsterType))
+                    Utils.Instance.MonsterType.Contains(monster.Type))
                     .ToList();
             }
         }

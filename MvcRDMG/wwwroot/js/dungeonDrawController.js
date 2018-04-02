@@ -7,25 +7,14 @@
 
     function dungeonDrawController($http) {
         var vm = this;
-        vm.newDungeon = {
-            dungeonSize: $("#dungeonSize").val(),
-            dungeonDifficulty: $("#dungeonDifficulty").val(),
-            partyLevel: $("#partyLevel").val(),
-            partySize: $("#partySize").val(),
-            treasureValue: $("#treasureValue").val(),
-            itemsRarity: $("#itemsRarity").val(),
-            roomDensity: $("#roomDensity").val(),
-            roomSize: $("#roomSize").val(),
-            monsterType: $("#monsterType").val(),
-            trapPercent: $("#trapPercent").val(),
-            deadEnd: $("#deadEnd").val(),
-            corridor: $("#corridor").val()
-        };
+        var mT = document.getElementById("monsterType");
+        var mType;
         vm.errorMessage = "";
         vm.isBusy = false;
         vm.hidden = true;
         vm.generateDungeon = function () {
             vm.themeID = $("#theme").val();
+            vm.getMonsters();
             vm.reloadVal();
             Utils.preloadImages();
             vm.isBusy = true;
@@ -61,10 +50,23 @@
             vm.newDungeon.itemsRarity = $("#itemsRarity").val();
             vm.newDungeon.roomDensity = $("#roomDensity").val();
             vm.newDungeon.roomSize = $("#roomSize").val();
-            vm.newDungeon.monsterType = $("#monsterType").val();
+            vm.newDungeon.monsterType = mType;
             vm.newDungeon.trapPercent = $("#trapPercent").val();
             vm.newDungeon.deadEnd = $("#deadEnd").val();
             vm.newDungeon.corridor = $("#corridor").val();
+        };
+        vm.getMonsters = function () {
+            mType = "";
+            if (mT.selectedOptions.length === 0) {
+                mType = "none";
+            } else if (mT.selectedOptions.length === mT.length) {
+                mType = "any";
+            } else {
+                for (var i = 0; i < mT.selectedOptions.length; i++) {
+                    mType += mT.selectedOptions[i].value + ",";
+                }
+                mType = mType.slice(0, -1);
+            }
         };
         vm.saveDungeon = function () {
             vm.isBusy = true;
