@@ -116,7 +116,6 @@ namespace MvcRDMG.Generator.Helpers
                     return 0;
             }
         }
-
         public string GetTrapName(int count)
         {
             return "#TRAP" + count + "#";

@@ -97,7 +97,7 @@ namespace MvcRDMG.Generator.Helpers
         }
         private string CalcEncounter()
         {
-            var filteredMonsters = GetMonsters(); //get monsters for party level
+            var filteredMonsters = Utils.Instance.MonsterList;
             int sumXP = Difficulty[Utils.Instance.DungeonDifficulty];
             var result = new StringBuilder();
             result.Append("Monster: ");
@@ -144,36 +144,6 @@ namespace MvcRDMG.Generator.Helpers
                 monster++;
             }
             return "None";
-        }
-        private List<Monster> GetMonsters()
-        {
-            if (Utils.Instance.MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
-            {
-                return Utils.Instance.MonsterList
-                    .Where(monster => Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
-                    Parse(monster.Challenge_Rating) >= Utils.Instance.PartyLevel / 4)
-                    .ToList();
-            }
-            else
-            {
-                return Utils.Instance.MonsterList
-                    .Where(monster => Parse(monster.Challenge_Rating) <= Utils.Instance.PartyLevel + 2 &&
-                    Parse(monster.Challenge_Rating) >= Utils.Instance.PartyLevel / 4 &&
-                    Utils.Instance.MonsterType.Contains(monster.Type))
-                    .ToList();
-            }
-        }
-        private double Parse(string ratio)
-        {
-            if (ratio.Contains("/"))
-            {
-                String[] rat = ratio.Split("/");
-                return Double.Parse(rat[0]) / Double.Parse(rat[1]);
-            }
-            else
-            {
-                return Double.Parse(ratio);
-            }
         }
         private void SetDifficulty()
         {

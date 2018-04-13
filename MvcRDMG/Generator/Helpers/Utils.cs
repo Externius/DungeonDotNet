@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MvcRDMG.Generator.Models;
 
 namespace MvcRDMG.Generator.Helpers
@@ -14,7 +15,15 @@ namespace MvcRDMG.Generator.Helpers
         public ITreasure TreasureGenerator { get; set; }
         public IEncounter EncouterGenerator { get; set; }
         public List<Treasures> TreasureList { get; set; }
-        public List<Monster> MonsterList { get; set; }
+        private List<Monster> _monsterList;
+        public List<Monster> MonsterList
+        {
+            get { return _monsterList; }
+            set
+            {
+                _monsterList = GetMonsters(value);  // get monsters for party level
+            }
+        }
         public int PartyLevel { get; set; }
         public int PartySize { get; set; }
         public int DungeonDifficulty { get; set; }
@@ -80,7 +89,6 @@ namespace MvcRDMG.Generator.Helpers
                 dungeonTiles[x][y].Description = Convert.ToString(roomDescription.Count);
             }
         }
-
         public void AddTrapDescription(DungeonTile[][] dungeonTiles, int x, int y, List<TrapDescription> trapDescription)
         {
             if (TrapGenerator != null)
@@ -92,17 +100,14 @@ namespace MvcRDMG.Generator.Helpers
                 dungeonTiles[x][y].Description = trapDescription.Count.ToString();
             }
         }
-
         public int Manhattan(int dx, int dy)
         {
             return dx + dy;
         }
-
         private string GetRoomName(int x)
         {
             return "#ROOM" + x + "#";
         }
-
         public void AddNCRoomDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoomDescription> roomDescription, string doors)
         {
             if (TreasureGenerator != null && EncouterGenerator != null)
@@ -114,6 +119,34 @@ namespace MvcRDMG.Generator.Helpers
                     EncouterGenerator.GetMonster(),
                     doors));
                 dungeonTiles[x][y].Description = roomDescription.Count.ToString();
+            }
+        }
+        private List<Monster> GetMonsters(List<Monster> monsters)
+        {
+            if (MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
+            {
+                return monsters.Where(monster => Parse(monster.Challenge_Rating) <= PartyLevel + 2 &&
+                    Parse(monster.Challenge_Rating) >= PartyLevel / 4)
+                    .ToList();
+            }
+            else
+            {
+                return monsters.Where(monster => Parse(monster.Challenge_Rating) <= PartyLevel + 2 &&
+                    Parse(monster.Challenge_Rating) >= PartyLevel / 4 &&
+                    MonsterType.Contains(monster.Type))
+                    .ToList();
+            }
+        }
+        private double Parse(string ratio)
+        {
+            if (ratio.Contains("/"))
+            {
+                String[] rat = ratio.Split("/");
+                return Double.Parse(rat[0]) / Double.Parse(rat[1]);
+            }
+            else
+            {
+                return Double.Parse(ratio);
             }
         }
     }

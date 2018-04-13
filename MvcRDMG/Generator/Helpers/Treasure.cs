@@ -6,7 +6,7 @@ using MvcRDMG.Generator.Models;
 
 namespace MvcRDMG.Generator.Helpers
 {
-    public class Treasure :ITreasure
+    public class Treasure : ITreasure
     {
         private readonly int[] TreasureGP = {
             0, 300, 600, 900, 1200, 1600, 2000, 2600, 3400, 4500, 5800,
@@ -86,7 +86,7 @@ namespace MvcRDMG.Generator.Helpers
         }
         private List<Treasures> GetFilteredList()
         {
-            if (object.Equals(Utils.Instance.MonsterType, "any"))
+            if (Utils.Instance.MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
             {
                 return Utils.Instance.TreasureList
                 .Where(item => item.Rarity <= Utils.Instance.ItemsRarity && item.Cost < SumValue)
