@@ -33,9 +33,16 @@ namespace MvcRDMG.Controllers.Api
             {
                 if (ModelState.IsValid)
                 {
-                    _generator.Generate(viewmodel);
-                    Response.StatusCode = (int)HttpStatusCode.Created;
-                    return Json(Mapper.Map<IEnumerable<SavedDungeonViewModel>>(viewmodel.SavedDungeons.ToList()));
+                    if (_generator.Generate(viewmodel))
+                    {
+                        Response.StatusCode = (int)HttpStatusCode.Created;
+                        return Json(Mapper.Map<IEnumerable<SavedDungeonViewModel>>(viewmodel.SavedDungeons.ToList()));
+                    }
+                    else
+                    {
+                        Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        return Json(new { Message = "Internal Error" });
+                    }
                 }
             }
             catch (Exception ex)

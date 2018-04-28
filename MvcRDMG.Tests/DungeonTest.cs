@@ -25,7 +25,7 @@ namespace MvcRDMG.Tests
             Utils.Instance.PartySize = 4;
             Utils.Instance.TreasureValue = 1;
             Utils.Instance.ItemsRarity = 1;
-            Utils.Instance.DungeonDifficulty = 1;            
+            Utils.Instance.DungeonDifficulty = 1;
             Utils.Instance.MonsterType = "any";
             Utils.Instance.MonsterList = Helpers.Instance.DeseraliazerJSON<Monster>("5e-SRD-Monsters.json");
             Utils.Instance.TreasureList = Helpers.Instance.DeseraliazerJSON<Treasures>("treasures.json");
@@ -42,31 +42,17 @@ namespace MvcRDMG.Tests
         [TestMethod]
         public void TestGenerateRoom()
         {
-            try
-            {
-                dungeon.GenerateRoom();
-                DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine("TestGenerateRoom: " + ex.Message);
-            }
+            dungeon.GenerateRoom();
+            DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
             Assert.IsTrue(dungeon.RoomDescription.Count == 2);
         }
 
         [TestMethod]
         public void TestAddEntryPoint()
         {
-            try
-            {
-                dungeon.GenerateRoom();
-                dungeon.AddEntryPoint();
-                DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine("TestAddEntryPoint: " + ex.Message);
-            }
+            dungeon.GenerateRoom();
+            dungeon.AddEntryPoint();
+            DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
             List<DungeonTile> list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.ENTRY);
             Assert.IsTrue(match != null);
@@ -74,17 +60,10 @@ namespace MvcRDMG.Tests
         [TestMethod]
         public void TestGenerateCorridors()
         {
-            try
-            {
-                dungeon.GenerateRoom();
-                dungeon.AddEntryPoint();
-                dungeon.GenerateCorridors();
-                DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine("TestGenerateCorridors: " + ex.Message);
-            }
+            dungeon.GenerateRoom();
+            dungeon.AddEntryPoint();
+            dungeon.GenerateCorridors();
+            DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
             List<DungeonTile> list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.CORRIDOR);
             Assert.IsTrue(match != null);
@@ -92,18 +71,11 @@ namespace MvcRDMG.Tests
         [TestMethod]
         public void TestAddDeadEnds()
         {
-            try
-            {
-                dungeon.GenerateRoom();
-                dungeon.AddEntryPoint();
-                dungeon.GenerateCorridors();
-                dungeon.AddDeadEnds();
-                DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine("TestAddDeadEnds: " + ex.Message);
-            }
+            dungeon.GenerateRoom();
+            dungeon.AddEntryPoint();
+            dungeon.GenerateCorridors();
+            dungeon.AddDeadEnds();
+            DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
             List<DungeonTile> list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.CORRIDOR);
             Assert.IsTrue(match != null);
@@ -111,22 +83,15 @@ namespace MvcRDMG.Tests
         [TestMethod]
         public void TestAddRandomTrap()
         {
-            try
-            {
-                dungeon.GenerateRoom();
-                dungeon.AddEntryPoint();
-                dungeon.GenerateCorridors();
-                dungeon.AddDeadEnds();
-                dungeon.AddRandomTrap();
-                DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine("TestAddDeadEnds: " + ex.Message);
-            }
+            dungeon.GenerateRoom();
+            dungeon.AddEntryPoint();
+            dungeon.GenerateCorridors();
+            dungeon.AddDeadEnds();
+            dungeon.AddRandomTrap();
+            DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
             List<DungeonTile> list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.TRAP);
             Assert.IsTrue(match != null);
-        }        
+        }
     }
 }
