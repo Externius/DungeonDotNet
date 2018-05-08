@@ -15,7 +15,6 @@ namespace MvcRDMG.Tests
         {
 
         }
-
         public void Draw(DungeonTile[][] dungeonTiles)
         {
             foreach (DungeonTile[] row in dungeonTiles)
@@ -24,7 +23,6 @@ namespace MvcRDMG.Tests
             }
             Trace.WriteLine(" ");
         }
-
         private void printRow(DungeonTile[] row)
         {
             foreach (var i in row)
@@ -59,6 +57,9 @@ namespace MvcRDMG.Tests
                         break;
                     case Textures.TRAP:
                         Trace.Write("T");
+                        break;
+                    case Textures.ROAMING_MONSTER:
+                        Trace.Write("M");
                         break;
                     default:
                         break;

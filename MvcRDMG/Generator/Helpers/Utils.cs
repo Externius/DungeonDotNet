@@ -100,6 +100,17 @@ namespace MvcRDMG.Generator.Helpers
                 dungeonTiles[x][y].Description = trapDescription.Count.ToString();
             }
         }
+        public void AddRoamingMonsterDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoamingMonsterDescription> roamingMonsterDescription)
+        {
+            if (TrapGenerator != null)
+            {
+                dungeonTiles[x][y].Index = roamingMonsterDescription.Count;
+                roamingMonsterDescription.Add(new RoamingMonsterDescription(
+                    EncouterGenerator.GetRoamingName(roamingMonsterDescription.Count + 1),
+                    EncouterGenerator.GetRoamingMonster()));
+                dungeonTiles[x][y].Description = roamingMonsterDescription.Count.ToString();
+            }
+        }
         public int Manhattan(int dx, int dy)
         {
             return dx + dy;

@@ -31,6 +31,7 @@ namespace MvcRDMG.Models
                     PartyLevel = 4,
                     PartySize = 4,
                     TrapPercent = 20,
+                    RoamingPercent = 10,
                     TreasureValue = 1,
                     RoomDensity = 10,
                     RoomSize = 20,
@@ -54,13 +55,14 @@ namespace MvcRDMG.Models
                     PartyLevel = 4,
                     PartySize = 4,
                     TrapPercent = 20,
+                    RoamingPercent = 10,
                     TreasureValue = 1,
                     RoomDensity = 10,
                     RoomSize = 20,
                     Corridor = true,
                     SavedDungeons = new List<SavedDungeon>()
                     {
-                        new SavedDungeon() {DungeonTiles = sd[0].DungeonTiles ,RoomDescription = sd[0].RoomDescription, TrapDescription = sd[0].TrapDescription}
+                        new SavedDungeon() {DungeonTiles = sd[0].DungeonTiles ,RoomDescription = sd[0].RoomDescription, TrapDescription = sd[0].TrapDescription, RoamingMonsterDescription = sd[0].RoamingMonsterDescription}
                     }
                 };
                 _context.Options.Add(dungeon);
@@ -79,6 +81,7 @@ namespace MvcRDMG.Models
                     PartyLevel = 4,
                     PartySize = 4,
                     TrapPercent = 20,
+                    RoamingPercent = 0,
                     TreasureValue = 1,
                     RoomDensity = 10,
                     RoomSize = 20,
@@ -101,13 +104,14 @@ namespace MvcRDMG.Models
                     PartyLevel = 4,
                     PartySize = 4,
                     TrapPercent = 20,
+                    RoamingPercent = 0,
                     TreasureValue = 1,
                     RoomDensity = 10,
                     RoomSize = 20,
                     Corridor = false,
                     SavedDungeons = new List<SavedDungeon>()
                     {
-                        new SavedDungeon() {DungeonTiles = sd2[0].DungeonTiles ,RoomDescription = sd2[0].RoomDescription, TrapDescription = sd2[0].TrapDescription}
+                        new SavedDungeon() {DungeonTiles = sd2[0].DungeonTiles ,RoomDescription = sd2[0].RoomDescription, TrapDescription = sd2[0].TrapDescription, RoamingMonsterDescription = sd[0].RoamingMonsterDescription}
                     }
                 };
                 _context.Options.Add(dungeon2);

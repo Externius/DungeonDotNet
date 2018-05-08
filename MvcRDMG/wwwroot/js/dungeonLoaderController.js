@@ -23,7 +23,8 @@
                     "mapArea",
                     response.data.dungeonSize,
                     response.data.corridor,
-                    vm.themeID);
+                    vm.themeID,
+                    response.data.savedDungeons[0].roamingMonsterDescription === null ? [] : JSON.parse(response.data.savedDungeons[0].roamingMonsterDescription));
                 Utils.downloadImg("download_map", document.getElementById("mapArea"));
                 Utils.downloadDescription("download_description", "DungeonRooms.csv");
                 Utils.downloadHTML("download_html");

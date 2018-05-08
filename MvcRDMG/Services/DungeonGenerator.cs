@@ -31,7 +31,7 @@ namespace MvcRDMG.Services
             {
                 if (model.Corridor)
                 {
-                    var dungeon = new Dungeon(800, 800, model.DungeonSize, model.RoomDensity, model.RoomSize, model.TrapPercent, model.DeadEnd);
+                    var dungeon = new Dungeon(800, 800, model.DungeonSize, model.RoomDensity, model.RoomSize, model.TrapPercent, model.DeadEnd, model.RoamingPercent);
                     dungeon.Generate();
                     model.SavedDungeons = new List<SavedDungeon>()
                     {
@@ -39,8 +39,9 @@ namespace MvcRDMG.Services
                         {
                             DungeonTiles = JsonConvert.SerializeObject(dungeon.DungeonTiles),
                             RoomDescription = JsonConvert.SerializeObject(dungeon.RoomDescription),
-                            TrapDescription = JsonConvert.SerializeObject(dungeon.TrapDescription)
-                        }
+                            TrapDescription = JsonConvert.SerializeObject(dungeon.TrapDescription),
+                            RoamingMonsterDescription = JsonConvert.SerializeObject(dungeon.RoamingMonsterDescription)
+                }
                     };
                     return true;
                 }

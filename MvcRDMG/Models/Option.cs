@@ -37,6 +37,8 @@ namespace MvcRDMG.Models
         public bool DeadEnd { get; set; }
         [Required]
         public bool Corridor { get; set; }
+        [Required]
+        public int RoamingPercent { get; set; }
         public DateTime Created { get; set; }
         public ICollection<SavedDungeon> SavedDungeons { get; set; }
     }

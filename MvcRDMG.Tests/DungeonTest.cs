@@ -12,7 +12,7 @@ namespace MvcRDMG.Tests
     [TestClass]
     public class DungeonTest
     {
-        private Dungeon dungeon = new Dungeon(800, 800, 15, 10, 15, 15, true);
+        private Dungeon dungeon = new Dungeon(800, 800, 15, 10, 15, 15, true, 10);
 
         [TestInitialize]
         public void setup()
@@ -81,16 +81,29 @@ namespace MvcRDMG.Tests
             Assert.IsTrue(match != null);
         }
         [TestMethod]
-        public void TestAddRandomTrap()
+        public void TestAddTrap()
         {
             dungeon.GenerateRoom();
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
             dungeon.AddDeadEnds();
-            dungeon.AddRandomTrap();
+            dungeon.AddCorridorItem(2, Dungeon.Item.TRAP);
             DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
             List<DungeonTile> list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.TRAP);
+            Assert.IsTrue(match != null);
+        }
+        [TestMethod]
+        public void TestAddRoamingMonster()
+        {
+            dungeon.GenerateRoom();
+            dungeon.AddEntryPoint();
+            dungeon.GenerateCorridors();
+            dungeon.AddDeadEnds();
+            dungeon.AddCorridorItem(2, Dungeon.Item.ROAMING_MONSTER);
+            DrawTestDungeon.Instance.Draw(dungeon.DungeonTiles);
+            List<DungeonTile> list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
+            var match = list.Where(x => x.Texture == Textures.ROAMING_MONSTER);
             Assert.IsTrue(match != null);
         }
     }

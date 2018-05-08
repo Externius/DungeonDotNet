@@ -12,6 +12,7 @@ var Utils = (function () {
         'images/dark/door_trapped.png',
         'images/dark/nc_door_locked.png',
         'images/dark/nc_door_trapped.png',
+        'images/dark/monster.png',
         'images/light/marble.png',
         'images/light/room.png',
         'images/light/room_edge.png',
@@ -60,7 +61,7 @@ var Utils = (function () {
         tr.appendChild(td);
         return tr;
     };
-    var addDescription = function (roomDescription, trapDescription) {
+    var addDescription = function (roomDescription, trapDescription, roamingDescription) {
         var table = document.getElementById("table_description");
         table.innerHTML = "";
         for (var i = 0; i < roomDescription.length; i++) {
@@ -77,6 +78,12 @@ var Utils = (function () {
             tr = createTrapTableNode(trapDescription[i].Name, true);
             table.appendChild(tr);
             tr = createTrapTableNode(trapDescription[i].Description, false);
+            table.appendChild(tr);
+        }
+        for (i = 0; i < roamingDescription.length; i++) {
+            tr = createTrapTableNode(roamingDescription[i].Name, true);
+            table.appendChild(tr);
+            tr = createTrapTableNode(roamingDescription[i].Description, false);
             table.appendChild(tr);
         }
     };
@@ -113,13 +120,14 @@ var Utils = (function () {
             context.drawImage(image, x, y, width, height);
         }
     };
-    var setBase = function (corridorIndex, doorIndex, entryIndex, trapIndex, doorLockedIndex, doorTrappedIndex) {
+    var setBase = function (corridorIndex, doorIndex, entryIndex, trapIndex, doorLockedIndex, doorTrappedIndex, monsterIndex) {
         THEMEINDEX[1] = corridorIndex;
         THEMEINDEX[2] = doorIndex;
         THEMEINDEX[4] = entryIndex;
         THEMEINDEX[5] = trapIndex;
         THEMEINDEX[8] = doorLockedIndex;
         THEMEINDEX[9] = doorTrappedIndex;
+        THEMEINDEX[12] = monsterIndex;
     };
     var setTheme = function (marbleIndex, roomIndex, roomEdgeIndex, ncDoorIndex, ncDoorLockedIndex, ncDoorTrappedIndex) {
         THEMEINDEX[0] = marbleIndex;
@@ -131,16 +139,16 @@ var Utils = (function () {
     };
     var getTheme = function (themeID) {
         THEMEINDEX = [];
-        setBase(1, 2, 4, 5, 8, 9);
+        setBase(1, 2, 4, 5, 8, 9, 12);
         switch (themeID) {
             case "0": // dark
                 setTheme(0, 3, 6, 7, 10, 11);
                 break;
             case "1": // light
-                setTheme(12, 13, 14, 15, 16, 17);
+                setTheme(13, 14, 15, 16, 17, 18);
                 break;
             case "2": // minimal
-                setTheme(18, 19, 18, 20, 21, 22);
+                setTheme(19, 20, 19, 21, 22, 23);
                 break;
             default:
                 break;
@@ -191,6 +199,11 @@ var Utils = (function () {
                     case 12: // nc_door_trapped
                         rotateImage(context, IMAGEOBJECT[THEMEINDEX[11]], getDegree(tiles, i, j), tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height)
                         break;
+                    case 13: // roaming monster
+                        context.drawImage(IMAGEOBJECT[THEMEINDEX[12]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
+                        context.font = contextFont;
+                        context.fillText(tiles[i][j].Description, tiles[i][j].X + Math.round(tiles[i][j].Width * 0.1), tiles[i][j].Y + Math.round(tiles[i][j].Height * 0.4));
+                        break;
                     default:
                         context.drawImage(IMAGEOBJECT[THEMEINDEX[0]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
                         break;
@@ -198,12 +211,12 @@ var Utils = (function () {
             }
         }
     };
-    var drawDungeonOneCanvas = function (tiles, roomDescription, trapDescription, canvasID, dungeonSize, hasCorridor, themeID) {
+    var drawDungeonOneCanvas = function (tiles, roomDescription, trapDescription, canvasID, dungeonSize, hasCorridor, themeID, roamingDescription) {
         var canvas = document.getElementById(canvasID);
         var contextFont = getFontSize(dungeonSize);
         var context = canvas.getContext("2d"); // get canvas context
         context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
-        addDescription(roomDescription, trapDescription);
+        addDescription(roomDescription, trapDescription, roamingDescription);
         getTheme(themeID);
         drawMap(tiles, context, contextFont, hasCorridor);
     };
@@ -264,10 +277,20 @@ var Utils = (function () {
             document.getElementById("roomDensity").disabled = false;
             document.getElementById("trapPercent").disabled = false;
             document.getElementById("deadEnd").disabled = false;
+            monsterTypeOnChange(document.getElementById("monsterType"));
         } else {
             document.getElementById("roomDensity").disabled = true;
             document.getElementById("trapPercent").disabled = true;
             document.getElementById("deadEnd").disabled = true;
+            document.getElementById("roamingPercent").disabled = true;
+        }
+    };
+    var monsterTypeOnChange = function (e) {
+        if (e.selectedOptions.length === 0) {
+            document.getElementById("roamingPercent").disabled = true;
+            document.getElementById("roamingPercent").selectedIndex = 0;
+        } else if (document.getElementById("corridor").value === "true") {
+            document.getElementById("roamingPercent").disabled = false;
         }
     };
     var preloadImages = function () {
@@ -280,6 +303,7 @@ var Utils = (function () {
     };
     return {
         corridorOnchange: corridorOnchange,
+        monsterTypeOnChange: monsterTypeOnChange,
         downloadImg: downloadImg,
         downloadDescription: downloadDescription,
         downloadHTML: downloadHTML,

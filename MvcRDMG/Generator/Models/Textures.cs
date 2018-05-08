@@ -14,6 +14,7 @@ namespace MvcRDMG.Generator.Models
         DOOR_LOCKED,
         DOOR_TRAPPED,
         NO_CORRIDOR_DOOR_LOCKED,
-        NO_CORRIDOR_DOOR_TRAPPED
+        NO_CORRIDOR_DOOR_TRAPPED,
+        ROAMING_MONSTER
     }
 }

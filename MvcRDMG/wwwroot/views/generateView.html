@@ -119,7 +119,7 @@
         <tr>
           <td>Monsters type:</td>
           <td>
-            <select multiple id="monsterType" class="form-control">
+            <select multiple id="monsterType" onchange="Utils.monsterTypeOnChange(this)" class="form-control">
               <option value="aberration" selected>Aberrations</option>
               <option value="beast" selected>Beasts</option>
               <option value="celestial" selected>Celestials</option>
@@ -162,6 +162,16 @@
             <select id="corridor" class="form-control" onchange="Utils.corridorOnchange(this)">
               <option value="true">Yes</option>
               <option value="false"> No</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td> Roaming monsters: </td>
+          <td>
+            <select id="roamingPercent" class="form-control">
+              <option value="0">None</option>
+              <option value="10">Few</option>
+              <option value="20">More</option>
             </select>
           </td>
         </tr>

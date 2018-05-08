@@ -13,12 +13,15 @@ namespace MvcRDMG.Generator.Core
         internal List<DungeonTile> Doors = new List<DungeonTile>();
         public List<RoomDescription> RoomDescription { get; set; }
         public List<TrapDescription> TrapDescription { get; set; }
+        public List<RoamingMonsterDescription> RoamingMonsterDescription { get; set; }
         public DungeonTile[][] DungeonTiles { get; set; }
         private List<DungeonTile> Result;
         private List<DungeonTile> Corridors;
         private int RoomDensity;
         private int TrapPercent;
+        private int RoamingPercent;
         private int TrapCount;
+        private int RoamingCount;
         private int RoomCount;
         private bool HasDeadEnds;
         public int DungeonWidth { get; set; }
@@ -27,11 +30,12 @@ namespace MvcRDMG.Generator.Core
         public int RoomSizePercent { get; set; }
         public int RoomSize { get; set; }
 
-        public Dungeon(){
+        public Dungeon()
+        {
 
         }
 
-        public Dungeon(int dungeonWidth, int dungeonHeight, int dungeonSize, int roomDensity, int roomSizePercent, int trapPercent, bool hasDeadEnds)
+        public Dungeon(int dungeonWidth, int dungeonHeight, int dungeonSize, int roomDensity, int roomSizePercent, int trapPercent, bool hasDeadEnds, int roamingPercent)
         {
             DungeonWidth = dungeonWidth;
             DungeonHeight = dungeonHeight;
@@ -40,6 +44,12 @@ namespace MvcRDMG.Generator.Core
             RoomSizePercent = roomSizePercent;
             TrapPercent = trapPercent;
             HasDeadEnds = hasDeadEnds;
+            RoamingPercent = roamingPercent;
+        }
+
+        public enum Item
+        {
+            TRAP, ROAMING_MONSTER
         }
 
         public virtual void Generate()
@@ -52,22 +62,38 @@ namespace MvcRDMG.Generator.Core
             {
                 AddDeadEnds();
             }
-            AddRandomTrap();
+            AddCorridorItem(TrapCount, Item.TRAP);
+            AddCorridorItem(RoamingCount, Item.ROAMING_MONSTER);
         }
 
-        public void AddRandomTrap()
+        public void AddCorridorItem(int inCount, Item item)
         {
             int count = 0;
-            while (TrapCount > count)
+            while (inCount > count)
             {
                 int x = Utils.Instance.GetRandomInt(0, Corridors.Count);
                 int i = Corridors[x].I;
                 int j = Corridors[x].J;
                 if (DungeonTiles[i][j].Texture == Textures.CORRIDOR)
                 {
-                    AddTrap(i, j);
+                    AddItem(i, j, item);
                     count++;
                 }
+            }
+        }
+
+        private void AddItem(int x, int y, Item item)
+        {
+            switch (item)
+            {
+                case Item.TRAP:
+                    AddTrap(x, y);
+                    break;
+                case Item.ROAMING_MONSTER:
+                    AddRoamingMonster(x, y);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -75,6 +101,12 @@ namespace MvcRDMG.Generator.Core
         {
             DungeonTiles[x][y].Texture = Textures.TRAP;
             Utils.Instance.AddTrapDescription(DungeonTiles, x, y, TrapDescription);
+        }
+
+        private void AddRoamingMonster(int x, int y)
+        {
+            DungeonTiles[x][y].Texture = Textures.ROAMING_MONSTER;
+            Utils.Instance.AddRoamingMonsterDescription(DungeonTiles, x, y, RoamingMonsterDescription);
         }
 
         public void AddDeadEnds()
@@ -478,7 +510,9 @@ namespace MvcRDMG.Generator.Core
             RoomSize = (int)Math.Round((float)(DungeonSize - Math.Round(DungeonSize * 0.35)) / 100 * RoomSizePercent);
             RoomDescription = new List<RoomDescription>();
             TrapDescription = new List<TrapDescription>();
+            RoamingMonsterDescription = new List<RoamingMonsterDescription>();
             TrapCount = DungeonSize * TrapPercent / 100;
+            RoamingCount = DungeonSize * RoamingPercent / 100;
             DungeonSize += 2; // because of boundaries
             DungeonTiles = new DungeonTile[DungeonSize][];
             for (int i = 0; i < DungeonSize; i++)

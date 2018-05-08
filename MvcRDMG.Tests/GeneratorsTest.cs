@@ -12,7 +12,7 @@ namespace MvcRDMG.Tests
     [TestClass]
     public class GeneratorsTest
     {
-        private Dungeon dungeon = new Dungeon(800, 800, 15, 10, 15, 15, true);
+        private Dungeon dungeon = new Dungeon(800, 800, 15, 10, 15, 15, true, 10);
 
         [TestInitialize]
         public void setup()
@@ -118,6 +118,17 @@ namespace MvcRDMG.Tests
             var result = Utils.Instance.EncouterGenerator.GetMonster();
             Trace.WriteLine(result);
             Assert.IsTrue(result.Equals("Monster: None"));
+        }
+        [TestMethod]
+        public void TestGetRoamingMonster()
+        {
+            var result = new string[20];
+            for (int i = 0; i < 20; i++)
+            {
+                result[i] = Utils.Instance.EncouterGenerator.GetRoamingMonster();
+                Trace.WriteLine("Roaming Monster#" + i + " " + result[i]);
+            }
+            Assert.IsTrue(result[0] != null);
         }
     }
 }

@@ -24,12 +24,15 @@
                     vm.tiles = response.data[0].dungeonTiles;
                     vm.roomDescription = response.data[0].roomDescription;
                     vm.trapDescription = response.data[0].trapDescription;
+                    vm.roamingMonsterDescription = response.data[0].roamingMonsterDescription;
                     Utils.drawDungeonOneCanvas(JSON.parse(response.data[0].dungeonTiles),
-                        JSON.parse(response.data[0].roomDescription), vm.trapDescription === null ? [] : JSON.parse(response.data[0].trapDescription),
+                        JSON.parse(response.data[0].roomDescription),
+                        vm.trapDescription === null ? [] : JSON.parse(response.data[0].trapDescription),
                         "mapArea",
                         vm.newDungeon.dungeonSize,
                         vm.newDungeon.corridor === "true",
-                        vm.themeID);
+                        vm.themeID,
+                        vm.roamingMonsterDescription === null ? [] : JSON.parse(response.data[0].roamingMonsterDescription));
                     Utils.downloadImg("download_map", document.getElementById("mapArea"));
                     Utils.downloadDescription("download_description", "DungeonRooms.csv");
                     Utils.downloadHTML("download_html");
@@ -52,6 +55,7 @@
             vm.newDungeon.roomSize = $("#roomSize").val();
             vm.newDungeon.monsterType = mType;
             vm.newDungeon.trapPercent = $("#trapPercent").val();
+            vm.newDungeon.roamingPercent = $("#roamingPercent").val();
             vm.newDungeon.deadEnd = $("#deadEnd").val();
             vm.newDungeon.corridor = $("#corridor").val();
         };
@@ -74,7 +78,8 @@
             vm.newSavedDungeon = {
                 dungeonTiles: vm.tiles,
                 roomDescription: vm.roomDescription,
-                trapDescription: vm.trapDescription
+                trapDescription: vm.trapDescription,
+                roamingMonsterDescription: vm.roamingMonsterDescription
             };
             $http.post("/api/options", vm.newDungeon)
                 .then(function () {
