@@ -15,6 +15,8 @@ using MvcRDMG.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpsPolicy;
 using System.Net;
 using Microsoft.AspNetCore.Authentication;
 
@@ -36,12 +38,15 @@ namespace MvcRDMG
         public IHostingEnvironment HostingEnvironment { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(config =>
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.Configure<CookiePolicyOptions>(options =>
             {
-#if !DEBUG
-                config.Filters.Add(new RequireHttpsAttribute());
-#endif
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
             services.AddLogging();
             services.AddDbContext<UserContext>();
             services.AddIdentity<DungeonUser, IdentityRole>()
@@ -90,7 +95,9 @@ namespace MvcRDMG
         public async void Configure(IApplicationBuilder app, IHostingEnvironment env, DungeonContextSeedData seedData, ILoggerFactory loggerFactory, UserContextSeedData userSeed)
         {
             loggerFactory.AddDebug(LogLevel.Error);
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCookiePolicy();
             app.UseAuthentication();
             Mapper.Initialize(config =>
             {
@@ -104,6 +111,7 @@ namespace MvcRDMG
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
             app.UseMvc(routes =>
             {
