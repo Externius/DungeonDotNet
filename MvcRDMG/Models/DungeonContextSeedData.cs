@@ -111,7 +111,7 @@ namespace MvcRDMG.Models
                     Corridor = false,
                     SavedDungeons = new List<SavedDungeon>()
                     {
-                        new SavedDungeon() {DungeonTiles = sd2[0].DungeonTiles ,RoomDescription = sd2[0].RoomDescription, TrapDescription = sd2[0].TrapDescription, RoamingMonsterDescription = sd[0].RoamingMonsterDescription}
+                        new SavedDungeon() {DungeonTiles = sd2[0].DungeonTiles ,RoomDescription = sd2[0].RoomDescription, TrapDescription = sd2[0].TrapDescription, RoamingMonsterDescription = sd2[0].RoamingMonsterDescription}
                     }
                 };
                 _context.Options.Add(dungeon2);

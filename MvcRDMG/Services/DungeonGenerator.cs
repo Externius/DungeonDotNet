@@ -41,7 +41,7 @@ namespace MvcRDMG.Services
                             RoomDescription = JsonConvert.SerializeObject(dungeon.RoomDescription),
                             TrapDescription = JsonConvert.SerializeObject(dungeon.TrapDescription),
                             RoamingMonsterDescription = JsonConvert.SerializeObject(dungeon.RoamingMonsterDescription)
-                }
+                        }
                     };
                     return true;
                 }
