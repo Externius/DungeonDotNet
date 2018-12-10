@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MvcRDMG.Models;
 using MvcRDMG.Services;
 using MvcRDMG.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MvcRDMG.Controllers.Web
 {
@@ -18,7 +19,7 @@ namespace MvcRDMG.Controllers.Web
         {
             _mailService = service;
         }
-
+        [Authorize]
         public IActionResult Index()
         {
             return View();

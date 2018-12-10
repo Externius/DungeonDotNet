@@ -1,14 +1,15 @@
-<div>
-  <div class="col-md-4">
+<div class="row">
+  <div class="col-md-4 mx-auto">
     <wait-cursor display-when="vm.isBusy"></wait-cursor>
     <div class="alert alert-danger" ng-show="vm.errorMessage">{{ vm.errorMessage }}</div>
     <form novalidate name="newDungeonForm" ng-submit="vm.generateDungeon()">
       <div class="form-group">
         <label for="dungeonName">Dungeon Name</label>
-        <input class="form-control" type="text" id="dungeonName" name="dungeonName" ng-model="vm.newDungeon.dungeonName" required
-          ng-minlength="3" />
+        <input class="form-control" type="text" id="dungeonName" name="dungeonName" ng-model="vm.newDungeon.dungeonName"
+          required ng-minlength="3" />
         <span ng-show="newDungeonForm.dungeonName.$error.required" class="text-warning">Dungeon Name is required</span>
-        <span ng-show="newDungeonForm.dungeonName.$error.minlength" class="text-warning">Dungeon Name must be at 3 characters</span>
+        <span ng-show="newDungeonForm.dungeonName.$error.minlength" class="text-warning">Dungeon Name must be at 3
+          characters</span>
       </div>
       <table class="table table-sm table-striped">
         <tr>
@@ -187,29 +188,31 @@
         </tr>
       </table>
       <div class="form-group">
-        <input type="submit" value="Generate Dungeon" class="btn btn-sm btn-success btn-block" ng-disabled="newDungeonForm.$invalid"
-        />
+        <input type="submit" value="Generate Dungeon" class="btn btn-sm btn-success btn-block" ng-disabled="newDungeonForm.$invalid" />
       </div>
     </form>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-8 mx-auto">
     <canvas id="mapArea" width="800" height="800" style="border:0px #000000;"> </canvas>
+    <div class="row">
+      <div class="col-md-3">
+        <a id="save_dungeon" class="btn btn-info btn-block" ng-hide="vm.hidden" ng-click="vm.saveDungeon()"> Save
+          dungeon </a>
+      </div>
+      <div class="col-md-3">
+        <a id="download_map" class="btn btn-info btn-block" ng-hide="vm.hidden"> Download Map </a>
+      </div>
+      <div class="col-md-3">
+        <a id="download_description" class="btn btn-info btn-block" ng-hide="vm.hidden"> Download Description to CSV
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a id="download_html" class="btn btn-info btn-block" ng-hide="vm.hidden"> Download HTML </a>
+      </div>
+    </div>
   </div>
 
-  <div class="col-md-2">
-    <a id="save_dungeon" class="btn btn-info btn-block" ng-hide="vm.hidden" ng-click="vm.saveDungeon()"> Save dungeon </a>
-  </div>
-  <div class="col-md-2">
-    <a id="download_map" class="btn btn-info btn-block" ng-hide="vm.hidden"> Download Map </a>
-  </div>
-  <div class="col-md-2">
-    <a id="download_description" class="btn btn-info btn-block" ng-hide="vm.hidden"> Download Description to CSV </a>
-  </div>
-  <div class="col-md-2">
-    <a id="download_html" class="btn btn-info btn-block" ng-hide="vm.hidden"> Download HTML </a>
-  </div>
-
-  <div>
+  <div class="row">
     <table id="table_description" class="table" style="white-space: pre-wrap;"> </table>
   </div>
 
