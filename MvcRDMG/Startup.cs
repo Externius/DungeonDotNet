@@ -38,7 +38,7 @@ namespace MvcRDMG
         public IHostingEnvironment HostingEnvironment { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -47,7 +47,12 @@ namespace MvcRDMG
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddLogging();
+            services.AddLogging(builder =>
+            {
+                builder.AddConfiguration(Configuration.GetSection("Logging"))
+                    .AddConsole()
+                    .AddDebug();
+            });
             services.AddDbContext<UserContext>();
             services.AddIdentity<DungeonUser, IdentityRole>()
                 .AddEntityFrameworkStores<UserContext>()
@@ -92,9 +97,8 @@ namespace MvcRDMG
                 services.AddScoped<IDungeonGenerator, DungeonGenerator>();
             }
         }
-        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, DungeonContextSeedData seedData, ILoggerFactory loggerFactory, UserContextSeedData userSeed)
+        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, DungeonContextSeedData seedData, UserContextSeedData userSeed)
         {
-            loggerFactory.AddDebug(LogLevel.Error);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();

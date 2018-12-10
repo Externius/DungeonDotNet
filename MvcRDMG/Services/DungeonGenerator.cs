@@ -13,6 +13,7 @@ namespace MvcRDMG.Services
 {
     public class DungeonGenerator : IDungeonGenerator
     {
+        private static int dungeonWidthAndHeight = 800;
         public bool Generate(OptionViewModel model)
         {
             Utils.Instance.DoorGenerator = new Door();
@@ -31,7 +32,7 @@ namespace MvcRDMG.Services
             {
                 if (model.Corridor)
                 {
-                    var dungeon = new Dungeon(800, 800, model.DungeonSize, model.RoomDensity, model.RoomSize, model.TrapPercent, model.DeadEnd, model.RoamingPercent);
+                    var dungeon = new Dungeon(dungeonWidthAndHeight, dungeonWidthAndHeight, model.DungeonSize, model.RoomDensity, model.RoomSize, model.TrapPercent, model.DeadEnd, model.RoamingPercent);
                     dungeon.Generate();
                     model.SavedDungeons = new List<SavedDungeon>()
                     {
@@ -47,7 +48,7 @@ namespace MvcRDMG.Services
                 }
                 else
                 {
-                    var dungeonNoCorridor = new DungeonNoCorridor(800, 800, model.DungeonSize, model.RoomSize);
+                    var dungeonNoCorridor = new DungeonNoCorridor(dungeonWidthAndHeight, dungeonWidthAndHeight, model.DungeonSize, model.RoomSize);
                     dungeonNoCorridor.Generate();
                     model.SavedDungeons = new List<SavedDungeon>()
                     {
