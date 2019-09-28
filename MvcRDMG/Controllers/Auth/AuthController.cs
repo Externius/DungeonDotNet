@@ -1,17 +1,24 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using AutoMapper;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using MvcRDMG.Core.Abstractions.Services;
+using MvcRDMG.Core.Abstractions.Services.Models;
 using MvcRDMG.Models;
-using MvcRDMG.ViewModels;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Controllers.Auth
 {
     public class AuthController : Controller
     {
-        private SignInManager<DungeonUser> _signInManager;
-        public AuthController(SignInManager<DungeonUser> signInManager)
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        public AuthController(IUserService userService, IMapper mapper)
         {
-            _signInManager = signInManager;
+            _userService = userService;
+            _mapper = mapper;
         }
         public IActionResult Login()
         {
@@ -26,31 +33,34 @@ namespace MvcRDMG.Controllers.Auth
         {
             if (ModelState.IsValid)
             {
-                var signInResult = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, true, false);
-                if (signInResult.Succeeded)
-                {
-                    if (string.IsNullOrWhiteSpace(returnUrl))
-                    {
-                        return RedirectToAction("Index", "Dungeon");
-                    }
-                    else
-                    {
-                        return Redirect(returnUrl);
-                    }
-                }
-                else
+                var user = _userService.Login(_mapper.Map<UserModel>(model));
+
+                if (user == null)
                 {
                     ModelState.AddModelError("", "Username or password incorrect");
+                    return View();
                 }
+
+                var claims = new List<Claim>
+                {
+                    new Claim(JwtClaimTypes.Name, user.UserName),
+                    new Claim(JwtClaimTypes.Id, user.Id.ToString())
+                };
+
+                var userIdentity = new ClaimsIdentity(claims, "login");
+
+                ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
+                await HttpContext.SignInAsync(principal);
+                if (string.IsNullOrWhiteSpace(returnUrl))
+                    return RedirectToAction("Index", "Dungeon");
+                else
+                    return Redirect(returnUrl);
             }
             return View();
         }
         public async Task<ActionResult> Logout()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                await _signInManager.SignOutAsync();
-            }
+            await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
     }

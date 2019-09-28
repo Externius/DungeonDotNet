@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using MvcRDMG.Services;
-using Microsoft.EntityFrameworkCore;
-using MvcRDMG.Models;
-using Microsoft.Extensions.Logging;
-using AutoMapper;
-using MvcRDMG.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MvcRDMG.Core.Abstractions.Repository;
+using MvcRDMG.Core.Abstractions.Services;
+using MvcRDMG.Core.Services;
+using MvcRDMG.Infrastructure;
+using MvcRDMG.Seed;
+using System;
 using System.Net;
-using Microsoft.AspNetCore.Authentication;
+using System.Threading.Tasks;
 
 namespace MvcRDMG
 {
     public class Startup
     {
         public static IConfigurationRoot Configuration;
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             HostingEnvironment = env;
             var builder = new ConfigurationBuilder()
@@ -35,11 +34,11 @@ namespace MvcRDMG
             Configuration = builder.Build();
 
         }
-        public IHostingEnvironment HostingEnvironment { get; }
+        public IWebHostEnvironment HostingEnvironment { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            services.AddControllersWithViews()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -53,10 +52,7 @@ namespace MvcRDMG
                     .AddConsole()
                     .AddDebug();
             });
-            services.AddDbContext<UserContext>();
-            services.AddIdentity<DungeonUser, IdentityRole>()
-                .AddEntityFrameworkStores<UserContext>()
-                .AddDefaultTokenProviders();
+            
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = true;
@@ -81,12 +77,32 @@ namespace MvcRDMG
                 options.Events.OnRedirectToAccessDenied = ReplaceRedirector(HttpStatusCode.Forbidden, options.Events.OnRedirectToAccessDenied);
                 options.Events.OnRedirectToLogin = ReplaceRedirector(HttpStatusCode.Unauthorized, options.Events.OnRedirectToLogin);
             });
+
+
             services.AddEntityFrameworkSqlite()
-                .AddDbContext<DungeonContext>();
-            services.AddTransient<DungeonContextSeedData>();
-            services.AddTransient<UserContextSeedData>();
+                        .AddDbContext<Context>(options => options.UseSqlite(Startup.Configuration["Data:DungeonContextConnection"]));
+
+            AddApplicationServices(services);
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(options =>
+                    {
+                        options.LoginPath = "/Auth/Login";
+                    });
+
+            services.AddHttpContextAccessor();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        }
+
+        private void AddApplicationServices(IServiceCollection services)
+        {
+            services.AddTransient<ContextSeedData>();
             services.AddScoped<IDungeonRepository, DungeonRepository>();
-            if (HostingEnvironment.IsDevelopment())
+            services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDungeonService, DungeonService>();
+
+            if (HostingEnvironment.EnvironmentName.StartsWith("Development"))
             {
                 services.AddScoped<IMailService, DebugMailService>();
                 services.AddScoped<IDungeonGenerator, DungeonGenerator>();
@@ -97,18 +113,15 @@ namespace MvcRDMG
                 services.AddScoped<IDungeonGenerator, DungeonGenerator>();
             }
         }
-        public async void Configure(IApplicationBuilder app, IHostingEnvironment env, DungeonContextSeedData seedData, UserContextSeedData userSeed)
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ContextSeedData seedData)
         {
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
-            Mapper.Initialize(config =>
-            {
-                config.CreateMap<Option, OptionViewModel>().ReverseMap();
-                config.CreateMap<SavedDungeon, SavedDungeonViewModel>().ReverseMap();
-            });
-            if (env.IsDevelopment())
+            app.UseAuthorization();
+            if (env.EnvironmentName.StartsWith("Development"))
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -117,15 +130,17 @@ namespace MvcRDMG
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
             seedData.SeedData();
-            await userSeed.SeedDataAsync();
         }
+
         static Func<RedirectContext<CookieAuthenticationOptions>, Task> ReplaceRedirector(HttpStatusCode statusCode, Func<RedirectContext<CookieAuthenticationOptions>, Task> existingRedirector) =>
         context =>
         {

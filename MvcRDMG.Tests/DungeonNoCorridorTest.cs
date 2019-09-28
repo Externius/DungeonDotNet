@@ -1,21 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MvcRDMG.Generator.Core;
 using MvcRDMG.Generator.Helpers;
 using MvcRDMG.Generator.Models;
+using System.Linq;
 
 namespace MvcRDMG.Tests
 {
     [TestClass]
     public class DungeonNoCorridorTest
     {
-        private DungeonNoCorridor dungeonNoCorridor = new DungeonNoCorridor(800, 800, 15, 15);
+        private readonly DungeonNoCorridor dungeonNoCorridor = new DungeonNoCorridor(800, 800, 15, 15);
 
         [TestInitialize]
-        public void setup()
+        public void Setup()
         {
             Utils.Instance.DoorGenerator = new Door();
             Utils.Instance.TrapGenerator = new Trap();
@@ -32,7 +29,7 @@ namespace MvcRDMG.Tests
             dungeonNoCorridor.Init();
         }
         [TestMethod]
-        public void testInit()
+        public void TestInit()
         {
             DrawTestDungeon.Instance.Draw(dungeonNoCorridor.DungeonTiles);
             Assert.IsTrue(dungeonNoCorridor.RoomDescription.Count == 0);

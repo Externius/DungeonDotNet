@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using MvcRDMG.Core.Abstractions.Services;
 using MvcRDMG.Models;
-using MvcRDMG.Services;
-using MvcRDMG.ViewModels;
-using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace MvcRDMG.Controllers.Web
 {
     public class HomeController : Controller
     {
-        private IMailService _mailService;
+        private readonly IMailService _mailService;
 
         public HomeController(IMailService service)
         {
             _mailService = service;
         }
-        [Authorize]
+
         public IActionResult Index()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
             return View();
         }
 

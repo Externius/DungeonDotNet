@@ -1,12 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MvcRDMG.Core.Abstractions.Services;
+using MvcRDMG.Core.Abstractions.Services.Models;
+using MvcRDMG.Helpers;
 using MvcRDMG.Models;
-using MvcRDMG.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Net;
 
 namespace MvcRDMG.Controllers.Api
 {
@@ -14,19 +16,21 @@ namespace MvcRDMG.Controllers.Api
     [Route("api/options")]
     public class OptionController : Controller
     {
-        private IDungeonRepository _repository;
-        private ILogger<OptionController> _logger;
+        private readonly IMapper _mapper;
+        private readonly IDungeonService _dungeonService;
+        private readonly ILogger<OptionController> _logger;
 
-        public OptionController(IDungeonRepository repository, ILogger<OptionController> logger)
+        public OptionController(IDungeonService dungeonService, IMapper mapper, ILogger<OptionController> logger)
         {
-            _repository = repository;
+            _dungeonService = dungeonService;
             _logger = logger;
+            _mapper = mapper;
         }
         [HttpGet("")]
         public JsonResult Get()
         {
-            var options = _repository.GetUserOptionsWithSavedDungeons(User.Identity.Name);
-            var result = Mapper.Map<IEnumerable<OptionViewModel>>(options);
+            var options = _dungeonService.GetUserOptionsWithSavedDungeons(UserHelper.GetUserId(User.Claims));
+            var result = _mapper.Map<IEnumerable<OptionViewModel>>(options);
             return Json(result);
         }
 
@@ -37,14 +41,14 @@ namespace MvcRDMG.Controllers.Api
             {
                 if (ModelState.IsValid)
                 {
-                    var dungeonOption = Mapper.Map<Option>(viewmodel);
-                    dungeonOption.UserName = User.Identity.Name;
+                    var dungeonOption = _mapper.Map<OptionModel>(viewmodel);
+                    dungeonOption.UserId = UserHelper.GetUserId(User.Claims);
                     _logger.LogInformation("Attempting save dungeon");
-                    _repository.AddDungeonOption(dungeonOption);
-                    if (_repository.SaveAll())
+                    _dungeonService.AddDungeonOption(dungeonOption);
+                    if (_dungeonService.SaveAll())
                     {
                         Response.StatusCode = (int)HttpStatusCode.Created;
-                        return Json(Mapper.Map<OptionViewModel>(dungeonOption));
+                        return Json(_mapper.Map<OptionViewModel>(dungeonOption));
                     }
                 }
             }
@@ -52,10 +56,10 @@ namespace MvcRDMG.Controllers.Api
             {
                 _logger.LogError("Failed to save dungeon", ex);
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json(new { Message = ex.Message });
+                return Json(new { ex.Message });
             }
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { Message = "Failed", ModelState = ModelState });
+            return Json(new { Message = "Failed", ModelState });
         }
     }
 }

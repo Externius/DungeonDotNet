@@ -7,7 +7,7 @@ namespace MvcRDMG.Tests
     public class Helpers
     {
         private static readonly Helpers _instance = new Helpers();
-        public static Helpers Instance { get { return _instance; } }
+        public static Helpers Instance => _instance;
         private Helpers()
         {
 

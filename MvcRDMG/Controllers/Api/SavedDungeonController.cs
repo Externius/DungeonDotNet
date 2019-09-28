@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MvcRDMG.Core.Abstractions.Services;
+using MvcRDMG.Core.Abstractions.Services.Models;
+using MvcRDMG.Helpers;
 using MvcRDMG.Models;
-using MvcRDMG.ViewModels;
+using System;
+using System.Net;
 
 namespace MvcRDMG.Controllers.Api
 {
@@ -15,25 +15,27 @@ namespace MvcRDMG.Controllers.Api
     [Route("api/options/{dungeonName}/saveddungeons")]
     public class SavedDungeonController : Controller
     {
-        private IDungeonRepository _repository;
-        private ILogger<SavedDungeonController> _logger;
+        private readonly IMapper _mapper;
+        private readonly IDungeonService _dungeonService;
+        private readonly ILogger<SavedDungeonController> _logger;
 
-        public SavedDungeonController(IDungeonRepository repository, ILogger<SavedDungeonController> logger)
+        public SavedDungeonController(IDungeonService dungeonService, IMapper mapper, ILogger<SavedDungeonController> logger)
         {
-            _repository = repository;
+            _dungeonService = dungeonService;
             _logger = logger;
+            _mapper = mapper;
         }
         [HttpGet("")]
         public JsonResult GetJson(string dungeonName)
         {
             try
             {
-                var results = _repository.GetSavedDungeonByName(dungeonName, User.Identity.Name);
+                var results = _dungeonService.GetSavedDungeonByName(dungeonName, UserHelper.GetUserId(User.Claims));
                 if (results == null)
                 {
                     return Json(null);
                 }
-                return Json(Mapper.Map<OptionViewModel>(results));
+                return Json(_mapper.Map<OptionViewModel>(results));
             }
             catch (Exception ex)
             {
@@ -50,13 +52,13 @@ namespace MvcRDMG.Controllers.Api
             {
                 if (ModelState.IsValid)
                 {
-                    var saveddungeon = Mapper.Map<SavedDungeon>(viewmodel);
-                    _repository.AddSavedDungeon(dungeonName, saveddungeon, User.Identity.Name);
+                    var saveddungeon = _mapper.Map<SavedDungeonModel>(viewmodel);
+                    _dungeonService.AddSavedDungeon(dungeonName, saveddungeon, UserHelper.GetUserId(User.Claims));
 
-                    if (_repository.SaveAll())
+                    if (_dungeonService.SaveAll())
                     {
                         Response.StatusCode = (int)HttpStatusCode.Created;
-                        return Json(Mapper.Map<SavedDungeonViewModel>(saveddungeon));
+                        return Json(_mapper.Map<SavedDungeonViewModel>(saveddungeon));
                     }
                 }
             }

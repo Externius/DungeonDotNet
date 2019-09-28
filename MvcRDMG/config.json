@@ -3,7 +3,6 @@
         "SiteEmailAddress": "aaa@bbb.com"
     },
     "Data":{
-        "DungeonContextConnection":"Data Source=dungeons.sqlite",
-        "AuthConnection":"Filename=./rdmg.sqlite"
+        "DungeonContextConnection":"Data Source=dungeons.sqlite"
     }
 }

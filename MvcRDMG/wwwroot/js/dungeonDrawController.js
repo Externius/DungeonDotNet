@@ -45,19 +45,20 @@
                 });
         };
         vm.reloadVal = function () {
-            vm.newDungeon.dungeonSize = $("#dungeonSize").val();
-            vm.newDungeon.dungeonDifficulty = $("#dungeonDifficulty").val();
-            vm.newDungeon.partyLevel = $("#partyLevel").val();
-            vm.newDungeon.partySize = $("#partySize").val();
-            vm.newDungeon.treasureValue = $("#treasureValue").val();
-            vm.newDungeon.itemsRarity = $("#itemsRarity").val();
-            vm.newDungeon.roomDensity = $("#roomDensity").val();
-            vm.newDungeon.roomSize = $("#roomSize").val();
+            vm.newDungeon.id = 0;
+            vm.newDungeon.dungeonSize = parseInt($("#dungeonSize").val());
+            vm.newDungeon.dungeonDifficulty = parseInt($("#dungeonDifficulty").val());
+            vm.newDungeon.partyLevel = parseInt($("#partyLevel").val());
+            vm.newDungeon.partySize = parseInt($("#partySize").val());
+            vm.newDungeon.treasureValue = parseFloat($("#treasureValue").val());
+            vm.newDungeon.itemsRarity = parseInt($("#itemsRarity").val());
+            vm.newDungeon.roomDensity = parseInt($("#roomDensity").val());
+            vm.newDungeon.roomSize = parseInt($("#roomSize").val());
             vm.newDungeon.monsterType = mType;
-            vm.newDungeon.trapPercent = $("#trapPercent").val();
-            vm.newDungeon.roamingPercent = $("#roamingPercent").val();
-            vm.newDungeon.deadEnd = $("#deadEnd").val();
-            vm.newDungeon.corridor = $("#corridor").val();
+            vm.newDungeon.trapPercent = parseInt($("#trapPercent").val());
+            vm.newDungeon.roamingPercent = parseInt($("#roamingPercent").val());
+            vm.newDungeon.deadEnd = $("#deadEnd").val() === "true";
+            vm.newDungeon.corridor = $("#corridor").val() === "true";
         };
         vm.getMonsters = function () {
             mType = "";

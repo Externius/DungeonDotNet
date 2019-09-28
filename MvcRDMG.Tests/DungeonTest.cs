@@ -1,21 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MvcRDMG.Generator.Core;
 using MvcRDMG.Generator.Helpers;
 using MvcRDMG.Generator.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MvcRDMG.Tests
 {
     [TestClass]
     public class DungeonTest
     {
-        private Dungeon dungeon = new Dungeon(800, 800, 15, 10, 15, 15, true, 10);
+        private readonly Dungeon dungeon = new Dungeon(800, 800, 15, 10, 15, 15, true, 10);
 
         [TestInitialize]
-        public void setup()
+        public void Setup()
         {
             Utils.Instance.DoorGenerator = new Door();
             Utils.Instance.TrapGenerator = new Trap();

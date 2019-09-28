@@ -1,16 +1,11 @@
-using System;
-using System.Diagnostics;
 using MvcRDMG.Generator.Models;
+using System.Diagnostics;
 
 namespace MvcRDMG.Tests
 {
     public class DrawTestDungeon
     {
-        private static readonly DrawTestDungeon _instance = new DrawTestDungeon();
-        public static DrawTestDungeon Instance
-        {
-            get { return _instance; }
-        }
+        public static DrawTestDungeon Instance { get; } = new DrawTestDungeon();
         private DrawTestDungeon()
         {
 
@@ -19,11 +14,11 @@ namespace MvcRDMG.Tests
         {
             foreach (DungeonTile[] row in dungeonTiles)
             {
-                printRow(row);
+                PrintRow(row);
             }
             Trace.WriteLine(" ");
         }
-        private void printRow(DungeonTile[] row)
+        private void PrintRow(DungeonTile[] row)
         {
             foreach (var i in row)
             {

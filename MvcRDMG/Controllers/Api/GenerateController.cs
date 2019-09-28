@@ -1,15 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MvcRDMG.Core.Abstractions.Services;
+using MvcRDMG.Core.Abstractions.Services.Models;
 using MvcRDMG.Models;
-using MvcRDMG.Services;
-using MvcRDMG.ViewModels;
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
 namespace MvcRDMG.Controllers.Api
 {
@@ -17,13 +16,15 @@ namespace MvcRDMG.Controllers.Api
     [Route("api/generate")]
     public class GenerateController : Controller
     {
-        private IDungeonGenerator _generator;
-        private ILogger<OptionController> _logger;
+        private readonly IMapper _mapper;
+        private readonly IDungeonGenerator _generator;
+        private readonly ILogger<OptionController> _logger;
 
-        public GenerateController(IDungeonGenerator generator, ILogger<OptionController> logger)
+        public GenerateController(IDungeonGenerator generator, IMapper mapper, ILogger<OptionController> logger)
         {
             _generator = generator;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpPost("")]
@@ -33,10 +34,11 @@ namespace MvcRDMG.Controllers.Api
             {
                 if (ModelState.IsValid)
                 {
-                    if (_generator.Generate(viewmodel))
+                    var model = _mapper.Map<OptionModel>(viewmodel);
+                    if (_generator.Generate(model))
                     {
                         Response.StatusCode = (int)HttpStatusCode.Created;
-                        return Json(Mapper.Map<IEnumerable<SavedDungeonViewModel>>(viewmodel.SavedDungeons.ToList()));
+                        return Json(_mapper.Map<IEnumerable<SavedDungeonViewModel>>(model.SavedDungeons.ToList()));
                     }
                     else
                     {
@@ -49,10 +51,10 @@ namespace MvcRDMG.Controllers.Api
             {
                 _logger.LogError("Failed to generate dungeon", ex);
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json(new { Message = ex.Message });
+                return Json(new { ex.Message });
             }
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json(new { Message = "Failed", ModelState = ModelState });
+            return Json(new { Message = "Failed", ModelState });
         }
     }
 }
