@@ -30,7 +30,7 @@
                         vm.trapDescription === null ? [] : JSON.parse(response.data[0].trapDescription),
                         "mapArea",
                         vm.newDungeon.dungeonSize,
-                        vm.newDungeon.corridor === "true",
+                        vm.newDungeon.corridor,
                         vm.themeID,
                         vm.roamingMonsterDescription === null ? [] : JSON.parse(response.data[0].roamingMonsterDescription));
                     Utils.downloadImg("download_map", document.getElementById("mapArea"));
