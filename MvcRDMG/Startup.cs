@@ -32,13 +32,13 @@ namespace MvcRDMG
              .AddJsonFile("config.json")
              .AddEnvironmentVariables();
             Configuration = builder.Build();
-
         }
         public IWebHostEnvironment HostingEnvironment { get; }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddRazorPages();  
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -53,32 +53,6 @@ namespace MvcRDMG
                     .AddDebug();
             });
             
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = false;
-                options.Password.RequiredUniqueChars = 6;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                options.Lockout.MaxFailedAccessAttempts = 10;
-                options.Lockout.AllowedForNewUsers = true;
-                options.User.RequireUniqueEmail = true;
-            });
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.Cookie.Expiration = TimeSpan.FromDays(150);
-                options.LoginPath = "/Auth/Login";
-                options.LogoutPath = "/Auth/Logout";
-                options.AccessDeniedPath = "/Auth/AccessDenied";
-                options.SlidingExpiration = true;
-                options.Events.OnRedirectToAccessDenied = ReplaceRedirector(HttpStatusCode.Forbidden, options.Events.OnRedirectToAccessDenied);
-                options.Events.OnRedirectToLogin = ReplaceRedirector(HttpStatusCode.Unauthorized, options.Events.OnRedirectToLogin);
-            });
-
-
             services.AddEntityFrameworkSqlite()
                         .AddDbContext<Context>(options => options.UseSqlite(Startup.Configuration["Data:DungeonContextConnection"]));
 
@@ -116,11 +90,6 @@ namespace MvcRDMG
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ContextSeedData seedData)
         {
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
-            app.UseAuthentication();
-            app.UseAuthorization();
             if (env.EnvironmentName.StartsWith("Development"))
             {
                 app.UseDeveloperExceptionPage();
@@ -129,27 +98,20 @@ namespace MvcRDMG
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
-            }
+            }      
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
+            app.UseCookiePolicy();
+            app.UseAuthentication();
+            app.UseAuthorization();    
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-
             seedData.SeedData();
         }
-
-        static Func<RedirectContext<CookieAuthenticationOptions>, Task> ReplaceRedirector(HttpStatusCode statusCode, Func<RedirectContext<CookieAuthenticationOptions>, Task> existingRedirector) =>
-        context =>
-        {
-            if (context.Request.Path.StartsWithSegments("/api"))
-            {
-                context.Response.StatusCode = (int)statusCode;
-                return Task.CompletedTask;
-            }
-            return existingRedirector(context);
-        };
     }
 }
