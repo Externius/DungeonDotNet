@@ -1,7 +1,7 @@
-<div><a href="#/!" class="btn btn-sm btn-default"><i class="fa fa-angle-left"></i> Back</a></div>
+<div><a href="#/!" class="btn btn-sm btn-default"><i class="fas fa-angle-left"></i> Back</a></div>
 <div class="row">
   <div class="col-md-4 mx-auto">
-    <h1> Dungeon name: {{ vm.dungeonName }} </h1>
+    <h2 class="text-center">{{ vm.dungeonName }}</h2>
     <wait-cursor display-when="vm.isBusy"></wait-cursor>
     <div class="alert alert-danger" ng-show="vm.errorMessage">{{ vm.errorMessage }}</div>
     <table class="table table-sm table-striped">
