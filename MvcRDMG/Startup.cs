@@ -1,10 +1,8 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,8 +14,6 @@ using MvcRDMG.Core.Services;
 using MvcRDMG.Infrastructure;
 using MvcRDMG.Seed;
 using System;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace MvcRDMG
 {
@@ -90,6 +86,7 @@ namespace MvcRDMG
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ContextSeedData seedData)
         {
+            UpdateDB(app);
             if (env.EnvironmentName.StartsWith("Development"))
             {
                 app.UseDeveloperExceptionPage();
@@ -112,6 +109,13 @@ namespace MvcRDMG
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
             seedData.SeedData();
+        }
+
+        private void UpdateDB(IApplicationBuilder app)
+        {
+            using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var context = serviceScope.ServiceProvider.GetService<Context>();
+            context.Database.Migrate();
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Repository;
 using MvcRDMG.Core.Domain;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MvcRDMG.Infrastructure
@@ -62,8 +63,17 @@ namespace MvcRDMG.Infrastructure
 
         public User GetByNameAndPass(string userName, string password)
         {
-            //TODO hash?
-            return _context.Users.FirstOrDefault(u => u.UserName == userName && u.Password == password);
+            return _context.Users.FirstOrDefault(u => u.UserName == userName && u.Password == password && !u.Deleted);
+        }
+
+        public IEnumerable<User> List(bool? deleted = false)
+        {
+            var query = _context.Users.AsNoTracking();
+
+            if (deleted.HasValue)
+                query = query.Where(x => x.Deleted == deleted.Value);
+
+            return query.ToList();
         }
     }
 }

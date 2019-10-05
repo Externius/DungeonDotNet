@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MvcRDMG.Core.Abstractions.Services;
-using MvcRDMG.Models;
+using MvcRDMG.Models.Home;
 using System.Diagnostics;
 
 namespace MvcRDMG.Controllers.Web

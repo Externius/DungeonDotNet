@@ -1,4 +1,4 @@
-@model MvcRDMG.Models.ContactViewModel
+@model MvcRDMG.Models.Home.ContactViewModel
 
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
@@ -12,22 +12,22 @@
         }
         <div asp-validation-summary="ModelOnly"></div>
         <div class="form-group">
-            <label asp-for="Name">Name</label>
+            <label asp-for="Name">@Resources.Home.Name</label>
             <input asp-for="Name" class="form-control"/>
             <span asp-validation-for="Name" class="text-muted"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Email">Email</label>
+            <label asp-for="Email">@Resources.Home.Email</label>
             <input type="email" asp-for="Email" class="form-control"/>
             <span asp-validation-for="Email" class="text-muted"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Message">Message</label>
+            <label asp-for="Message">@Resources.Home.Message</label>
             <textarea cols="50" rows="5" asp-for="Message" class="form-control"></textarea>
             <span asp-validation-for="Message" class="text-muted"></span>
         </div>
         <div class="form-group">
-            <input type="submit" value="Send Message" class="btn btn-success"/>
+            <input type="submit" value="@Resources.Home.Send" class="btn btn-success"/>
         </div>
     </form>
     </div>

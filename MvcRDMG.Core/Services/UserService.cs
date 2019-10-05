@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Repository;
@@ -47,9 +49,33 @@ namespace MvcRDMG.Core.Services
             return _mapper.Map<UserModel>(user);
         }
 
+        public IEnumerable<UserModel> List(bool? deleted = false)
+        {
+            return _userRepository.List(deleted)
+                                    .Select(p => _mapper.Map<UserModel>(p))
+                                    .OrderBy(um => um.UserName)
+                                    .ToList();
+        }
+
         public UserModel Login(UserModel model)
         {
             return _mapper.Map<UserModel>(_userRepository.GetByNameAndPass(model.UserName, model.Password));
+        }
+
+        public bool Restore(int id)
+        {
+            try
+            {
+                var model = _userRepository.Get(id);
+                model.Deleted = false;
+                _userRepository.Update(model);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Restore User #{id} failed.");
+                throw;
+            }
         }
 
         public UserModel Update(UserModel model)

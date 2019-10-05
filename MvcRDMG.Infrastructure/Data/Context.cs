@@ -10,8 +10,9 @@ namespace MvcRDMG.Infrastructure
         public DbSet<User> Users { get; set; }
         public Context(DbContextOptions options) : base(options)
         {
-            Database.EnsureCreated();
+
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Option>()

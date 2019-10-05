@@ -1,4 +1,5 @@
 ﻿using MvcRDMG.Core.Domain;
+using System.Collections.Generic;
 
 namespace MvcRDMG.Core.Abstractions.Repository
 {
@@ -8,6 +9,7 @@ namespace MvcRDMG.Core.Abstractions.Repository
         User Update(User user);
         User GetByNameAndPass(string userName, string password);
         User Get(int id);
+        IEnumerable<User> List(bool? deleted = false);
         bool Delete(int id);
     }
 }

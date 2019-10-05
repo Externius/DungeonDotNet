@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -8,11 +8,9 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="IdentityModel" Version="4.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +21,7 @@
     <ProjectReference Include="..\MvcRDMG.Core\MvcRDMG.Core.csproj" />
     <ProjectReference Include="..\MvcRDMG.Generator\MvcRDMG.Generator.csproj" />
     <ProjectReference Include="..\MvcRDMG.Infrastructure\MvcRDMG.Infrastructure.csproj" />
+    <ProjectReference Include="..\MvcRDMG.Resources\MvcRDMG.Resources.csproj" />
   </ItemGroup>
 
 </Project>

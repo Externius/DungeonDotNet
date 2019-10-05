@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using MvcRDMG.Core.Abstractions.Services;
 using MvcRDMG.Core.Abstractions.Services.Models;
-using MvcRDMG.Models;
+using MvcRDMG.Models.Auth;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;

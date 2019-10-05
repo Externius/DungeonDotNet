@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Services;
 using MvcRDMG.Core.Abstractions.Services.Models;
 using MvcRDMG.Helpers;
-using MvcRDMG.Models;
+using MvcRDMG.Models.Dungeon;
 using System;
 using System.Net;
 

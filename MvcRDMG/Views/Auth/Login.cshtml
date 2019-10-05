@@ -1,10 +1,6 @@
-@model MvcRDMG.Models.LoginViewModel
+@model MvcRDMG.Models.Auth.LoginViewModel
 @{
     ViewData["Title"] = "Login";
-}
-@section Scripts {
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
 <div class="row">
     <div class="col-md-6 mx-auto">
@@ -27,3 +23,13 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+    $(document).ready(function () {
+      
+    });
+    </script>
+}
+

@@ -8,9 +8,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcRDMG.Tests", "MvcRDMG.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcRDMG.Generator", "MvcRDMG.Generator\MvcRDMG.Generator.csproj", "{670937CF-4266-491C-B128-9277DCEEEE71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcRDMG.Core", "MvcRDMG.Core\MvcRDMG.Core.csproj", "{F11BD7E4-901C-4B7D-8A8B-B0ACD5B31271}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcRDMG.Core", "MvcRDMG.Core\MvcRDMG.Core.csproj", "{F11BD7E4-901C-4B7D-8A8B-B0ACD5B31271}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcRDMG.Infrastructure", "MvcRDMG.Infrastructure\MvcRDMG.Infrastructure.csproj", "{79A37F9A-178B-4C65-8B36-5F94EF7E3993}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcRDMG.Infrastructure", "MvcRDMG.Infrastructure\MvcRDMG.Infrastructure.csproj", "{79A37F9A-178B-4C65-8B36-5F94EF7E3993}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcRDMG.Resources", "MvcRDMG.Resources\MvcRDMG.Resources.csproj", "{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +84,18 @@ Global
 		{79A37F9A-178B-4C65-8B36-5F94EF7E3993}.Release|x64.Build.0 = Release|Any CPU
 		{79A37F9A-178B-4C65-8B36-5F94EF7E3993}.Release|x86.ActiveCfg = Release|Any CPU
 		{79A37F9A-178B-4C65-8B36-5F94EF7E3993}.Release|x86.Build.0 = Release|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Debug|x64.Build.0 = Debug|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Debug|x86.Build.0 = Debug|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Release|x64.ActiveCfg = Release|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Release|x64.Build.0 = Release|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Release|x86.ActiveCfg = Release|Any CPU
+		{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
