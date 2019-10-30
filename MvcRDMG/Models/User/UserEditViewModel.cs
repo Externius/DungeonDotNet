@@ -7,7 +7,7 @@ namespace MvcRDMG.Models.User
         public int Id { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resources.Error), ErrorMessageResourceName = "RequiredValidation")]
         [Display(ResourceType = typeof(Resources.User), Name = "Name")]
-        public string UserName { get; set; }
+        public string Username { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resources.Error), ErrorMessageResourceName = "RequiredValidation")]
         [Display(ResourceType = typeof(Resources.User), Name = "Password")]
         public string Password { get; set; }

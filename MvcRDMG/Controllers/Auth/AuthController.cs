@@ -43,7 +43,7 @@ namespace MvcRDMG.Controllers.Auth
 
                 var claims = new List<Claim>
                 {
-                    new Claim(JwtClaimTypes.Name, user.UserName),
+                    new Claim(JwtClaimTypes.Name, user.Username),
                     new Claim(JwtClaimTypes.Id, user.Id.ToString())
                 };
 

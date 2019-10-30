@@ -68,5 +68,14 @@ namespace MvcRDMG.Resources {
                 return ResourceManager.GetString("RequiredValidation", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The user {0} is already exists in the system!.
+        /// </summary>
+        public static string UserExist {
+            get {
+                return ResourceManager.GetString("UserExist", resourceCulture);
+            }
+        }
     }
 }

@@ -13,9 +13,6 @@
                     @Resources.User.Name
                 </th>
                 <th>
-                    @Resources.User.Password
-                </th>
-                <th>
                     @Resources.User.Status
                 </th>
                 <th>
@@ -27,10 +24,7 @@
             {
                 <tr>
                     <td>
-                        @item.UserName
-                    </td>
-                    <td>
-                        <pre> @item.Password </pre>
+                        @item.Username
                     </td>
                     <td>
                         @(item.Deleted == true ? Resources.User.Deleted : Resources.User.Active)

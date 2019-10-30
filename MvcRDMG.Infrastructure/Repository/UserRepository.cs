@@ -61,9 +61,14 @@ namespace MvcRDMG.Infrastructure
 
         }
 
-        public User GetByNameAndPass(string userName, string password)
+        public User GetByUsername(string username, bool? deleted = false)
         {
-            return _context.Users.FirstOrDefault(u => u.UserName == userName && u.Password == password && !u.Deleted);
+            var query = _context.Users.AsNoTracking();
+
+            if (deleted.HasValue)
+                query = query.Where(x => x.Deleted == deleted.Value);
+
+            return query.FirstOrDefault(u => u.Username == username);
         }
 
         public IEnumerable<User> List(bool? deleted = false)

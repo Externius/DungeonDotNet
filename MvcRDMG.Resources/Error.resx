@@ -120,4 +120,7 @@
   <data name="RequiredValidation" xml:space="preserve">
     <value>Field {0} is required.</value>
   </data>
+  <data name="UserExist" xml:space="preserve">
+    <value>The user {0} is already exists in the system!</value>
+  </data>
 </root>

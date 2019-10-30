@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MvcRDMG.Generator\MvcRDMG.Generator.csproj" />
+    <ProjectReference Include="..\MvcRDMG.Resources\MvcRDMG.Resources.csproj" />
   </ItemGroup>
 
 </Project>

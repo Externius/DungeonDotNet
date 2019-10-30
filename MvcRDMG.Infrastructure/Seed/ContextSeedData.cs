@@ -12,17 +12,18 @@ namespace MvcRDMG.Seed
     {
         private readonly Context _context;
         private readonly IDungeonGenerator _generator;
-        public ContextSeedData(IDungeonGenerator generator, Context context)
+        private readonly IUserService _userService;
+        public ContextSeedData(IDungeonGenerator generator, IUserService userService, Context context)
         {
             _context = context;
             _generator = generator;
+            _userService = userService;
         }
         public void SeedData()
         {
             if (!_context.Users.Any())
             {
-                _context.Users.Add(new User { Password = "testPassword12345", UserName = "TestUser" });
-                _context.SaveChanges();
+                _userService.Create(new UserModel { Password = "testPassword12345", Username = "TestUser" });
 
                 var model = new OptionModel()
                 {

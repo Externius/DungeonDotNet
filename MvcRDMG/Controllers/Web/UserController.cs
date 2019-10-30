@@ -41,6 +41,7 @@ namespace MvcRDMG.Controllers.Web
             if (id != 0)
             {
                 model = _mapper.Map<UserEditViewModel>(_userService.Get(id));
+                model.Password = "";
                 ViewData["Title"] = Resources.User.EditTitle;
             }
 

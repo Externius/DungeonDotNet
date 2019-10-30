@@ -7,7 +7,7 @@ namespace MvcRDMG.Core.Abstractions.Repository
     {
         User Create(User user);
         User Update(User user);
-        User GetByNameAndPass(string userName, string password);
+        User GetByUsername(string username, bool? deleted = false);
         User Get(int id);
         IEnumerable<User> List(bool? deleted = false);
         bool Delete(int id);

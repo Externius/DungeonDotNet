@@ -13,7 +13,7 @@ namespace MvcRDMG.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserName = table.Column<string>(nullable: true),
+                    Username = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
                     Deleted = table.Column<bool>(nullable: false),
                     Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true)
