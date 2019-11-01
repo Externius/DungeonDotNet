@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
     <PackageReference Include="IdentityModel" Version="4.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
@@ -23,6 +24,10 @@
     <ProjectReference Include="..\MvcRDMG.Generator\MvcRDMG.Generator.csproj" />
     <ProjectReference Include="..\MvcRDMG.Infrastructure\MvcRDMG.Infrastructure.csproj" />
     <ProjectReference Include="..\MvcRDMG.Resources\MvcRDMG.Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
