@@ -1,16 +1,16 @@
 ﻿using MvcRDMG.Core.Abstractions.Services.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Core.Abstractions.Services
 {
     public interface IDungeonService
     {
-        IEnumerable<OptionModel> GetAllOptions();
-        IEnumerable<OptionModel> GetAllOptionsWithSavedDungeons(int userId);
-        void AddDungeonOption(OptionModel dungeonOption);
-        bool SaveAll();
-        OptionModel GetSavedDungeonByName(string dungeonName, int userId);
-        void AddSavedDungeon(string dungeonName, SavedDungeonModel saveddungeon, int userId);
-        IEnumerable<OptionModel> GetUserOptionsWithSavedDungeons(int userId);
+        Task<IEnumerable<OptionModel>> GetAllOptionsAsync();
+        Task<IEnumerable<OptionModel>> GetAllOptionsWithSavedDungeonsAsync(int userId);
+        Task AddDungeonOptionAsync(OptionModel dungeonOption);
+        Task<OptionModel> GetSavedDungeonByNameAsync(string dungeonName, int userId);
+        Task AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId);
+        Task<IEnumerable<OptionModel>> GetUserOptionsWithSavedDungeonsAsync(int userId);
     }
 }

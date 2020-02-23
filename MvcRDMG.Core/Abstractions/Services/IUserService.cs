@@ -1,16 +1,17 @@
 ﻿using MvcRDMG.Core.Abstractions.Services.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Core.Abstractions.Services
 {
     public interface IUserService
     {
-        UserModel Get(int id);
-        UserModel Update(UserModel model);
-        UserModel Create(UserModel model);
-        IEnumerable<UserModel> List(bool? deleted = false);
-        bool Delete(int id);
-        bool Restore(int id);
-        UserModel Login(UserModel model);
+        Task<UserModel> GetAsync(int id);
+        Task<UserModel> UpdateAsync(UserModel model);
+        Task<UserModel> CreateAsync(UserModel model);
+        Task<IEnumerable<UserModel>> ListAsync(bool? deleted = false);
+        Task<bool> DeleteAsync(int id);
+        Task<bool> RestoreAsync(int id);
+        Task<UserModel> LoginAsync(UserModel model);
     }
 }

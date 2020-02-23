@@ -8,6 +8,7 @@ using MvcRDMG.Helpers;
 using MvcRDMG.Models.Dungeon;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Controllers.Api
 {
@@ -25,16 +26,15 @@ namespace MvcRDMG.Controllers.Api
             _logger = logger;
             _mapper = mapper;
         }
-        [HttpGet("")]
-        public JsonResult GetJson(string dungeonName)
+        [HttpGet]
+        public async Task<JsonResult> GetJson(string dungeonName)
         {
             try
             {
-                var results = _dungeonService.GetSavedDungeonByName(dungeonName, UserHelper.GetUserId(User.Claims));
+                var results =  await _dungeonService.GetSavedDungeonByNameAsync(dungeonName, UserHelper.GetUserId(User.Claims));
                 if (results == null)
-                {
                     return Json(null);
-                }
+
                 return Json(_mapper.Map<OptionViewModel>(results));
             }
             catch (Exception ex)
@@ -45,21 +45,17 @@ namespace MvcRDMG.Controllers.Api
             }
 
         }
-        [HttpPost("")]
-        public JsonResult Post(string dungeonName, [FromBody]SavedDungeonViewModel viewmodel)
+        [HttpPost]
+        public async Task<JsonResult> Post(string dungeonName, [FromBody]SavedDungeonViewModel viewmodel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var saveddungeon = _mapper.Map<SavedDungeonModel>(viewmodel);
-                    _dungeonService.AddSavedDungeon(dungeonName, saveddungeon, UserHelper.GetUserId(User.Claims));
-
-                    if (_dungeonService.SaveAll())
-                    {
-                        Response.StatusCode = (int)HttpStatusCode.Created;
-                        return Json(_mapper.Map<SavedDungeonViewModel>(saveddungeon));
-                    }
+                    await _dungeonService.AddSavedDungeonAsync(dungeonName, saveddungeon, UserHelper.GetUserId(User.Claims));
+                    Response.StatusCode = (int)HttpStatusCode.Created;
+                    return Json(_mapper.Map<SavedDungeonViewModel>(saveddungeon));
                 }
             }
             catch (Exception ex)

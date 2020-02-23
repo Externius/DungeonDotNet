@@ -108,7 +108,7 @@ namespace MvcRDMG
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            seedData.SeedData();
+            seedData.SeedDataAsync().Wait();
         }
 
         private void UpdateDB(IApplicationBuilder app)

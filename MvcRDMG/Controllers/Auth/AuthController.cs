@@ -33,7 +33,7 @@ namespace MvcRDMG.Controllers.Auth
         {
             if (ModelState.IsValid)
             {
-                var user = _userService.Login(_mapper.Map<UserModel>(model));
+                var user = await _userService.LoginAsync(_mapper.Map<UserModel>(model));
 
                 if (user == null)
                 {

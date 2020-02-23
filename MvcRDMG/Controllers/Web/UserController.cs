@@ -6,6 +6,7 @@ using MvcRDMG.Core.Abstractions.Services.Models;
 using MvcRDMG.Models.User;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Controllers.Web
 {
@@ -21,26 +22,25 @@ namespace MvcRDMG.Controllers.Web
             _mapper = mapper;
             _logger = logger;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var list = _userService.List(null)
-                        .Select(um => _mapper.Map<UserEditViewModel>(um))
-                        .ToList();
+            var list = await _userService.ListAsync(null);
+
 
             return View(new UserListViewModel
             {
-                Details = list
+                Details = list.Select(um => _mapper.Map<UserEditViewModel>(um)).ToList()
             });
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             ViewData["Title"] = Resources.User.CreateTitle;
             var model = new UserEditViewModel();
 
             if (id != 0)
             {
-                model = _mapper.Map<UserEditViewModel>(_userService.Get(id));
+                model = _mapper.Map<UserEditViewModel>(await _userService.GetAsync(id));
                 model.Password = "";
                 ViewData["Title"] = Resources.User.EditTitle;
             }
@@ -50,7 +50,7 @@ namespace MvcRDMG.Controllers.Web
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(UserEditViewModel model)
+        public async Task<IActionResult> Edit(UserEditViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -58,18 +58,19 @@ namespace MvcRDMG.Controllers.Web
                 {
                     if (model.Id == 0)
                     {
-                        _userService.Create(_mapper.Map<UserModel>(model));
+                        await _userService.CreateAsync(_mapper.Map<UserModel>(model));
                     }
                     else
                     {
                         var user = new UserModel();
                         _mapper.Map(model, user);
-                        _userService.Update(user);
+                        await _userService.UpdateAsync(user);
                     }
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Error editing user.");
                     ModelState.AddModelError("", ex.Message);
                 }
             }
@@ -82,15 +83,15 @@ namespace MvcRDMG.Controllers.Web
             return View(model);
         }
 
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            _userService.Delete(id);
+            await _userService.DeleteAsync(id);
             return RedirectToAction("Index");
         }
 
-        public ActionResult Restore(int id)
+        public async Task<ActionResult> Restore(int id)
         {
-            _userService.Restore(id);
+            await _userService.RestoreAsync(id);
             return RedirectToAction("Index");
         }
     }

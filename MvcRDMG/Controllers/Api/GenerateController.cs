@@ -27,7 +27,7 @@ namespace MvcRDMG.Controllers.Api
             _mapper = mapper;
         }
 
-        [HttpPost("")]
+        [HttpPost]
         public JsonResult Post([FromBody]OptionViewModel viewmodel)
         {
             try

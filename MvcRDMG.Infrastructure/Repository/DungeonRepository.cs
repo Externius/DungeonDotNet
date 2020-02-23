@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Repository;
@@ -17,13 +18,14 @@ namespace MvcRDMG.Infrastructure
             _context = context;
             _logger = logger;
         }
-        public IEnumerable<Option> GetAllOptions()
+
+        public async Task<IEnumerable<Option>> GetAllOptionsAsync()
         {
             try
             {
-                return _context.Options
-                    .OrderBy(d => d.Created)
-                    .ToList();
+                return await _context.Options
+                                        .OrderBy(d => d.Created)
+                                        .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -31,15 +33,16 @@ namespace MvcRDMG.Infrastructure
                 return null;
             }
         }
-        public IEnumerable<Option> GetAllOptionsWithSavedDungeons(int userId)
+
+        public async Task<IEnumerable<Option>> GetAllOptionsWithSavedDungeonsAsync(int userId)
         {
             try
             {
-                return _context.Options
+                return await _context.Options
                     .Include(d => d.SavedDungeons)
                     .OrderBy(d => d.Created)
                     .Where(d => d.UserId == userId)
-                    .ToList();
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -47,36 +50,38 @@ namespace MvcRDMG.Infrastructure
                 return null;
             }
         }
-        public void AddDungeonOption(Option dungeonOption)
+
+        public async Task AddDungeonOptionAsync(Option dungeonOption)
         {
             _context.Add(dungeonOption);
+            await _context.SaveChangesAsync();
         }
-        public bool SaveAll()
+
+        public async Task<Option> GetSavedDungeonByNameAsync(string dungeonName, int userId)
         {
-            return _context.SaveChanges() > 0;
-        }
-        public Option GetSavedDungeonByName(string dungeonName, int userId)
-        {
-            return _context.Options
+            return await _context.Options
                 .Include(d => d.SavedDungeons)
                 .Where(d => d.DungeonName == dungeonName && d.UserId == userId)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
-        public void AddSavedDungeon(string dungeonName, SavedDungeon saveddungeon, int userId)
+
+        public async Task AddSavedDungeonAsync(string dungeonName, SavedDungeon savedDungeon, int userId)
         {
-            var dungeon = GetSavedDungeonByName(dungeonName, userId);
-            dungeon.SavedDungeons.Add(saveddungeon);
-            _context.SavedDungeons.Add(saveddungeon);
+            var dungeon = await GetSavedDungeonByNameAsync(dungeonName, userId);
+            dungeon.SavedDungeons.Add(savedDungeon);
+            _context.SavedDungeons.Add(savedDungeon);
+            await _context.SaveChangesAsync();
         }
-        public IEnumerable<Option> GetUserOptionsWithSavedDungeons(int userId)
+
+        public async Task<IEnumerable<Option>> GetUserOptionsWithSavedDungeonsAsync(int userId)
         {
             try
             {
-                return _context.Options
+                return await _context.Options
                     .Include(d => d.SavedDungeons)
                     .OrderBy(d => d.Created)
                     .Where(d => d.UserId == userId)
-                    .ToList();
+                    .ToListAsync();
             }
             catch (Exception ex)
             {

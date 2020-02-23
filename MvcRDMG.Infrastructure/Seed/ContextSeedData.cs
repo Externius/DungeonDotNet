@@ -5,6 +5,7 @@ using MvcRDMG.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Seed
 {
@@ -19,11 +20,11 @@ namespace MvcRDMG.Seed
             _generator = generator;
             _userService = userService;
         }
-        public void SeedData()
+        public async Task SeedDataAsync()
         {
             if (!_context.Users.Any())
             {
-                _userService.Create(new UserModel { Password = "testPassword12345", Username = "TestUser" });
+                await _userService.CreateAsync(new UserModel { Password = "testPassword12345", Username = "TestUser" });
 
                 var model = new OptionModel()
                 {
@@ -74,7 +75,6 @@ namespace MvcRDMG.Seed
                 _context.Options.Add(dungeon);
                 _context.SavedDungeons.AddRange(dungeon.SavedDungeons);
 
-
                 var model2 = new OptionModel()
                 {
                     DungeonName = "Test2",
@@ -123,7 +123,7 @@ namespace MvcRDMG.Seed
                 _context.Options.Add(dungeon2);
                 _context.SavedDungeons.AddRange(dungeon2.SavedDungeons);
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

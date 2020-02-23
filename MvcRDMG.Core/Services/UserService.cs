@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Repository;
@@ -23,14 +24,14 @@ namespace MvcRDMG.Core.Services
             _logger = logger;
         }
 
-        public UserModel Create(UserModel model)
+        public async Task<UserModel> CreateAsync(UserModel model)
         {
-            CheckUserExist(model);
+            await CheckUserExist(model);
             try
             {
                 model.Password = GetSavedPasswordHash(model.Password);
                 var user = _mapper.Map<Domain.User>(model);
-                user = _userRepository.Create(user);
+                user = await _userRepository.CreateAsync(user);
                 return _mapper.Map<UserModel>(user);
             }
             catch (Exception ex)
@@ -40,53 +41,86 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        private void CheckUserExist(UserModel model)
+        private async Task CheckUserExist(UserModel model)
         {
-            var user = _userRepository.GetByUsername(model.Username, null);
+            var user = await _userRepository.GetByUsernameAsync(model.Username, null);
             if (user != null)
                 throw new Exception(string.Format(Resources.Error.UserExist, model.Username));
         }
 
-        public bool Delete(int id)
-        {
-            return _userRepository.Delete(id);
-        }
-
-        public UserModel Get(int id)
-        {
-            var user = _userRepository.Get(id);
-
-            return _mapper.Map<UserModel>(user);
-        }
-
-        public IEnumerable<UserModel> List(bool? deleted = false)
-        {
-            return _userRepository.List(deleted)
-                                    .Select(p => _mapper.Map<UserModel>(p))
-                                    .OrderBy(um => um.Username)
-                                    .ToList();
-        }
-
-        public UserModel Login(UserModel model)
-        {
-            var user = _userRepository.GetByUsername(model.Username);
-
-            if (user == null)
-                return null;
-
-            if (CheckPassword(user.Password, model.Password))
-                return _mapper.Map<UserModel>(user);
-            else
-                return null;
-        }
-
-        public bool Restore(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             try
             {
-                var model = _userRepository.Get(id);
+                return await _userRepository.DeleteAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Delete User failed.");
+                throw;
+            }
+        }
+
+        public async Task<UserModel> GetAsync(int id)
+        {
+            try
+            {
+                var user = await _userRepository.GetAsync(id);
+
+                return _mapper.Map<UserModel>(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Get User failed.");
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<UserModel>> ListAsync(bool? deleted = false)
+        {
+            try
+            {
+                var result = await _userRepository.ListAsync(deleted);
+
+                return result.Select(p => _mapper.Map<UserModel>(p))
+                        .OrderBy(um => um.Username)
+                        .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"List Users failed.");
+                throw;
+            }
+        }
+
+        public async Task<UserModel> LoginAsync(UserModel model)
+        {
+            try
+            {
+                var user = await _userRepository.GetByUsernameAsync(model.Username);
+
+                if (user == null)
+                    return null;
+
+                if (CheckPassword(user.Password, model.Password))
+                    return _mapper.Map<UserModel>(user);
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Login User failed.");
+                throw;
+            }
+        }
+
+        public async Task<bool> RestoreAsync(int id)
+        {
+            try
+            {
+                var model = await _userRepository.GetAsync(id);
                 model.Deleted = false;
-                _userRepository.Update(model);
+                await _userRepository.UpdateAsync(model);
                 return true;
             }
             catch (Exception ex)
@@ -96,14 +130,22 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        public UserModel Update(UserModel model)
+        public async Task<UserModel> UpdateAsync(UserModel model)
         {
-            model.Password = GetSavedPasswordHash(model.Password);
-            var user = _mapper.Map<Domain.User>(model);
+            try
+            {
+                model.Password = GetSavedPasswordHash(model.Password);
+                var user = _mapper.Map<Domain.User>(model);
 
-            user = _userRepository.Update(user);
+                user = await _userRepository.UpdateAsync(user);
 
-            return _mapper.Map<UserModel>(user);
+                return _mapper.Map<UserModel>(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Update User failed.");
+                throw;
+            }
         }
 
         private string GetSavedPasswordHash(string password)

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Repository;
@@ -23,45 +25,89 @@ namespace MvcRDMG.Core.Services
             _logger = logger;
         }
 
-        public void AddDungeonOption(OptionModel dungeonOption)
+        public async Task AddDungeonOptionAsync(OptionModel dungeonOption)
         {
-            _dungeonRepository.AddDungeonOption(_mapper.Map<Option>(dungeonOption));
+            try
+            {
+                await _dungeonRepository.AddDungeonOptionAsync(_mapper.Map<Option>(dungeonOption));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Dungeon AddDungeonOption failed.");
+                throw;
+            }         
         }
 
-        public void AddSavedDungeon(string dungeonName, SavedDungeonModel saveddungeon, int userId)
+        public async Task AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId)
         {
-            _dungeonRepository.AddSavedDungeon(dungeonName, _mapper.Map<SavedDungeon>(saveddungeon), userId);
+            try
+            {
+                await _dungeonRepository.AddSavedDungeonAsync(dungeonName, _mapper.Map<SavedDungeon>(saveddungeon), userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Dungeon AddSavedDungeon failed.");
+                throw;
+            }
         }
 
-        public IEnumerable<OptionModel> GetAllOptions()
+        public async Task<IEnumerable<OptionModel>> GetAllOptionsAsync()
         {
-            return _dungeonRepository.GetAllOptions()
-                                     .Select(o => _mapper.Map<OptionModel>(o))
-                                     .ToList();
+            try
+            {
+                var options = await _dungeonRepository.GetAllOptionsAsync();
+
+                return options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
+            } 
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Dungeon GetAllOptions failed.");
+                throw;
+            }
         }
 
-        public IEnumerable<OptionModel> GetAllOptionsWithSavedDungeons(int userId)
+        public async Task<IEnumerable<OptionModel>> GetAllOptionsWithSavedDungeonsAsync(int userId)
         {
-            return _dungeonRepository.GetAllOptionsWithSavedDungeons(userId)
-                                     .Select(o => _mapper.Map<OptionModel>(o))
-                                     .ToList();
+            try
+            {
+                var options = await _dungeonRepository.GetAllOptionsWithSavedDungeonsAsync(userId);
+
+                return options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"List Applications failed.");
+                throw;
+            }
+
         }
 
-        public OptionModel GetSavedDungeonByName(string dungeonName, int userId)
+        public async Task<OptionModel> GetSavedDungeonByNameAsync(string dungeonName, int userId)
         {
-            return _mapper.Map<OptionModel>(_dungeonRepository.GetSavedDungeonByName(dungeonName, userId));
+            try
+            {
+                return  _mapper.Map<OptionModel>(await _dungeonRepository.GetSavedDungeonByNameAsync(dungeonName, userId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"List Applications failed.");
+                throw;
+            }
         }
 
-        public IEnumerable<OptionModel> GetUserOptionsWithSavedDungeons(int userId)
+        public async Task<IEnumerable<OptionModel>> GetUserOptionsWithSavedDungeonsAsync(int userId)
         {
-            return _dungeonRepository.GetUserOptionsWithSavedDungeons(userId)
-                                     .Select(o => _mapper.Map<OptionModel>(o))
-                                     .ToList();
-        }
-
-        public bool SaveAll()
-        {
-            return _dungeonRepository.SaveAll();
+            try
+            {
+                var result = await _dungeonRepository.GetUserOptionsWithSavedDungeonsAsync(userId);
+                
+                return result.Select(o => _mapper.Map<OptionModel>(o)).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"List Applications failed.");
+                throw;
+            }
         }
     }
 }

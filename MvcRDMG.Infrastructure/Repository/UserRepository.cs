@@ -5,6 +5,7 @@ using MvcRDMG.Core.Abstractions.Repository;
 using MvcRDMG.Core.Domain;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Infrastructure
 {
@@ -19,38 +20,38 @@ namespace MvcRDMG.Infrastructure
             _logger = logger;
             _mapper = mapper;
         }
-        public User Create(User user)
+        public async Task<User> CreateAsync(User user)
         {
             _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return user;
         }
 
-        public User Get(int id)
+        public async Task<User> GetAsync(int id)
         {
-            return _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == id);
+            return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public User Update(User user)
+        public async Task<User> UpdateAsync(User user)
         {
-            var local = _context.Users.FirstOrDefault(u => u.Id == user.Id);
+            var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
 
             if (local != null)
             {
                 _mapper.Map(user, local);
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
             }
 
             return local;
         }
-        public bool Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var local = _context.Users.FirstOrDefault(u => u.Id == id);
+            var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
             if (local != null)
             {
                 local.Deleted = true;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return true;
             }
             else
@@ -58,27 +59,26 @@ namespace MvcRDMG.Infrastructure
                 _logger.LogError($" Entity not found (User# {id})");
                 return false;
             }
-
         }
 
-        public User GetByUsername(string username, bool? deleted = false)
+        public async Task<User> GetByUsernameAsync(string username, bool? deleted = false)
         {
             var query = _context.Users.AsNoTracking();
 
             if (deleted.HasValue)
                 query = query.Where(x => x.Deleted == deleted.Value);
 
-            return query.FirstOrDefault(u => u.Username == username);
+            return await query.FirstOrDefaultAsync(u => u.Username == username);
         }
 
-        public IEnumerable<User> List(bool? deleted = false)
+        public async Task<IEnumerable<User>> ListAsync(bool? deleted = false)
         {
             var query = _context.Users.AsNoTracking();
 
             if (deleted.HasValue)
                 query = query.Where(x => x.Deleted == deleted.Value);
 
-            return query.ToList();
+            return await query.ToListAsync();
         }
     }
 }

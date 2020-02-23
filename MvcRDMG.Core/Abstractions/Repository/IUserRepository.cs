@@ -1,15 +1,16 @@
 ﻿using MvcRDMG.Core.Domain;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Core.Abstractions.Repository
 {
     public interface IUserRepository
     {
-        User Create(User user);
-        User Update(User user);
-        User GetByUsername(string username, bool? deleted = false);
-        User Get(int id);
-        IEnumerable<User> List(bool? deleted = false);
-        bool Delete(int id);
+        Task<User> CreateAsync(User user);
+        Task<User> UpdateAsync(User user);
+        Task<User> GetByUsernameAsync(string username, bool? deleted = false);
+        Task<User> GetAsync(int id);
+        Task<IEnumerable<User>> ListAsync(bool? deleted = false);
+        Task<bool> DeleteAsync(int id);
     }
 }
