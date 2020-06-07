@@ -3,15 +3,15 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.4.1",
+      "library": "jquery@3.5.1",
       "destination": "wwwroot/lib/jquery"
     },
     {
-      "library": "twitter-bootstrap@4.3.1",
+      "library": "twitter-bootstrap@4.5.0",
       "destination": "wwwroot/lib/bootstrap"
     },
     {
-      "library": "bootbox.js@5.3.2",
+      "library": "bootbox.js@5.4.0",
       "destination": "wwwroot/lib/bootbox"
     },
     {
@@ -21,6 +21,10 @@
     {
       "library": "jquery-validate@1.19.1",
       "destination": "wwwroot/lib/jquery-validation"
+    },
+    {
+      "library": "font-awesome@5.13.0",
+      "destination": "wwwroot/lib/font-awesome"
     }
   ]
 }

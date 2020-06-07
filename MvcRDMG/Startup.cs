@@ -19,17 +19,11 @@ namespace MvcRDMG
 {
     public class Startup
     {
-        public static IConfigurationRoot Configuration;
-        public Startup(IWebHostEnvironment env)
+        public static IConfiguration Configuration;
+        public Startup(IConfiguration configuration)
         {
-            HostingEnvironment = env;
-            var builder = new ConfigurationBuilder()
-             .SetBasePath(env.ContentRootPath)
-             .AddJsonFile("config.json")
-             .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
-        public IWebHostEnvironment HostingEnvironment { get; }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
@@ -48,9 +42,11 @@ namespace MvcRDMG
                     .AddConsole()
                     .AddDebug();
             });
-            
-            services.AddEntityFrameworkSqlite()
-                        .AddDbContext<Context>(options => options.UseSqlite(Startup.Configuration["Data:DungeonContextConnection"]));
+
+            services.AddDbContext<Context>(options =>
+                    {
+                        options.UseSqlite(Configuration["Data:DungeonContextConnection"]);
+                    }) ;
 
             AddApplicationServices(services);
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -71,17 +67,7 @@ namespace MvcRDMG
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDungeonService, DungeonService>();
-
-            if (HostingEnvironment.EnvironmentName.StartsWith("Development"))
-            {
-                services.AddScoped<IMailService, DebugMailService>();
-                services.AddScoped<IDungeonGenerator, DungeonGenerator>();
-            }
-            else
-            {
-                services.AddScoped<IMailService, DebugMailService>();
-                services.AddScoped<IDungeonGenerator, DungeonGenerator>();
-            }
+            services.AddScoped<IDungeonGenerator, DungeonGenerator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ContextSeedData seedData)

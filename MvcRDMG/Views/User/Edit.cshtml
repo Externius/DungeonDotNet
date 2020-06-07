@@ -15,7 +15,12 @@
         <div class="form-group row">
             <label asp-for="Password" class="col-md-3 col-form-label"></label>
             <div class="col-md-4">
-                <input asp-for="Password" class="form-control" tabindex="2" />
+                <div class="input-group input-group-password">
+                    <input type="password" class="form-control" asp-for="Password" autocomplete="off">
+                    <div class="input-group-append">
+                        <a class="btn btn-outline-secondary" href="#"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                    </div>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
         </div>

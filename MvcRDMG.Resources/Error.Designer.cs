@@ -61,6 +61,15 @@ namespace MvcRDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The password is too short!.
+        /// </summary>
+        public static string PasswordLength {
+            get {
+                return ResourceManager.GetString("PasswordLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Field {0} is required..
         /// </summary>
         public static string RequiredValidation {

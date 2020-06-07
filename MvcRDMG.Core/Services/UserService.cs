@@ -26,6 +26,7 @@ namespace MvcRDMG.Core.Services
 
         public async Task<UserModel> CreateAsync(UserModel model)
         {
+            ValidateModel(model);
             await CheckUserExist(model);
             try
             {
@@ -39,6 +40,14 @@ namespace MvcRDMG.Core.Services
                 _logger.LogError(ex, $"Create User failed.");
                 throw;
             }
+        }
+
+        private void ValidateModel(UserModel model)
+        {
+            if (model.Password.Length < 8)
+                throw new Exception(Resources.Error.PasswordLength);
+            if (string.IsNullOrEmpty(model.Username))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Username));
         }
 
         private async Task CheckUserExist(UserModel model)
@@ -132,6 +141,7 @@ namespace MvcRDMG.Core.Services
 
         public async Task<UserModel> UpdateAsync(UserModel model)
         {
+            ValidateModel(model);
             try
             {
                 model.Password = GetSavedPasswordHash(model.Password);

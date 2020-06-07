@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using MvcRDMG.Core.Abstractions.Services;
 using MvcRDMG.Models.Home;
 using System.Diagnostics;
 
@@ -7,11 +6,9 @@ namespace MvcRDMG.Controllers.Web
 {
     public class HomeController : Controller
     {
-        private readonly IMailService _mailService;
 
-        public HomeController(IMailService service)
+        public HomeController()
         {
-            _mailService = service;
         }
 
         public IActionResult Index()
@@ -30,33 +27,6 @@ namespace MvcRDMG.Controllers.Web
 
         public IActionResult Contact()
         {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Contact(ContactViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var email = Startup.Configuration["AppSettings:SiteEmailAddress"];
-
-                if (string.IsNullOrWhiteSpace(email))
-                {
-                    ModelState.AddModelError("", "Could not send email, configuration problem.");
-                }
-                if (_mailService.SendMail(
-                    email,
-                    email,
-                    $"Contact Page from {model.Name} ({model.Email})",
-                    model.Message
-                ))
-                {
-                    ModelState.Clear();
-
-                    ViewBag.Message = "Mail Sent.";
-                }
-            }
-
             return View();
         }
 
