@@ -1,11 +1,12 @@
 # DungeonDotNet
-I just wanted to see how is the .NET Core under Linux so i ported my app to ASP.NET Core + Entity Framework Core (using SQLite). There are some AngularJS code too. 
 
-You will need the .NET Core 3.0 SDK to build/run this project (simply run dotnet build/run in the terminal).
+I just wanted to see how is the .NET Core under Linux so i ported my app to ASP.NET Core + Entity Framework Core (using SQLite). There are some AngularJS code too.
 
-## Usage:
+You will need the .NET 5.0 SDK to build/run this project (simply run dotnet build/run in the terminal).
 
-Open the https://localhost:5001/ address in a browser.
+## Usage
+
+Open the <https://localhost:5001/> address in a browser.
 
 You can log in with TestUser/testPassword12345
 
