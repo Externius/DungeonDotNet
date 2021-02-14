@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Services;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace MvcRDMG.Controllers.Web
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
