@@ -9,6 +9,7 @@ namespace MvcRDMG.Automapper
         public UserProfile()
         {
             CreateMap<UserModel, UserEditViewModel>().ReverseMap();
+            CreateMap<UserModel, UserCreateViewModel>().ReverseMap();
         }
     }
 }

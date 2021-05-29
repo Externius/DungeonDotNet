@@ -15,18 +15,23 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <div class="navbar-collapse collapse d-sm-inline-flex ">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">@Resources.Common.NavAbout</a>
                         </li>
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">@Resources.Common.NavUserManagement </a></li>
+                            if (User.Claims.Any(c => c.Value == MvcRDMG.Core.Domain.Roles.Admin))
+                            {
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">@Resources.Common.NavUserManagement </a></li>
+                            }
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Dungeon" asp-action="Index">@Resources.Common.NavGenerateDungeons</a></li>
                             <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="LoadDungeon" asp-action="Index">@Resources.Common.NavLoadDungeons</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="Logout">@Resources.Common.NavLogout</a></li>
                         }
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <partial name="_Login" />
                     </ul>
                 </div>
             </div>
@@ -41,7 +46,7 @@
 
     <footer class="border-top footer text-muted text-center">
         <div class="container">
-            &copy; 2020 - MvcRDMG - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Resources.Common.Privacy</a>
+            &copy; @Resources.Common.Copyright - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Resources.Common.Privacy</a>
         </div>
     </footer>
 

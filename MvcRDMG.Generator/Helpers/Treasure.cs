@@ -17,32 +17,31 @@ namespace MvcRDMG.Generator.Helpers
             9, 9, 9, 9, 12, 12, 12, 15, 15, 15
         };
         private int SumValue;
-        public Treasure()
-        {
+        public Treasure() { }
 
-        }
         public string GetTreasure()
         {
-            if (Utils.Instance.GetRandomInt(0, 101) > Utils.Instance.GetTreasurePercentage())
+            if (Utils.GetRandomInt(0, 101) > Utils.Instance.GetTreasurePercentage())
             {
                 return "Treasures: Empty";
             }
             GetAllCost();
             return "Treasures: " + CalcTreasure();
         }
+
         private string CalcTreasure()
         {
             var filteredTreasures = GetFilteredList();
             var sb = new StringBuilder();
-            int currentValue = 0;
-            int itemCount = GetItemsCount();
-            int currentCount = 0;
-            int maxAttempt = filteredTreasures.Count * 2;
+            var currentValue = 0;
+            var itemCount = GetItemsCount();
+            var currentCount = 0;
+            var maxAttempt = filteredTreasures.Count * 2;
             Treasures currentTreasure;
             var finalList = new List<Treasures>();
             while (currentCount < itemCount && maxAttempt > 0)
             {
-                currentTreasure = filteredTreasures[Utils.Instance.GetRandomInt(0, filteredTreasures.Count)]; // get random treasure
+                currentTreasure = filteredTreasures[Utils.GetRandomInt(0, filteredTreasures.Count)]; // get random treasure
                 if (currentValue + currentTreasure.Cost < SumValue)
                 { // if it's still affordable add to list
                     currentValue += currentTreasure.Cost;
@@ -64,21 +63,23 @@ namespace MvcRDMG.Generator.Helpers
                 sb.Append(item.Key.Name);
                 sb.Append(", ");
             }
-            sb.Append(Utils.Instance.GetRandomInt(1, SumValue - currentValue)); // get the remaining value randomly
+            sb.Append(Utils.GetRandomInt(1, SumValue - currentValue)); // get the remaining value randomly
             sb.Append(" gp");
             return sb.ToString();
         }
+
         private int GetItemsCount()
         {
             return Utils.Instance.DungeonDifficulty switch
             {
-                0 => Utils.Instance.GetRandomInt(0, ItemCount[Utils.Instance.PartyLevel]),
-                1 => Utils.Instance.GetRandomInt(2, ItemCount[Utils.Instance.PartyLevel]),
-                2 => Utils.Instance.GetRandomInt(3, ItemCount[Utils.Instance.PartyLevel]),
-                3 => Utils.Instance.GetRandomInt(4, ItemCount[Utils.Instance.PartyLevel]),
+                0 => Utils.GetRandomInt(0, ItemCount[Utils.Instance.PartyLevel]),
+                1 => Utils.GetRandomInt(2, ItemCount[Utils.Instance.PartyLevel]),
+                2 => Utils.GetRandomInt(3, ItemCount[Utils.Instance.PartyLevel]),
+                3 => Utils.GetRandomInt(4, ItemCount[Utils.Instance.PartyLevel]),
                 _ => 0,
             };
         }
+
         private List<Treasures> GetFilteredList()
         {
             if (Utils.Instance.MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
@@ -94,6 +95,7 @@ namespace MvcRDMG.Generator.Helpers
                 .ToList();
             }
         }
+
         private void GetAllCost()
         {
             SumValue = (int)(TreasureGP[Utils.Instance.PartyLevel] * Utils.Instance.TreasureValue);

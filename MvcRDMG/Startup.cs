@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,15 +18,16 @@ namespace MvcRDMG
 {
     public class Startup
     {
-        public static IConfiguration Configuration;
+        private static IConfiguration Configuration;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews().SetCompatibilityVersion(CompatibilityVersion.Latest);
-            services.AddRazorPages();
+            services.AddControllersWithViews()
+                    .SetCompatibilityVersion(CompatibilityVersion.Latest)
+                    .AddRazorRuntimeCompilation();
             services.AddCookiePolicy()
                     .AddDatabase(Configuration)
                     .AddLogging(builder =>
@@ -42,7 +42,8 @@ namespace MvcRDMG
                     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options =>
                     {
-                        options.LoginPath = "/Auth/Login";
+                        options.LoginPath = new PathString("/Auth/Login");
+                        options.AccessDeniedPath = new PathString("/Auth/Forbidden/");
                     });
         }
 
@@ -57,13 +58,13 @@ namespace MvcRDMG
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
-            }      
+            }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseCookiePolicy();
             app.UseAuthentication();
-            app.UseAuthorization();    
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -73,7 +74,7 @@ namespace MvcRDMG
             seedData.SeedDataAsync().Wait();
         }
 
-        private void UpdateDB(IApplicationBuilder app)
+        private static void UpdateDB(IApplicationBuilder app)
         {
             using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
             using var context = serviceScope.ServiceProvider.GetService<Context>();
@@ -94,14 +95,15 @@ namespace MvcRDMG
 
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddTransient<ContextSeedData>();
-            services.AddScoped<IDungeonRepository, DungeonRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddTransient<ContextSeedData>()
+                    .AddScoped<IDungeonRepository, DungeonRepository>()
+                    .AddScoped<IUserRepository, UserRepository>();
 
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IDungeonService, DungeonService>();
-            services.AddScoped<IDungeonGenerator, DungeonGenerator>();
-            
+            services.AddScoped<IUserService, UserService>()
+                    .AddScoped<IAuthService, AuthService>()
+                    .AddScoped<IDungeonService, DungeonService>()
+                    .AddScoped<IDungeonGenerator, DungeonGenerator>();
+
             return services;
         }
 
@@ -116,6 +118,5 @@ namespace MvcRDMG
 
             return services;
         }
-
     }
 }

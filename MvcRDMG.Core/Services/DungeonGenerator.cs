@@ -68,9 +68,9 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        public List<T> DeseraliazerJSON<T>(string fileName)
+        public static List<T> DeseraliazerJSON<T>(string fileName)
         {
-            string json = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/Data/" + fileName);
+            var json = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/Data/" + fileName);
             return JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,

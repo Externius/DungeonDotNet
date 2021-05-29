@@ -1,0 +1,21 @@
+﻿@if (User.Identity.IsAuthenticated)
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="menuProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-user fa-fw"></i>
+            <span class="">
+                @UserHelper.GetUserName(User.Claims)
+            </span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="menuProfile">
+            <a class="dropdown-item" asp-controller="Profile" asp-action="Index">@Resources.Profile.MyProfile</a>
+            <a class="dropdown-item" asp-controller="Auth" asp-action="Logout">@Resources.Profile.Logout</a>
+        </div>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Auth" asp-action="Login">@Resources.Profile.Login</a>
+    </li>
+}

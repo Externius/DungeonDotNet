@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Repository;
 using MvcRDMG.Core.Abstractions.Services;
 using MvcRDMG.Core.Abstractions.Services.Models;
+using MvcRDMG.Core.Domain;
+using MvcRDMG.Core.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MvcRDMG.Core.Services
 {
@@ -17,23 +18,23 @@ namespace MvcRDMG.Core.Services
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public UserService (IMapper mapper, IUserRepository userRepository, ILogger<UserService> logger)
+        public UserService(IMapper mapper, IUserRepository userRepository, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task<UserModel> CreateAsync(UserModel model)
+        public async Task<int> CreateAsync(UserModel model)
         {
             ValidateModel(model);
             await CheckUserExist(model);
             try
             {
-                model.Password = GetSavedPasswordHash(model.Password);
+                model.Password = PasswordHelper.EncryptPassword(model.Password);
                 var user = _mapper.Map<Domain.User>(model);
                 user = await _userRepository.CreateAsync(user);
-                return _mapper.Map<UserModel>(user);
+                return user.Id;
             }
             catch (Exception ex)
             {
@@ -42,12 +43,22 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        private void ValidateModel(UserModel model)
+        private static void ValidateModel(UserModel model)
         {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
             if (model.Password.Length < 8)
                 throw new Exception(Resources.Error.PasswordLength);
             if (string.IsNullOrEmpty(model.Username))
                 throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Username));
+            if (string.IsNullOrEmpty(model.FirstName))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.FirstName));
+            if (string.IsNullOrEmpty(model.LastName))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.LastName));
+            if (string.IsNullOrEmpty(model.Email))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Email));
+            if (string.IsNullOrEmpty(model.Role))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Role));
         }
 
         private async Task CheckUserExist(UserModel model)
@@ -102,27 +113,6 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        public async Task<UserModel> LoginAsync(UserModel model)
-        {
-            try
-            {
-                var user = await _userRepository.GetByUsernameAsync(model.Username);
-
-                if (user == null)
-                    return null;
-
-                if (CheckPassword(user.Password, model.Password))
-                    return _mapper.Map<UserModel>(user);
-                else
-                    return null;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Login User failed.");
-                throw;
-            }
-        }
-
         public async Task<bool> RestoreAsync(int id)
         {
             try
@@ -139,17 +129,18 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        public async Task<UserModel> UpdateAsync(UserModel model)
+        public async Task UpdateAsync(UserModel model)
         {
-            ValidateModel(model);
+            ValidateModelForEdit(model);
             try
             {
-                model.Password = GetSavedPasswordHash(model.Password);
-                var user = _mapper.Map<Domain.User>(model);
+                var user = await _userRepository.GetAsync(model.Id);
 
-                user = await _userRepository.UpdateAsync(user);
-
-                return _mapper.Map<UserModel>(user);
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.Role = (Role)Enum.Parse(typeof(Role), model.Role);
+                await _userRepository.UpdateAsync(user);
             }
             catch (Exception ex)
             {
@@ -158,44 +149,43 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        private string GetSavedPasswordHash(string password)
+        private static void ValidateModelForEdit(UserModel model)
         {
-            var passwordHash = "";
-
-            using (var rNGCryptoServiceProvider = new RNGCryptoServiceProvider())
-            {
-                var salt = new byte[16];
-                rNGCryptoServiceProvider.GetBytes(salt);
-                using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-                var hash = pbkdf2.GetBytes(20);
-                var hashBytes = new byte[36];
-                Array.Copy(salt, 0, hashBytes, 0, 16);
-                Array.Copy(hash, 0, hashBytes, 16, 20);
-                passwordHash = Convert.ToBase64String(hashBytes);
-            }
-
-            return passwordHash;
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+            if (string.IsNullOrEmpty(model.FirstName))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.FirstName));
+            if (string.IsNullOrEmpty(model.LastName))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.LastName));
+            if (string.IsNullOrEmpty(model.Email))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Email));
+            if (string.IsNullOrEmpty(model.Role))
+                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Role));
         }
 
-        private bool CheckPassword(string savedPasswordHash, string password)
+        public async Task ChangePasswordAsync(ChangePasswordModel model)
         {
-            var result = true;
-            var hashBytes = Convert.FromBase64String(savedPasswordHash);
-            var salt = new byte[16];
-            Array.Copy(hashBytes, 0, salt, 0, 16);
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-            var hash = pbkdf2.GetBytes(20);
-
-            for (int i = 0; i < 20; i++)
+            try
             {
-                if (hashBytes[i + 16] != hash[i])
-                {
-                    result = false;
-                    break;
-                }
-            }
+                if (model.NewPassword.Length < 8)
+                    throw new Exception(Resources.Error.PasswordLength);
 
-            return result;
+                var user = await _userRepository.GetAsync(model.Id);
+
+                if (user is null)
+                    throw new Exception(Resources.Error.NotFound);
+                if (!PasswordHelper.CheckPassword(user.Password, model.CurrentPassword))
+                    throw new Exception(Resources.Error.PasswordMissMatch);
+
+                user.Password = PasswordHelper.EncryptPassword(model.NewPassword);
+
+                await _userRepository.UpdateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Change user password failed.");
+                throw;
+            }
         }
     }
 }

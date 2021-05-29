@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MvcRDMG.Core.Domain;
+using MvcRDMG.Infrastructure.Extensions;
 
 namespace MvcRDMG.Infrastructure
 {
@@ -18,6 +19,8 @@ namespace MvcRDMG.Infrastructure
             modelBuilder.Entity<Option>()
                 .HasIndex(o => new { o.DungeonName, o.UserId })
                 .IsUnique();
+
+            modelBuilder.UseEnumStringConverter();
         }
     }
 }

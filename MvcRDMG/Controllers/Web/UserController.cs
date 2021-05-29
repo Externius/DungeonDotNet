@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Services;
 using MvcRDMG.Core.Abstractions.Services.Models;
+using MvcRDMG.Core.Domain;
 using MvcRDMG.Models.User;
 using System;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MvcRDMG.Controllers.Web
 {
-    [Authorize]
+    [Authorize(Roles = Roles.Admin)]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -24,10 +25,10 @@ namespace MvcRDMG.Controllers.Web
             _mapper = mapper;
             _logger = logger;
         }
+
         public async Task<IActionResult> Index()
         {
             var list = await _userService.ListAsync(null);
-
 
             return View(new UserListViewModel
             {
@@ -35,18 +36,36 @@ namespace MvcRDMG.Controllers.Web
             });
         }
 
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View(new UserCreateViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(UserCreateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _userService.CreateAsync(_mapper.Map<UserModel>(model));
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error creating user.");
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            ViewData["Title"] = Resources.User.CreateTitle;
-            var model = new UserEditViewModel();
-
-            if (id != 0)
-            {
-                model = _mapper.Map<UserEditViewModel>(await _userService.GetAsync(id));
-                model.Password = "";
-                ViewData["Title"] = Resources.User.EditTitle;
-            }
-
+            var model = _mapper.Map<UserEditViewModel>(await _userService.GetAsync(id));
             return View(model);
         }
 
@@ -58,16 +77,9 @@ namespace MvcRDMG.Controllers.Web
             {
                 try
                 {
-                    if (model.Id == 0)
-                    {
-                        await _userService.CreateAsync(_mapper.Map<UserModel>(model));
-                    }
-                    else
-                    {
-                        var user = new UserModel();
-                        _mapper.Map(model, user);
-                        await _userService.UpdateAsync(user);
-                    }
+                    var user = new UserModel();
+                    _mapper.Map(model, user);
+                    await _userService.UpdateAsync(user);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -76,24 +88,36 @@ namespace MvcRDMG.Controllers.Web
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-
-            if (model.Id == 0)
-                ViewData["Title"] = Resources.User.CreateTitle;
-            else
-                ViewData["Title"] = Resources.User.EditTitle;
-
             return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id)
         {
-            await _userService.DeleteAsync(id);
+            try
+            {
+                await _userService.DeleteAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting user.");
+            }
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Restore(int id)
         {
-            await _userService.RestoreAsync(id);
+            try
+            {
+                await _userService.RestoreAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error restoring user.");
+            }
             return RedirectToAction("Index");
         }
     }

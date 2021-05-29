@@ -7,8 +7,7 @@ namespace MvcRDMG.Generator.Helpers
 {
     public class Utils
     {
-        private static readonly Random _random = new Random();
-
+        private static readonly Random _random = new();
         public static Utils Instance { get; } = new Utils();
         public IDoor DoorGenerator { get; set; }
         public ITrap TrapGenerator { get; set; }
@@ -30,10 +29,8 @@ namespace MvcRDMG.Generator.Helpers
         public string MonsterType { get; set; }
         public double TreasureValue { get; set; }
         public int ItemsRarity { get; set; }
-        private Utils()
-        {
+        private Utils() { }
 
-        }
         internal int GetTreasurePercentage()
         {
             return DungeonDifficulty switch
@@ -45,6 +42,7 @@ namespace MvcRDMG.Generator.Helpers
                 _ => 0,
             };
         }
+
         internal int GetMonsterPercentage()
         {
             return DungeonDifficulty switch
@@ -56,14 +54,14 @@ namespace MvcRDMG.Generator.Helpers
                 _ => 0,
             };
         }
-        public int GetRandomInt(int min, int max)
+
+        public static int GetRandomInt(int min, int max)
         {
             if (max != min)
-            {
                 return _random.Next(max - min) + min;
-            }
             return max;
         }
+
         public void AddRoomDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoomDescription> roomDescription, List<DungeonTile> currentDoors)
         {
             if (DoorGenerator != null && TreasureGenerator != null && EncouterGenerator != null)
@@ -79,6 +77,7 @@ namespace MvcRDMG.Generator.Helpers
                 dungeonTiles[x][y].Description = Convert.ToString(roomDescription.Count);
             }
         }
+
         public void AddTrapDescription(DungeonTile[][] dungeonTiles, int x, int y, List<TrapDescription> trapDescription)
         {
             if (TrapGenerator != null)
@@ -90,6 +89,7 @@ namespace MvcRDMG.Generator.Helpers
                 dungeonTiles[x][y].Description = trapDescription.Count.ToString();
             }
         }
+
         public void AddRoamingMonsterDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoamingMonsterDescription> roamingMonsterDescription)
         {
             if (TrapGenerator != null)
@@ -101,14 +101,17 @@ namespace MvcRDMG.Generator.Helpers
                 dungeonTiles[x][y].Description = roamingMonsterDescription.Count.ToString();
             }
         }
-        public int Manhattan(int dx, int dy)
+
+        public static int Manhattan(int dx, int dy)
         {
             return dx + dy;
         }
-        private string GetRoomName(int x)
+
+        private static string GetRoomName(int x)
         {
             return "#ROOM" + x + "#";
         }
+
         public void AddNCRoomDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoomDescription> roomDescription, string doors)
         {
             if (TreasureGenerator != null && EncouterGenerator != null)
@@ -122,6 +125,7 @@ namespace MvcRDMG.Generator.Helpers
                 dungeonTiles[x][y].Description = roomDescription.Count.ToString();
             }
         }
+
         private List<Monster> GetMonsters(List<Monster> monsters)
         {
             if (MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
@@ -138,16 +142,17 @@ namespace MvcRDMG.Generator.Helpers
                     .ToList();
             }
         }
-        private double Parse(string ratio)
+
+        private static double Parse(string ratio)
         {
             if (ratio.Contains("/"))
             {
-                String[] rat = ratio.Split("/");
-                return Double.Parse(rat[0]) / Double.Parse(rat[1]);
+                var rat = ratio.Split("/");
+                return double.Parse(rat[0]) / double.Parse(rat[1]);
             }
             else
             {
-                return Double.Parse(ratio);
+                return double.Parse(ratio);
             }
         }
     }

@@ -9,14 +9,14 @@ using MvcRDMG.Infrastructure;
 namespace MvcRDMG.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20191003122617_Init")]
+    [Migration("20210529163802_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.0.0");
+                .HasAnnotation("ProductVersion", "5.0.6");
 
             modelBuilder.Entity("MvcRDMG.Core.Domain.Option", b =>
                 {
@@ -63,6 +63,11 @@ namespace MvcRDMG.Infrastructure.Migrations
                     b.Property<int>("RoomSize")
                         .HasColumnType("INTEGER");
 
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<int>("TrapPercent")
                         .HasColumnType("INTEGER");
 
@@ -100,6 +105,11 @@ namespace MvcRDMG.Infrastructure.Migrations
                     b.Property<string>("RoomDescription")
                         .HasColumnType("TEXT");
 
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<string>("TrapDescription")
                         .HasColumnType("TEXT");
 
@@ -119,7 +129,20 @@ namespace MvcRDMG.Infrastructure.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Password")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Timestamp")
@@ -127,7 +150,7 @@ namespace MvcRDMG.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -142,6 +165,8 @@ namespace MvcRDMG.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MvcRDMG.Core.Domain.SavedDungeon", b =>
@@ -149,6 +174,11 @@ namespace MvcRDMG.Infrastructure.Migrations
                     b.HasOne("MvcRDMG.Core.Domain.Option", null)
                         .WithMany("SavedDungeons")
                         .HasForeignKey("OptionId");
+                });
+
+            modelBuilder.Entity("MvcRDMG.Core.Domain.Option", b =>
+                {
+                    b.Navigation("SavedDungeons");
                 });
 #pragma warning restore 612, 618
         }

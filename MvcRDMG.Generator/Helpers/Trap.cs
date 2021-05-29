@@ -42,79 +42,64 @@ namespace MvcRDMG.Generator.Helpers
                 new string[] {"Energy Drain", "Constitution", "15", "15", "Dispel Magic", "false", "necrotic", ""}
         };
         private static string[] CurrentTrap;
+
         public string GetCurrentTrap(bool door)
         {
-            int trapDanger = GetTrapDanger(); // setback, dangerous, deadly
-            if (door)
-            { // get random currentTrap index
-                CurrentTrap = TrapDoorKind[Utils.Instance.GetRandomInt(0, TrapDoorKind.Length)];
-            }
+            var trapDanger = GetTrapDanger(); // setback, dangerous, deadly
+            if (door) // get random currentTrap index
+                CurrentTrap = TrapDoorKind[Utils.GetRandomInt(0, TrapDoorKind.Length)];
             else
-            {
-                CurrentTrap = TrapKind[Utils.Instance.GetRandomInt(0, TrapKind.Length)];
-            }
-            if (CurrentTrap[6] != null && CurrentTrap[6] != String.Empty)
-            { // check dmg type
+                CurrentTrap = TrapKind[Utils.GetRandomInt(0, TrapKind.Length)];
+            if (CurrentTrap[6] != null && CurrentTrap[6] != string.Empty) // check dmg type
                 return CurrentTrap[0] + " [" + TrapSeverity[trapDanger] + "]: DC " + CurrentTrap[2] + " to spot, DC " + CurrentTrap[3] + " to disable (" + CurrentTrap[4] + "), DC " + GetTrapSaveDC(trapDanger) + " " + CurrentTrap[1] + " save or take " + GetTrapDamage(trapDanger) + "D10 (" + CurrentTrap[6] + ") damage" + GetTrapAttackBonus(trapDanger);
-            }
             else
-            {
                 return CurrentTrap[0] + " [" + TrapSeverity[trapDanger] + "]: DC " + CurrentTrap[2] + " to spot, DC " + CurrentTrap[3] + " to disable (" + CurrentTrap[4] + "), DC " + GetTrapSaveDC(trapDanger) + " " + CurrentTrap[1] + " save or " + CurrentTrap[7];
-            }
         }
+
         private string GetTrapAttackBonus(int trapDanger)
         {
-            if (Boolean.TryParse(CurrentTrap[5], out bool parsedValue))
+            if (bool.TryParse(CurrentTrap[5], out bool parsedValue))
             {
                 if (parsedValue)
                 {
-                    int min = TrapAttackBonus[trapDanger];
-                    int max = TrapAttackBonus[trapDanger + 1];
-                    return ",\n (attack bonus +" + Utils.Instance.GetRandomInt(min, max) + ").";
+                    var min = TrapAttackBonus[trapDanger];
+                    var max = TrapAttackBonus[trapDanger + 1];
+                    return ",\n (attack bonus +" + Utils.GetRandomInt(min, max) + ").";
                 }
             }
             return ".";
         }
+
         private int GetTrapDamage(int trapDanger)
         {
             if (Utils.Instance.PartyLevel < 5)
-            {
                 return TrapDmgSeverity[0, trapDanger];
-            }
             else if (Utils.Instance.PartyLevel < 11)
-            {
                 return TrapDmgSeverity[1, trapDanger];
-            }
             else if (Utils.Instance.PartyLevel < 17)
-            {
                 return TrapDmgSeverity[2, trapDanger];
-            }
             else
-            {
                 return TrapDmgSeverity[3, trapDanger];
-            }
         }
+
         private int GetTrapSaveDC(int trapDanger)
         {
-            int min = TrapSave[trapDanger];
-            int max = TrapSave[trapDanger + 1];
-            return Utils.Instance.GetRandomInt(min, max);
+            var min = TrapSave[trapDanger];
+            var max = TrapSave[trapDanger + 1];
+            return Utils.GetRandomInt(min, max);
         }
-        private int GetTrapDanger()
+
+        private static int GetTrapDanger()
         {
-            switch (Utils.Instance.DungeonDifficulty)
+            return Utils.Instance.DungeonDifficulty switch
             {
-                case 0:
-                    return Utils.Instance.GetRandomInt(0, 1);
-                case 1:
-                case 2:
-                    return Utils.Instance.GetRandomInt(0, 2);
-                case 3:
-                    return Utils.Instance.GetRandomInt(0, 3);
-                default:
-                    return 0;
-            }
+                0 => Utils.GetRandomInt(0, 1),
+                1 or 2 => Utils.GetRandomInt(0, 2),
+                3 => Utils.GetRandomInt(0, 3),
+                _ => 0,
+            };
         }
+
         public string GetTrapName(int count)
         {
             return "#TRAP" + count + "#";

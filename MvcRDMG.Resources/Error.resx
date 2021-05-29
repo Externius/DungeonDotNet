@@ -117,8 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>The {0} and the {1} does not match.</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>The entity not found.</value>
+  </data>
   <data name="PasswordLength" xml:space="preserve">
     <value>The password is too short!</value>
+  </data>
+  <data name="PasswordMissMatch" xml:space="preserve">
+    <value>The password you entered did not match our records.</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>The Password is required.</value>
   </data>
   <data name="RequiredValidation" xml:space="preserve">
     <value>Field {0} is required.</value>

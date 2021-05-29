@@ -6,15 +6,9 @@ namespace MvcRDMG.Tests
 {
     public class Helpers
     {
-        private static readonly Helpers _instance = new Helpers();
-        public static Helpers Instance => _instance;
-        private Helpers()
+        public static List<T> DeseraliazerJSON<T>(string fileName)
         {
-
-        }
-        public List<T> DeseraliazerJSON<T>(string fileName)
-        {
-            string json = File.ReadAllText("Data/" + fileName);
+            var json = File.ReadAllText("Data/" + fileName);
             var jsonList = JsonConvert.DeserializeObject<List<T>>(json);
             return jsonList;
         }

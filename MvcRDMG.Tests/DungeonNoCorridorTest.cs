@@ -9,7 +9,7 @@ namespace MvcRDMG.Tests
     [TestClass]
     public class DungeonNoCorridorTest
     {
-        private readonly DungeonNoCorridor dungeonNoCorridor = new DungeonNoCorridor(800, 800, 15, 15);
+        private readonly DungeonNoCorridor dungeonNoCorridor = new(800, 800, 15, 15);
 
         [TestInitialize]
         public void Setup()
@@ -24,21 +24,21 @@ namespace MvcRDMG.Tests
             Utils.Instance.ItemsRarity = 1;
             Utils.Instance.DungeonDifficulty = 1;
             Utils.Instance.MonsterType = "any";
-            Utils.Instance.MonsterList = Helpers.Instance.DeseraliazerJSON<Monster>("5e-SRD-Monsters.json");
-            Utils.Instance.TreasureList = Helpers.Instance.DeseraliazerJSON<Treasures>("treasures.json");
+            Utils.Instance.MonsterList = Helpers.DeseraliazerJSON<Monster>("5e-SRD-Monsters.json");
+            Utils.Instance.TreasureList = Helpers.DeseraliazerJSON<Treasures>("treasures.json");
             dungeonNoCorridor.Init();
         }
         [TestMethod]
         public void TestInit()
         {
-            DrawTestDungeon.Instance.Draw(dungeonNoCorridor.DungeonTiles);
+            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
             Assert.IsTrue(dungeonNoCorridor.RoomDescription.Count == 0);
         }
         [TestMethod]
         public void TestAddFirstRoom()
         {
             dungeonNoCorridor.AddFirstRoom();
-            DrawTestDungeon.Instance.Draw(dungeonNoCorridor.DungeonTiles);
+            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
             var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.ROOM);
             Assert.IsTrue(match != null);
@@ -49,7 +49,7 @@ namespace MvcRDMG.Tests
         {
             dungeonNoCorridor.AddFirstRoom();
             dungeonNoCorridor.FillRoomToDoor();
-            DrawTestDungeon.Instance.Draw(dungeonNoCorridor.DungeonTiles);
+            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
             Assert.IsTrue(dungeonNoCorridor.OpenDoorList.Count == 0);
         }
 
@@ -59,7 +59,7 @@ namespace MvcRDMG.Tests
             dungeonNoCorridor.AddFirstRoom();
             dungeonNoCorridor.FillRoomToDoor();
             dungeonNoCorridor.AddEntryPoint();
-            DrawTestDungeon.Instance.Draw(dungeonNoCorridor.DungeonTiles);
+            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
             var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.ENTRY);
             Assert.IsTrue(match != null);
@@ -72,7 +72,7 @@ namespace MvcRDMG.Tests
             dungeonNoCorridor.FillRoomToDoor();
             dungeonNoCorridor.AddEntryPoint();
             dungeonNoCorridor.AddDescription();
-            DrawTestDungeon.Instance.Draw(dungeonNoCorridor.DungeonTiles);
+            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
             Assert.IsTrue(dungeonNoCorridor.RoomDescription.Count > 1);
         }
     }

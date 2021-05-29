@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace MvcRDMG.Core.Abstractions.Services.Models
 {
-    public class OptionModel
+    public class OptionModel : EditModel
     {
-        public int Id { get; set; }
         public string DungeonName { get; set; }
         public int UserId { get; set; }
         public int DungeonSize { get; set; }

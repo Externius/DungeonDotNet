@@ -1,4 +1,3 @@
-using System;
 using MvcRDMG.Generator.Models;
 
 namespace MvcRDMG.Generator.Helpers
@@ -10,32 +9,22 @@ namespace MvcRDMG.Generator.Helpers
         public static bool Down { get; set; }
         public static bool Left { get; set; }
         public static bool Right { get; set; }
-        private RoomPosition()
-        {
+        private RoomPosition() { }
 
-        }
         internal static void CheckRoomPosition(DungeonTile[][] dungeonTiles, int x, int y)
         {
             Up = false;
             Down = false;
             Left = false;
             Right = false;
-            if (dungeonTiles[x][y - 1].Texture == Textures.ROOM)
-            { // left
+            if (dungeonTiles[x][y - 1].Texture == Textures.ROOM) // left
                 Left = true;
-            }
-            if (dungeonTiles[x][y + 1].Texture == Textures.ROOM)
-            { // right
+            if (dungeonTiles[x][y + 1].Texture == Textures.ROOM) // right
                 Right = true;
-            }
-            if (dungeonTiles[x + 1][y].Texture == Textures.ROOM)
-            { // bottom
+            if (dungeonTiles[x + 1][y].Texture == Textures.ROOM) // bottom
                 Down = true;
-            }
-            if (dungeonTiles[x - 1][y].Texture == Textures.ROOM)
-            { // top
+            if (dungeonTiles[x - 1][y].Texture == Textures.ROOM) // top
                 Up = true;
-            }
         }
     }
 }

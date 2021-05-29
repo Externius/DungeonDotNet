@@ -9,7 +9,7 @@ namespace MvcRDMG.Tests
         [TestMethod]
         public void GetRandomIntTest()
         {
-            int x = Utils.Instance.GetRandomInt(1, 10);
+            var x = Utils.GetRandomInt(1, 10);
             Assert.IsTrue(x > 0);
             Assert.IsTrue(x < 10);
         }

@@ -1,5 +1,10 @@
-namespace MvcRDMG.Generator.Models
+﻿namespace MvcRDMG.Generator.Models
 {
+    public enum Item
+    {
+        TRAP = 0, 
+        ROAMING_MONSTER
+    }
     public enum Textures
     {
         EDGE,

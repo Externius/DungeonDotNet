@@ -3,7 +3,7 @@
     <wait-cursor display-when="vm.isBusy"></wait-cursor>
     <div class="alert alert-danger" ng-show="vm.errorMessage">{{ vm.errorMessage }}</div>
     <form novalidate name="newDungeonForm" ng-submit="vm.generateDungeon()">
-      <div class="form-group">
+      <div class="mb-3">
         <label for="dungeonName">Dungeon Name</label>
         <input class="form-control" type="text" id="dungeonName" name="dungeonName" ng-model="vm.newDungeon.dungeonName"
           required ng-minlength="3" />
@@ -187,7 +187,7 @@
           </td>
         </tr>
       </table>
-      <div class="form-group">
+      <div class="mb-3">
         <input type="submit" value="Generate Dungeon" class="btn btn-sm btn-success btn-block" ng-disabled="newDungeonForm.$invalid" />
       </div>
     </form>

@@ -11,7 +11,7 @@ namespace MvcRDMG.Tests
     [TestClass]
     public class GeneratorsTest
     {
-        private readonly Dungeon dungeon = new Dungeon(800, 800, 15, 10, 15, 15, true, 10);
+        private readonly Dungeon dungeon = new(800, 800, 15, 10, 15, 15, true, 10);
 
         [TestInitialize]
         public void Setup()
@@ -26,8 +26,8 @@ namespace MvcRDMG.Tests
             Utils.Instance.ItemsRarity = 2;
             Utils.Instance.DungeonDifficulty = 1;
             Utils.Instance.MonsterType = "any";
-            Utils.Instance.MonsterList = Helpers.Instance.DeseraliazerJSON<Monster>("5e-SRD-Monsters.json");
-            Utils.Instance.TreasureList = Helpers.Instance.DeseraliazerJSON<Treasures>("treasures.json");
+            Utils.Instance.MonsterList = Helpers.DeseraliazerJSON<Monster>("5e-SRD-Monsters.json");
+            Utils.Instance.TreasureList = Helpers.DeseraliazerJSON<Treasures>("treasures.json");
             dungeon.Init();
         }
 
@@ -79,7 +79,7 @@ namespace MvcRDMG.Tests
         public void TestGetTreasure()
         {
             var result = new string[20];
-            for (int i = 0; i < 20; i++)
+            for (var i = 0; i < 20; i++)
             {
                 result[i] = Utils.Instance.TreasureGenerator.GetTreasure();
                 Trace.WriteLine("Treasure#" + i + " " + result[i]);
@@ -91,7 +91,7 @@ namespace MvcRDMG.Tests
         public void TestGetMonster()
         {
             var result = new string[20];
-            for (int i = 0; i < 20; i++)
+            for (var i = 0; i < 20; i++)
             {
                 result[i] = Utils.Instance.EncouterGenerator.GetMonster();
                 Trace.WriteLine("Monster#" + i + " " + result[i]);
@@ -102,7 +102,7 @@ namespace MvcRDMG.Tests
         public void TestGetCurrentTrap()
         {
             var result = new string[20];
-            for (int i = 0; i < 20; i++)
+            for (var i = 0; i < 20; i++)
             {
                 result[i] = Utils.Instance.TrapGenerator.GetCurrentTrap(false);
                 Trace.WriteLine("Trap#" + i + " " + result[i]);
@@ -122,7 +122,7 @@ namespace MvcRDMG.Tests
         public void TestGetRoamingMonster()
         {
             var result = new string[20];
-            for (int i = 0; i < 20; i++)
+            for (var i = 0; i < 20; i++)
             {
                 result[i] = Utils.Instance.EncouterGenerator.GetRoamingMonster();
                 Trace.WriteLine("Roaming Monster#" + i + " " + result[i]);

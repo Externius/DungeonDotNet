@@ -54,7 +54,7 @@ namespace MvcRDMG.Generator.Helpers
             {11, 3},
             {15, 4}
         };
-        private static readonly List<String> ChallengeRating = new List<String>(new string[] {"0", "1/8", "1/4", "1/2", "1", "2", "3", "4", "5",
+        private static readonly List<String> ChallengeRating = new(new string[] {"0", "1/8", "1/4", "1/2", "1", "2", "3", "4", "5",
                 "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
                 "16", "17", "18", "19", "20", "21", "22", "23", "24", "25",
                 "26", "27", "28", "29", "30"});
@@ -84,35 +84,28 @@ namespace MvcRDMG.Generator.Helpers
         private static readonly int[] Difficulty = {
             0, 0, 0, 0
         };
-        public Encounter()
-        {
 
-        }
+        public Encounter() { }
+
         public string GetMonster()
         {
             if (Utils.Instance.MonsterType.Equals("none", StringComparison.OrdinalIgnoreCase))
-            {
                 return "Monster: None";
-            }
             Init();
-            bool checkResult = CheckPossible();
-            if (checkResult && Utils.Instance.GetRandomInt(0, 101) <= Utils.Instance.GetMonsterPercentage())
-            {
+            var checkResult = CheckPossible();
+            if (checkResult && Utils.GetRandomInt(0, 101) <= Utils.Instance.GetMonsterPercentage())
                 return CalcEncounter();
-            }
             else if (!checkResult)
-            {
                 return "Monster: No suitable monsters with this settings";
-            }
             else
-            {
                 return "Monster: None";
-            }
         }
-        private int GetMonsterXP(Monster monster)
+
+        private static int GetMonsterXP(Monster monster)
         {
             return ChallengeRatingXP[ChallengeRating.IndexOf(monster.Challenge_Rating)]; // get monster xp
         }
+
         private bool CheckPossible()
         {
             foreach (var monster in FilteredMonsters)
@@ -124,18 +117,19 @@ namespace MvcRDMG.Generator.Helpers
             }
             return false;
         }
+
         private string CalcEncounter()
         {
             var result = new StringBuilder();
             result.Append("Monster: ");
-            if (Utils.Instance.GetRandomInt(0, 101) > 50)
+            if (Utils.GetRandomInt(0, 101) > 50)
             {
                 result.Append(AddMonster(SumXP));
             }
             else
             {
-                int x = Utils.Instance.GetRandomInt(2, Utils.Instance.DungeonDifficulty + 3);
-                for (int i = 0; i < x; i++)
+                var x = Utils.GetRandomInt(2, Utils.Instance.DungeonDifficulty + 3);
+                for (var i = 0; i < x; i++)
                 {
                     result.Append(AddMonster(SumXP / x));
                     result.Append(", ");
@@ -144,34 +138,32 @@ namespace MvcRDMG.Generator.Helpers
             }
             return result.Replace(", None", "").ToString();
         }
+
         private string AddMonster(int currentXP)
         {
-            int monsterCount = FilteredMonsters.Count;
-            int monster = 0;
+            var monsterCount = FilteredMonsters.Count;
+            var monster = 0;
             int count;
             double allXP;
             while (monster < monsterCount)
             {
-                Monster currentMonster = FilteredMonsters[Utils.Instance.GetRandomInt(0, FilteredMonsters.Count)]; // get random monster
+                Monster currentMonster = FilteredMonsters[Utils.GetRandomInt(0, FilteredMonsters.Count)]; // get random monster
                 FilteredMonsters.Remove(currentMonster);
-                int monsterXP = GetMonsterXP(currentMonster);
-                for (int i = Multipliers.GetLength(0) - 1; i > -1; i--)
+                var monsterXP = GetMonsterXP(currentMonster);
+                for (var i = Multipliers.GetLength(0) - 1; i > -1; i--)
                 {
                     count = (int)Multipliers[i, 0];
                     allXP = monsterXP * count * Multipliers[i, 1];
                     if (allXP <= currentXP && count > 1)
-                    {
                         return count + "x " + currentMonster.Name + " (CR: " + currentMonster.Challenge_Rating + ") " + monsterXP * count + " XP";
-                    }
                     else if (allXP <= currentXP)
-                    {
                         return currentMonster.Name + " (CR: " + currentMonster.Challenge_Rating + ") " + monsterXP + " XP";
-                    }
                 }
                 monster++;
             }
             return "None";
         }
+
         private void Init()
         {
             Difficulty[0] = Thresholds[Utils.Instance.PartyLevel, 0] * Utils.Instance.PartySize;
@@ -181,21 +173,19 @@ namespace MvcRDMG.Generator.Helpers
             FilteredMonsters = Utils.Instance.MonsterList;
             SumXP = Difficulty[Utils.Instance.DungeonDifficulty];
         }
-        public String GetRoamingName(int count)
+
+        public string GetRoamingName(int count)
         {
             return "ROAMING MONSTERS " + count + "# ";
         }
-        public String GetRoamingMonster()
+
+        public string GetRoamingMonster()
         {
             Init();
             if (CheckPossible())
-            {
-                return CalcEncounter().Substring(9); // remove "Monster: "
-            }
+                return CalcEncounter()[9..]; // remove "Monster: "
             else
-            {
                 return "No suitable monsters with this settings";
-            }
         }
     }
 }

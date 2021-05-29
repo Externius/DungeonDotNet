@@ -10,7 +10,7 @@ namespace MvcRDMG.Tests
         {
 
         }
-        public void Draw(DungeonTile[][] dungeonTiles)
+        public static void Draw(DungeonTile[][] dungeonTiles)
         {
             foreach (DungeonTile[] row in dungeonTiles)
             {
@@ -18,7 +18,7 @@ namespace MvcRDMG.Tests
             }
             Trace.WriteLine(" ");
         }
-        private void PrintRow(DungeonTile[] row)
+        private static void PrintRow(DungeonTile[] row)
         {
             foreach (var i in row)
             {

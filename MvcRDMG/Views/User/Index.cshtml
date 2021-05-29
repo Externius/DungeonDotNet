@@ -4,13 +4,27 @@
 }
 <div class="col-md-12">
     <div class="d-flex bd-highlight">
-        <div class="mr-auto p-2"><a asp-action="Edit" class="btn btn-primary">@Resources.User.NewUser</a> </div>
+        <div class="mr-auto p-2">
+            <a asp-action="Create" class="btn btn-primary">@Resources.User.NewUser</a>
+        </div>
     </div>
-    <table class="table">
+    <table class="table text-nowrap">
         <thead class="thead-light">
             <tr>
                 <th>
-                    @Resources.User.Name
+                    @Resources.User.Username
+                </th>
+                <th>
+                    @Resources.User.FirstName
+                </th>
+                <th>
+                    @Resources.User.LastName
+                </th>
+                <th>
+                    @Resources.User.Email
+                </th>
+                <th>
+                    @Resources.User.Role
                 </th>
                 <th>
                     @Resources.User.Status
@@ -27,17 +41,33 @@
                         @item.Username
                     </td>
                     <td>
+                        @item.FirstName
+                    </td>
+                    <td>
+                        @item.LastName
+                    </td>
+                    <td>
+                        @item.Email
+                    </td>
+                    <td>
+                        @item.Role
+                    </td>
+                    <td>
                         @(item.Deleted == true ? Resources.User.Deleted : Resources.User.Active)
                     </td>
-                    <td class="text-right">
+                    <td>
                         <a asp-action="Edit" asp-route-id="@item.Id" title="@Resources.Common.Edit" class="btn btn-primary"><i class="fas fa-edit"></i></a>
                         @if (!item.Deleted)
                         {
-                            <a data-id="@item.Id" title="@Resources.Common.Delete" class="btn btn-primary deleteUser" href="#"><i class="fas fa-minus-circle"></i></a>
+                            <form method="post" asp-action="Delete" asp-controller="User" asp-route-id="@item.Id" class="list-inline-item">
+                                <button id="deleteBtn" title="@Resources.Common.Delete" class="btn btn-primary deleteUser"><i class="fas fa-minus-circle"></i></button>
+                            </form>
                         }
                         else
                         {
-                            <a data-id="@item.Id" title="@Resources.Common.Activate" class="btn btn-primary unDeleteUser" href="#"><i class="fas fa-check-circle"></i></a>
+                            <form method="post" asp-action="Restore" asp-controller="User" asp-route-id="@item.Id" class="list-inline-item">
+                                <button id="activateBtn" title="@Resources.Common.Activate" class="btn btn-primary unDeleteUser"><i class="fas fa-check-circle"></i></button>
+                            </form>
                         }
                     </td>
                 </tr>
@@ -49,66 +79,39 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-    $(document).ready(function () {
-        $(document).on('click', '.deleteUser', function (e) {
-            var id = $(this).data("id");
+        var confirm = function (msg, form, confirmLabel, cancelLabel) {
             bootbox.confirm({
-                message: '@Resources.Common.Alert',
+                message: msg,
                 buttons: {
                     confirm: {
-                        label: '@Resources.Common.Yes',
+                        label: confirmLabel,
                         className: 'btn-success'
                     },
                     cancel: {
-                        label: '@Resources.Common.No',
+                        label: cancelLabel,
                         className: 'btn-danger'
                     }
                 },
                 callback: function (result) {
                     if (result === true) {
-                        $.ajax({
-                            type: 'GET',
-                            url: '@Url.Action("Delete", "User")',
-                            data: { id: id },
-                            cache: false,
-                            success: function () {
-                                window.location.href = '@Url.Action("Index", "User")';
-                            }
-                        });
+                        form.submit();
                     }
                 }
             });
-        });
+        };
 
-        $(document).on('click', '.unDeleteUser', function (e) {
-            var id = $(this).data("id");
-            bootbox.confirm({
-                message: '@Resources.User.Restore',
-                buttons: {
-                    confirm: {
-                        label: '@Resources.Common.Yes',
-                        className: 'btn-success'
-                    },
-                    cancel: {
-                        label: '@Resources.Common.No',
-                        className: 'btn-danger'
-                    }
-                },
-                callback: function (result) {
-                    if (result === true) {
-                        $.ajax({
-                            type: 'GET',
-                            url: '@Url.Action("Restore", "User")',
-                            data: { id: id },
-                            cache: false,
-                            success: function () {
-                                window.location.href = '@Url.Action("Index", "User")';
-                            }
-                        });
-                    }
-                }
+        $(document).ready(function () {
+
+            $(document).on('click', '#deleteBtn', function (e) {
+                e.preventDefault();
+                confirm('@Resources.Common.Alert', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
             });
+
+            $(document).on('click', '#activateBtn', function (e) {
+                e.preventDefault();
+                confirm('@Resources.User.Restore', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
+            });
+
         });
-    });
     </script>
 }

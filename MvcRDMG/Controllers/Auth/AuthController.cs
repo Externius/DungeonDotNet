@@ -1,6 +1,7 @@
 using AutoMapper;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using MvcRDMG.Core.Abstractions.Services;
 using MvcRDMG.Core.Abstractions.Services.Models;
@@ -13,11 +14,11 @@ namespace MvcRDMG.Controllers.Auth
 {
     public class AuthController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
         private readonly IMapper _mapper;
-        public AuthController(IUserService userService, IMapper mapper)
+        public AuthController(IAuthService authService, IMapper mapper)
         {
-            _userService = userService;
+            _authService = authService;
             _mapper = mapper;
         }
         public IActionResult Login()
@@ -33,7 +34,7 @@ namespace MvcRDMG.Controllers.Auth
         {
             if (ModelState.IsValid)
             {
-                var user = await _userService.LoginAsync(_mapper.Map<UserModel>(model));
+                var user = await _authService.LoginAsync(_mapper.Map<UserModel>(model));
 
                 if (user == null)
                 {
@@ -44,13 +45,19 @@ namespace MvcRDMG.Controllers.Auth
                 var claims = new List<Claim>
                 {
                     new Claim(JwtClaimTypes.Name, user.Username),
-                    new Claim(JwtClaimTypes.Id, user.Id.ToString())
+                    new Claim(JwtClaimTypes.Id, user.Id.ToString()),
+                    new Claim(JwtClaimTypes.Email, user.Email),
+                    new Claim(JwtClaimTypes.Role, user.Role)
                 };
 
-                var userIdentity = new ClaimsIdentity(claims, "login");
+                var userIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, JwtClaimTypes.Subject, JwtClaimTypes.Role);
 
-                ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
-                await HttpContext.SignInAsync(principal);
+                var authProperties = (await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme)).Properties;
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(userIdentity),
+                    authProperties);
+
                 if (string.IsNullOrWhiteSpace(returnUrl))
                     return RedirectToAction("Index", "Dungeon");
                 else
@@ -62,6 +69,11 @@ namespace MvcRDMG.Controllers.Auth
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Forbidden()
+        {
+            return View();
         }
     }
 }

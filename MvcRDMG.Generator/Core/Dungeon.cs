@@ -9,8 +9,8 @@ namespace MvcRDMG.Generator.Core
     public class Dungeon
     {
         private const int Movement = 10;
-        internal List<DungeonTile> Rooms = new List<DungeonTile>();
-        internal List<DungeonTile> Doors = new List<DungeonTile>();
+        internal List<DungeonTile> Rooms = new();
+        internal List<DungeonTile> Doors = new();
         public List<RoomDescription> RoomDescription { get; set; }
         public List<TrapDescription> TrapDescription { get; set; }
         public List<RoamingMonsterDescription> RoamingMonsterDescription { get; set; }
@@ -30,10 +30,7 @@ namespace MvcRDMG.Generator.Core
         public int RoomSizePercent { get; set; }
         public int RoomSize { get; set; }
 
-        public Dungeon()
-        {
-
-        }
+        public Dungeon() { }
 
         public Dungeon(int dungeonWidth, int dungeonHeight, int dungeonSize, int roomDensity, int roomSizePercent, int trapPercent, bool hasDeadEnds, int roamingPercent)
         {
@@ -47,11 +44,6 @@ namespace MvcRDMG.Generator.Core
             RoamingPercent = roamingPercent;
         }
 
-        public enum Item
-        {
-            TRAP, ROAMING_MONSTER
-        }
-
         public virtual void Generate()
         {
             Init();
@@ -59,21 +51,19 @@ namespace MvcRDMG.Generator.Core
             AddEntryPoint();
             GenerateCorridors();
             if (HasDeadEnds)
-            {
                 AddDeadEnds();
-            }
             AddCorridorItem(TrapCount, Item.TRAP);
             AddCorridorItem(RoamingCount, Item.ROAMING_MONSTER);
         }
 
         public void AddCorridorItem(int inCount, Item item)
         {
-            int count = 0;
+            var count = 0;
             while (inCount > count)
             {
-                int x = Utils.Instance.GetRandomInt(0, Corridors.Count);
-                int i = Corridors[x].I;
-                int j = Corridors[x].J;
+                var x = Utils.GetRandomInt(0, Corridors.Count);
+                var i = Corridors[x].I;
+                var j = Corridors[x].J;
                 if (DungeonTiles[i][j].Texture == Textures.CORRIDOR)
                 {
                     AddItem(i, j, item);
@@ -126,15 +116,15 @@ namespace MvcRDMG.Generator.Core
 
         private List<DungeonTile> GenerateDeadEnds()
         {
-            int count = RoomCount / 2;
-            int deadEndsCount = 0;
+            var count = RoomCount / 2;
+            var deadEndsCount = 0;
             var deadEnds = new List<DungeonTile>();
             var croppedDungeonTiles = new DungeonTile[DungeonTiles.Length - 4][];
-            for (int i = 0; i < DungeonTiles.Length - 4; i++)
+            for (var i = 0; i < DungeonTiles.Length - 4; i++)
             {
                 croppedDungeonTiles[i] = new DungeonTile[DungeonTiles.Length - 4];
             }
-            for (int i = 2; i < DungeonTiles.Length - 2; i++)
+            for (var i = 2; i < DungeonTiles.Length - 2; i++)
             {
                 Array.Copy(DungeonTiles[i], 2, croppedDungeonTiles[i - 2], 0, DungeonTiles[i].Length - 4);
             }
@@ -142,10 +132,10 @@ namespace MvcRDMG.Generator.Core
             dungeonList.RemoveAll(i => Rooms.Contains(i));
             dungeonList.RemoveAll(i => Doors.Contains(i));
             dungeonList.RemoveAll(i => Corridors.Contains(i));
-            int maxAttempt = dungeonList.Count * 2;
+            var maxAttempt = dungeonList.Count * 2;
             do
             {
-                var tile = dungeonList[Utils.Instance.GetRandomInt(0, dungeonList.Count)];
+                var tile = dungeonList[Utils.GetRandomInt(0, dungeonList.Count)];
                 if (CheckTileForDeadEnd(tile.I, tile.J))
                 {
                     DungeonTiles[tile.I][tile.J].Texture = Textures.CORRIDOR;
@@ -160,14 +150,12 @@ namespace MvcRDMG.Generator.Core
 
         private bool CheckTileForDeadEnd(int x, int y)
         {
-            for (int i = x - 1; i < x + 2; i++)
+            for (var i = x - 1; i < x + 2; i++)
             {
-                for (int j = y - 1; j < y + 2; j++)
+                for (var j = y - 1; j < y + 2; j++)
                 {
-                    if (DungeonTiles[i][j].Texture != Textures.MARBLE)
-                    { // check if any other tile is there
+                    if (DungeonTiles[i][j].Texture != Textures.MARBLE) // check if any other tile is there
                         return false;
-                    }
                 }
             }
             return true;
@@ -175,18 +163,18 @@ namespace MvcRDMG.Generator.Core
 
         public void GenerateCorridors()
         {
-            for (int d = 0; d < Doors.Count - 1; d++)
-            { // -1 because the end point
+            for (var d = 0; d < Doors.Count - 1; d++) // -1 because the end point
+            {
                 Result = new List<DungeonTile>();
                 var openList = new List<DungeonTile>();
                 var closedList = new List<DungeonTile>();
                 var start = Doors[d]; // set door as the starting point
                 var end = Doors[d + 1]; // set the next door as the end point
-                for (int i = 1; i < DungeonTiles.Length - 1; i++)
-                { // preconfig H value + restore default values
-                    for (int j = 1; j < DungeonTiles.Length - 1; j++)
+                for (var i = 1; i < DungeonTiles.Length - 1; i++)
+                {
+                    for (var j = 1; j < DungeonTiles.Length - 1; j++) // preconfig H value + restore default values
                     {
-                        DungeonTiles[i][j].H = Utils.Instance.Manhattan(Math.Abs(i - end.I), Math.Abs(j - end.J));
+                        DungeonTiles[i][j].H = Utils.Manhattan(Math.Abs(i - end.I), Math.Abs(j - end.J));
                         DungeonTiles[i][j].G = 0;
                         DungeonTiles[i][j].Parent = null;
                         DungeonTiles[i][j].F = 9999;
@@ -209,15 +197,15 @@ namespace MvcRDMG.Generator.Core
         {
             foreach (var tile in Result)
             {
-                if (tile.Texture == Textures.MARBLE)
-                { // only change the marble texture
+                if (tile.Texture == Textures.MARBLE) // only change the marble texture
+                {
                     DungeonTiles[tile.I][tile.J].Texture = Textures.CORRIDOR;
                     Corridors.Add(tile);
                 }
             }
         }
 
-        internal void RemoveFromOpen(List<DungeonTile> openList, DungeonTile node)
+        internal static void RemoveFromOpen(List<DungeonTile> openList, DungeonTile node)
         {
             openList.Remove(node);
         }
@@ -232,7 +220,7 @@ namespace MvcRDMG.Generator.Core
             CalcFValue(openList); // calc F value (G + H)
         }
 
-        private void CalcFValue(List<DungeonTile> openList)
+        private static void CalcFValue(List<DungeonTile> openList)
         {
             foreach (var tile in openList)
             {
@@ -241,10 +229,9 @@ namespace MvcRDMG.Generator.Core
             // sort it
             openList.Sort((dt1, dt2) => dt1.F - dt2.F);
             //openList.Sort((x, y) => x.F.CompareTo(y.F));
-
         }
 
-        private void CalcGValue(List<DungeonTile> openList)
+        private static void CalcGValue(List<DungeonTile> openList)
         {
             foreach (var tile in openList)
             {
@@ -257,8 +244,8 @@ namespace MvcRDMG.Generator.Core
             if (!CheckEnd(node, x, y, end))
             {
                 CheckG(node, x, y, openList); // check if it needs reparenting
-                if (CheckTileForOpenList(x, y) && !closedList.Contains(DungeonTiles[x][y]) && !openList.Contains(DungeonTiles[x][y]))
-                { // not in openlist/closedlist
+                if (CheckTileForOpenList(x, y) && !closedList.Contains(DungeonTiles[x][y]) && !openList.Contains(DungeonTiles[x][y])) // not in openlist/closedlist
+                {
                     SetParent(node, x, y);
                     openList.Add(DungeonTiles[x][y]);
                 }
@@ -278,9 +265,7 @@ namespace MvcRDMG.Generator.Core
         private void CheckG(DungeonTile node, int x, int y, List<DungeonTile> openList)
         {
             if (openList.Contains(DungeonTiles[x][y]) && DungeonTiles[x][y].G > (node.G + Movement))
-            {
                 SetParent(node, x, y);
-            }
         }
 
         private bool CheckEnd(DungeonTile node, int x, int y, DungeonTile end)
@@ -317,8 +302,8 @@ namespace MvcRDMG.Generator.Core
             int y;
             do
             {
-                x = Utils.Instance.GetRandomInt(1, DungeonTiles.Length - 1);
-                y = Utils.Instance.GetRandomInt(1, DungeonTiles.Length - 1);
+                x = Utils.GetRandomInt(1, DungeonTiles.Length - 1);
+                y = Utils.GetRandomInt(1, DungeonTiles.Length - 1);
                 entryIsOk = DungeonTiles[x][y].Texture == Textures.MARBLE;
             }
             while (!entryIsOk);
@@ -329,29 +314,27 @@ namespace MvcRDMG.Generator.Core
         public void GenerateRoom()
         {
             int[] coordinates;
-            for (int i = 0; i < RoomCount; i++)
+            for (var i = 0; i < RoomCount; i++)
             {
                 coordinates = SetTilesForRoom();
                 if (coordinates[0] != 0)
-                {
                     FillRoom(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
-                }
             }
         }
 
         internal virtual void FillRoom(int x, int y, int right, int down)
         {
-            int doorCount = GetDoorCount(down, right);
-            for (int i = 0; i < down + 2; i++) // fill with room_edge texture the bigger boundaries
+            var doorCount = GetDoorCount(down, right);
+            for (var i = 0; i < down + 2; i++) // fill with room_edge texture the bigger boundaries
             {
-                for (int j = 0; j < right + 2; j++)
+                for (var j = 0; j < right + 2; j++)
                 {
                     DungeonTiles[x + i - 1][y + j - 1].Texture = Textures.ROOM_EDGE;
                 }
             }
-            for (int i = 0; i < down; i++) // fill room texture
+            for (var i = 0; i < down; i++) // fill room texture
             {
-                for (int j = 0; j < right; j++)
+                for (var j = 0; j < right; j++)
                 {
                     DungeonTiles[x + i][y + j].Texture = Textures.ROOM;
                     Rooms.Add(DungeonTiles[x + i][y + j]);
@@ -359,12 +342,12 @@ namespace MvcRDMG.Generator.Core
                     DungeonTiles[x + i][y + j].Index = RoomDescription.Count;
                 }
             }
-            int currentSize = Doors.Count;
-            for (int d = 0; d < doorCount; d++)
+            var currentSize = Doors.Count;
+            for (var d = 0; d < doorCount; d++)
             {
                 AddDoor(x, y, down, right);
             }
-            int newSize = Doors.Count;
+            var newSize = Doors.Count;
             var currentDoors = Doors.GetRange(currentSize, newSize - currentSize);
             Utils.Instance.AddRoomDescription(DungeonTiles, x, y, RoomDescription, currentDoors);
         }
@@ -376,8 +359,8 @@ namespace MvcRDMG.Generator.Core
             int doorY;
             do
             {
-                doorX = Utils.Instance.GetRandomInt(x, x + down);
-                doorY = Utils.Instance.GetRandomInt(y, y + right);
+                doorX = Utils.GetRandomInt(x, x + down);
+                doorY = Utils.GetRandomInt(y, y + right);
                 doorIsOK = CheckDoor(doorX, doorY);
             }
             while (!doorIsOK);
@@ -385,14 +368,14 @@ namespace MvcRDMG.Generator.Core
 
         internal virtual bool CheckDoor(int x, int y)
         {
-            for (int i = x - 1; i < x + 2; i++)
+            for (var i = x - 1; i < x + 2; i++)
             {
-                for (int j = y - 1; j < y + 2; j++)
-                { // check nearby doors
-                    if (DungeonTiles[i][j].Texture == Textures.DOOR || DungeonTiles[i][j].Texture == Textures.DOOR_LOCKED || DungeonTiles[i][j].Texture == Textures.DOOR_TRAPPED)
-                    {
+                for (var j = y - 1; j < y + 2; j++)
+                {
+                    if (DungeonTiles[i][j].Texture == Textures.DOOR ||
+                        DungeonTiles[i][j].Texture == Textures.DOOR_LOCKED ||
+                        DungeonTiles[i][j].Texture == Textures.DOOR_TRAPPED) // check nearby doors
                         return false;
-                    }
                 }
             }
             return CheckEnvironment(x, y);
@@ -425,31 +408,21 @@ namespace MvcRDMG.Generator.Core
 
         internal virtual void SetDoor(int x, int y)
         {
-            if (Utils.Instance.GetRandomInt(0, 101) < 40)
-            {
+            if (Utils.GetRandomInt(0, 101) < 40)
                 DungeonTiles[x][y].Texture = Textures.DOOR_TRAPPED;
-            }
-            else if (Utils.Instance.GetRandomInt(0, 101) < 50)
-            {
+            else if (Utils.GetRandomInt(0, 101) < 50)
                 DungeonTiles[x][y].Texture = Textures.DOOR_LOCKED;
-            }
             else
-            {
                 DungeonTiles[x][y].Texture = Textures.DOOR;
-            }
             Doors.Add(DungeonTiles[x][y]);
         }
 
         internal virtual int GetDoorCount(int down, int right)
         {
             if (down < 4 || right < 4)
-            {
-                return Utils.Instance.GetRandomInt(1, 3);
-            }
+                return Utils.GetRandomInt(1, 3);
             else
-            {
-                return Utils.Instance.GetRandomInt(2, 5);
-            }
+                return Utils.GetRandomInt(2, 5);
         }
 
         private int[] SetTilesForRoom()
@@ -457,42 +430,36 @@ namespace MvcRDMG.Generator.Core
             bool roomIsOk;
             int x;
             int y;
-            int max = DungeonTiles.Length - (RoomSize + 2); // because of edge + room_edge
-            int failSafeCount = DungeonTiles.Length * DungeonTiles.Length / 2;
+            var max = DungeonTiles.Length - (RoomSize + 2); // because of edge + room_edge
+            var failSafeCount = DungeonTiles.Length * DungeonTiles.Length / 2;
             int right;
             int down;
             do
             {
-                x = Utils.Instance.GetRandomInt(3, max); // 3 because of edge + room_edge
-                y = Utils.Instance.GetRandomInt(3, max);
-                right = Utils.Instance.GetRandomInt(2, RoomSize + 1);
-                down = Utils.Instance.GetRandomInt(2, RoomSize + 1);
+                x = Utils.GetRandomInt(3, max); // 3 because of edge + room_edge
+                y = Utils.GetRandomInt(3, max);
+                right = Utils.GetRandomInt(2, RoomSize + 1);
+                down = Utils.GetRandomInt(2, RoomSize + 1);
                 roomIsOk = CheckTileGoodForRoom(x - 2, y - 2, right + 2, down + 2); // -2/+2 because i want min 3 tiles between rooms
                 failSafeCount--;
             }
             while (!roomIsOk && failSafeCount > 0);
             if (failSafeCount > 0)
-            {
                 return new int[] { x, y, right, down };
-            }
             else
-            {
                 return new int[] { 0, 0, 0, 0 }; // it can never be 0 if its a good coordinate
-            }
         }
 
         private bool CheckTileGoodForRoom(int x, int y, int right, int down)
         {
-            int maxX = x + down + 2; // +2 because of edges
-            int maxY = y + right + 2;
-            for (int i = x; i < maxX; i++) // check the room area + boundaries
+            var maxX = x + down + 2; // +2 because of edges
+            var maxY = y + right + 2;
+            for (var i = x; i < maxX; i++) // check the room area + boundaries
             {
-                for (int j = y; j < maxY; j++)
+                for (var j = y; j < maxY; j++)
                 {
                     if (CheckIsRoom(i, j))
-                    {
                         return false;
-                    }
                 }
             }
             return true;
@@ -506,8 +473,8 @@ namespace MvcRDMG.Generator.Core
         public virtual void Init()
         {
             Corridors = new List<DungeonTile>();
-            int ImgSizeX = DungeonWidth / DungeonSize;
-            int ImgSizeY = DungeonHeight / DungeonSize;
+            var ImgSizeX = DungeonWidth / DungeonSize;
+            var ImgSizeY = DungeonHeight / DungeonSize;
             RoomCount = (int)Math.Round(((float)DungeonSize / 100) * (float)RoomDensity);
             RoomSize = (int)Math.Round((float)(DungeonSize - Math.Round(DungeonSize * 0.35)) / 100 * RoomSizePercent);
             RoomDescription = new List<RoomDescription>();
@@ -517,20 +484,20 @@ namespace MvcRDMG.Generator.Core
             RoamingCount = DungeonSize * RoamingPercent / 100;
             DungeonSize += 2; // because of boundaries
             DungeonTiles = new DungeonTile[DungeonSize][];
-            for (int i = 0; i < DungeonSize; i++)
+            for (var i = 0; i < DungeonSize; i++)
             {
                 DungeonTiles[i] = new DungeonTile[DungeonSize];
             }
-            for (int i = 0; i < DungeonSize; i++)
+            for (var i = 0; i < DungeonSize; i++)
             {
-                for (int j = 0; j < DungeonSize; j++)
+                for (var j = 0; j < DungeonSize; j++)
                 {
                     DungeonTiles[i][j] = new DungeonTile(i, j);
                 }
             }
-            for (int i = 1; i < DungeonSize - 1; i++) // set drawing area
+            for (var i = 1; i < DungeonSize - 1; i++) // set drawing area
             {
-                for (int j = 1; j < DungeonSize - 1; j++)
+                for (var j = 1; j < DungeonSize - 1; j++)
                 {
                     DungeonTiles[i][j] = new DungeonTile((j - 1) * ImgSizeX, (i - 1) * ImgSizeY, i, j, ImgSizeX, ImgSizeY, Textures.MARBLE);
                 }

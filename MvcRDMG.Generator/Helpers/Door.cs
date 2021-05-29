@@ -1,7 +1,6 @@
-using System;
+using MvcRDMG.Generator.Models;
 using System.Collections.Generic;
 using System.Text;
-using MvcRDMG.Generator.Models;
 
 namespace MvcRDMG.Generator.Helpers
 {
@@ -31,11 +30,11 @@ namespace MvcRDMG.Generator.Helpers
         private readonly int[] LockDifficulty = {
                 5, 10, 15, 20, 25, 25, 30
         };
+
         public Door()
         {
 
         }
-
 
         public string GetDoorDescription()
         {
@@ -57,47 +56,37 @@ namespace MvcRDMG.Generator.Helpers
             sb.Length -= 1;
             return sb.ToString();
         }
+
         private string GetDoorText(Textures texture, int x)
         {
             if (RoomPosition.Up)
-            {
                 return "South Entry #" + SouthCount++ + ": " + DoorTypes[x] + GetState(texture, x) + "\n";
-            }
             else if (RoomPosition.Down)
-            {
                 return "North Entry #" + NorthCount++ + ": " + DoorTypes[x] + GetState(texture, x) + "\n";
-            }
             else if (RoomPosition.Right)
-            {
                 return "West Entry #" + WestCount++ + ": " + DoorTypes[x] + GetState(texture, x) + "\n";
-            }
             else
-            {
                 return "East Entry #" + EastCount++ + ": " + DoorTypes[x] + GetState(texture, x) + "\n";
-            }
         }
+
         private string GetState(Textures texture, int x)
         {
-            switch (texture)
+            return texture switch
             {
-                case Textures.NO_CORRIDOR_DOOR_LOCKED:
-                case Textures.DOOR_LOCKED:
-                    return " Locked Door (AC " + DoorAC[x] + ", HP " + DoorHP[x] + ", DC " + LockDifficulty[x] + " to unlock)";
-                case Textures.NO_CORRIDOR_DOOR_TRAPPED:
-                case Textures.DOOR_TRAPPED:
-                    return " Trapped Door (AC " + DoorAC[x] + ", HP " + DoorHP[x] + ") " + Utils.Instance.TrapGenerator.GetCurrentTrap(true);
-                default:
-                    return " Open Door (AC " + DoorAC[x] + ", HP " + DoorHP[x] + ")";
-            }
+                Textures.NO_CORRIDOR_DOOR_LOCKED or Textures.DOOR_LOCKED => " Locked Door (AC " + DoorAC[x] + ", HP " + DoorHP[x] + ", DC " + LockDifficulty[x] + " to unlock)",
+                Textures.NO_CORRIDOR_DOOR_TRAPPED or Textures.DOOR_TRAPPED => " Trapped Door (AC " + DoorAC[x] + ", HP " + DoorHP[x] + ") " + Utils.Instance.TrapGenerator.GetCurrentTrap(true),
+                _ => " Open Door (AC " + DoorAC[x] + ", HP " + DoorHP[x] + ")",
+            };
         }
-        private int GetDoorDC()
+
+        private static int GetDoorDC()
         {
             return Utils.Instance.DungeonDifficulty switch
             {
-                0 => Utils.Instance.GetRandomInt(0, 2),
-                1 => Utils.Instance.GetRandomInt(1, 4),
-                2 => Utils.Instance.GetRandomInt(1, 6),
-                3 => Utils.Instance.GetRandomInt(2, 7),
+                0 => Utils.GetRandomInt(0, 2),
+                1 => Utils.GetRandomInt(1, 4),
+                2 => Utils.GetRandomInt(1, 6),
+                3 => Utils.GetRandomInt(2, 7),
                 _ => 0,
             };
         }
@@ -147,8 +136,8 @@ namespace MvcRDMG.Generator.Helpers
 
         public string GetNCDoor(DungeonTile door)
         {
-            int x = GetDoorDC();
-            return ": " + DoorTypes[x] + GetState(door.Texture, x) + "\n";
+            var doorDC = GetDoorDC();
+            return ": " + DoorTypes[doorDC] + GetState(door.Texture, doorDC) + "\n";
         }
     }
 }
