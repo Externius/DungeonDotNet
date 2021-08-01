@@ -12,7 +12,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcRDMG.Core", "MvcRDMG.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcRDMG.Infrastructure", "MvcRDMG.Infrastructure\MvcRDMG.Infrastructure.csproj", "{79A37F9A-178B-4C65-8B36-5F94EF7E3993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcRDMG.Resources", "MvcRDMG.Resources\MvcRDMG.Resources.csproj", "{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcRDMG.Resources", "MvcRDMG.Resources\MvcRDMG.Resources.csproj", "{E1EBA5E2-59E9-425C-89F5-6869B9408C7F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{EC3117DF-B57F-4029-87B6-A11862510D4D}"
+	ProjectSection(SolutionItems) = preProject
+		Docker\configure-db.sh = Docker\configure-db.sh
+		Docker\Dockerfile = Docker\Dockerfile
+		Docker\entrypoint.sh = Docker\entrypoint.sh
+		Docker\setup.sql = Docker\setup.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A9C8155D-F8A5-43F6-8CA9-F2C6BF743DDC}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.env = .env
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

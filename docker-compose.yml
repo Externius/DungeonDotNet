@@ -1,0 +1,48 @@
+version: "3.9"
+services:
+    web:
+        build:
+            context: .
+            dockerfile: ./MvcRDMG/Dockerfile
+        ports:
+            - 5000:80
+            - 5001:443
+        environment:
+            ASPNETCORE_ENVIRONMENT: Development
+            ASPNETCORE_URLS: https://+:443;http://+:80
+            ASPNETCORE_Kestrel__Certificates__Default__Password: ${CERTPASSWORD}
+            ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+            ConnectionStrings__DbProvider: sqlserver
+            ConnectionStrings__RDMG: Server=db,1432;Database=${RDMGDB};User=${RDMGDBUSER};Password=${RDMGDBPASSWORD};
+        networks:
+            - rdmg-network
+        volumes:
+            - ${CERTPATH}:/https:ro
+        depends_on:
+            - db
+        container_name: rdmg-web
+    db:
+        build:
+            context: .
+            dockerfile: ./Docker/Dockerfile
+        ports:
+            - 1432:1432
+        environment:
+            MSSQL_SA_PASSWORD: ${SAPASSWORD}
+            MSSQL_PID: Express
+            MSSQL_TCP_PORT: 1432
+            ACCEPT_EULA: "Y"
+            RDMG_DB: ${RDMGDB}
+            RDMG_USER: ${RDMGDBUSER}
+            RDMG_PASSWORD: ${RDMGDBPASSWORD}
+        networks:
+            - rdmg-network
+        volumes:
+            - sqlvolume:/var/opt/mssql
+        container_name: rdmg-db
+volumes:
+    sqlvolume:
+        driver: local
+networks:
+    rdmg-network:
+        driver: bridge

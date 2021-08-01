@@ -13,6 +13,7 @@ using MvcRDMG.Core.Services;
 using MvcRDMG.Infrastructure;
 using MvcRDMG.Seed;
 using System;
+using System.Reflection;
 
 namespace MvcRDMG
 {
@@ -49,7 +50,7 @@ namespace MvcRDMG
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ContextSeedData seedData)
         {
-            UpdateDB(app);
+            app.ConfigureDB(Configuration);
             if (env.EnvironmentName.StartsWith("Development"))
             {
                 app.UseDeveloperExceptionPage();
@@ -73,23 +74,73 @@ namespace MvcRDMG
             });
             seedData.SeedDataAsync().Wait();
         }
+    }
 
-        private static void UpdateDB(IApplicationBuilder app)
+    public static class ApplicationBuilderExtensions
+    {
+        public static IApplicationBuilder ConfigureDB(this IApplicationBuilder app, IConfiguration configuration)
         {
             using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            using var context = serviceScope.ServiceProvider.GetService<Context>();
+
+            switch (configuration.GetConnectionString("DbProvider").ToLower())
+            {
+                case "sqlserver":
+                    MigrateDB<SqlServerContext>(serviceScope);
+                    break;
+                case "sqlite":
+                    MigrateDB<SqliteContext>(serviceScope);
+                    break;
+                default:
+                    throw new Exception($"DbProvider not recognized: {configuration.GetConnectionString("DbProvider")}");
+            }
+
+            return app;
+        }
+        public static void MigrateDB<T>(IServiceScope serviceScope) where T : Context
+        {
+            using var context = serviceScope.ServiceProvider.GetService<T>();
             context.Database.Migrate();
         }
     }
+
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<Context>(options =>
+            switch (configuration.GetConnectionString("DbProvider").ToLower())
             {
-                options.UseSqlite(configuration.GetConnectionString("RDMG"));
-            });
+                case "sqlserver":
+                    services.AddDbContext<Context>(options =>
+                    {
+                        options.UseSqlServer(configuration.GetConnectionString("RDMG"));
+                    });
+                    services.AddDbContext<SqlServerContext>(options =>
+                    {
+                        options.UseSqlServer(configuration.GetConnectionString("RDMG"),
+                        sqlServerOptionsAction: sqlOptions =>
+                        {
+                            sqlOptions.MigrationsAssembly(typeof(SqlServerContext).GetTypeInfo().Assembly.GetName().Name);
+                        });
+                    });
+                    break;
+                case "sqlite":
+                    services.AddDbContext<Context>(options =>
+                    {
+                        options.UseSqlite(configuration.GetConnectionString("RDMG"));
+                    });
+                    services.AddDbContext<SqliteContext>(options =>
+                    {
+                        options.UseSqlite(configuration.GetConnectionString("RDMG"),
+                        sqliteOptionsAction: sqlOptions =>
+                        {
+                            sqlOptions.MigrationsAssembly(typeof(SqliteContext).GetTypeInfo().Assembly.GetName().Name);
+                        });
+                    });
+                    break;
+                default:
+                    throw new Exception($"DbProvider not recognized: {configuration.GetConnectionString("DbProvider")}");
 
+            }
             return services;
         }
 
