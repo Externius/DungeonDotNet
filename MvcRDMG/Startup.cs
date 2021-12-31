@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,15 +26,12 @@ namespace MvcRDMG
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
-                    .SetCompatibilityVersion(CompatibilityVersion.Latest)
                     .AddRazorRuntimeCompilation();
             services.AddCookiePolicy()
                     .AddDatabase(Configuration)
                     .AddLogging(builder =>
                     {
-                        builder.AddConfiguration(Configuration.GetSection("Logging"))
-                            .AddConsole()
-                            .AddDebug();
+                        builder.AddFile(Configuration.GetSection("Logging"));
                     })
                     .AddHttpContextAccessor()
                     .AddApplicationServices()

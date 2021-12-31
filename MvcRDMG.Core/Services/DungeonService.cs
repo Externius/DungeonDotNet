@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
@@ -25,11 +26,11 @@ namespace MvcRDMG.Core.Services
             _logger = logger;
         }
 
-        public async Task AddDungeonOptionAsync(OptionModel dungeonOption)
+        public async Task AddDungeonOptionAsync(OptionModel dungeonOption, CancellationToken cancellationToken)
         {
             try
             {
-                await _dungeonRepository.AddDungeonOptionAsync(_mapper.Map<Option>(dungeonOption));
+                await _dungeonRepository.AddDungeonOptionAsync(_mapper.Map<Option>(dungeonOption), cancellationToken);
             }
             catch (Exception ex)
             {
@@ -38,11 +39,11 @@ namespace MvcRDMG.Core.Services
             }         
         }
 
-        public async Task AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId)
+        public async Task AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId, CancellationToken cancellationToken)
         {
             try
             {
-                await _dungeonRepository.AddSavedDungeonAsync(dungeonName, _mapper.Map<SavedDungeon>(saveddungeon), userId);
+                await _dungeonRepository.AddSavedDungeonAsync(dungeonName, _mapper.Map<SavedDungeon>(saveddungeon), userId, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -51,11 +52,11 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        public async Task<IEnumerable<OptionModel>> GetAllOptionsAsync()
+        public async Task<IEnumerable<OptionModel>> GetAllOptionsAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var options = await _dungeonRepository.GetAllOptionsAsync();
+                var options = await _dungeonRepository.GetAllOptionsAsync(cancellationToken);
 
                 return options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
             } 
@@ -66,11 +67,11 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        public async Task<IEnumerable<OptionModel>> GetAllOptionsWithSavedDungeonsAsync(int userId)
+        public async Task<IEnumerable<OptionModel>> GetAllOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken)
         {
             try
             {
-                var options = await _dungeonRepository.GetAllOptionsWithSavedDungeonsAsync(userId);
+                var options = await _dungeonRepository.GetAllOptionsWithSavedDungeonsAsync(userId, cancellationToken);
 
                 return options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
             }
@@ -82,11 +83,11 @@ namespace MvcRDMG.Core.Services
 
         }
 
-        public async Task<OptionModel> GetSavedDungeonByNameAsync(string dungeonName, int userId)
+        public async Task<OptionModel> GetSavedDungeonByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
         {
             try
             {
-                return  _mapper.Map<OptionModel>(await _dungeonRepository.GetSavedDungeonByNameAsync(dungeonName, userId));
+                return  _mapper.Map<OptionModel>(await _dungeonRepository.GetSavedDungeonByNameAsync(dungeonName, userId, cancellationToken));
             }
             catch (Exception ex)
             {
@@ -95,11 +96,11 @@ namespace MvcRDMG.Core.Services
             }
         }
 
-        public async Task<IEnumerable<OptionModel>> GetUserOptionsWithSavedDungeonsAsync(int userId)
+        public async Task<IEnumerable<OptionModel>> GetUserOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _dungeonRepository.GetUserOptionsWithSavedDungeonsAsync(userId);
+                var result = await _dungeonRepository.GetUserOptionsWithSavedDungeonsAsync(userId, cancellationToken);
                 
                 return result.Select(o => _mapper.Map<OptionModel>(o)).ToList();
             }

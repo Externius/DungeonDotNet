@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MvcRDMG.Core.Abstractions.Repository;
 using MvcRDMG.Core.Abstractions.Services;
+using MvcRDMG.Core.Abstractions.Services.Exceptions;
 using MvcRDMG.Core.Abstractions.Services.Models;
 using MvcRDMG.Core.Domain;
 using MvcRDMG.Core.Helpers;
@@ -32,7 +33,7 @@ namespace MvcRDMG.Core.Services
             try
             {
                 model.Password = PasswordHelper.EncryptPassword(model.Password);
-                var user = _mapper.Map<Domain.User>(model);
+                var user = _mapper.Map<User>(model);
                 user = await _userRepository.CreateAsync(user);
                 return user.Id;
             }
@@ -48,24 +49,24 @@ namespace MvcRDMG.Core.Services
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
             if (model.Password.Length < 8)
-                throw new Exception(Resources.Error.PasswordLength);
+                throw new ServiceException(Resources.Error.PasswordLength);
             if (string.IsNullOrEmpty(model.Username))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Username));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Username));
             if (string.IsNullOrEmpty(model.FirstName))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.FirstName));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.FirstName));
             if (string.IsNullOrEmpty(model.LastName))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.LastName));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.LastName));
             if (string.IsNullOrEmpty(model.Email))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Email));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Email));
             if (string.IsNullOrEmpty(model.Role))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Role));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Role));
         }
 
         private async Task CheckUserExist(UserModel model)
         {
             var user = await _userRepository.GetByUsernameAsync(model.Username, null);
             if (user != null)
-                throw new Exception(string.Format(Resources.Error.UserExist, model.Username));
+                throw new ServiceException(string.Format(Resources.Error.UserExist, model.Username));
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -154,13 +155,13 @@ namespace MvcRDMG.Core.Services
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
             if (string.IsNullOrEmpty(model.FirstName))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.FirstName));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.FirstName));
             if (string.IsNullOrEmpty(model.LastName))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.LastName));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.LastName));
             if (string.IsNullOrEmpty(model.Email))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Email));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Email));
             if (string.IsNullOrEmpty(model.Role))
-                throw new Exception(string.Format(Resources.Error.RequiredValidation, model.Role));
+                throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Role));
         }
 
         public async Task ChangePasswordAsync(ChangePasswordModel model)
@@ -168,14 +169,14 @@ namespace MvcRDMG.Core.Services
             try
             {
                 if (model.NewPassword.Length < 8)
-                    throw new Exception(Resources.Error.PasswordLength);
+                    throw new ServiceException(Resources.Error.PasswordLength);
 
                 var user = await _userRepository.GetAsync(model.Id);
 
                 if (user is null)
-                    throw new Exception(Resources.Error.NotFound);
+                    throw new ServiceException(Resources.Error.NotFound);
                 if (!PasswordHelper.CheckPassword(user.Password, model.CurrentPassword))
-                    throw new Exception(Resources.Error.PasswordMissMatch);
+                    throw new ServiceException(Resources.Error.PasswordMissMatch);
 
                 user.Password = PasswordHelper.EncryptPassword(model.NewPassword);
 

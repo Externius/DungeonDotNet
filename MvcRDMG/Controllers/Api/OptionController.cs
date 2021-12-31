@@ -9,6 +9,7 @@ using MvcRDMG.Models.Dungeon;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvcRDMG.Controllers.Api
@@ -29,15 +30,15 @@ namespace MvcRDMG.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get()
+        public async Task<JsonResult> Get(CancellationToken cancellationToken)
         {
-            var options = await _dungeonService.GetUserOptionsWithSavedDungeonsAsync(UserHelper.GetUserId(User.Claims));
+            var options = await _dungeonService.GetUserOptionsWithSavedDungeonsAsync(UserHelper.GetUserId(User.Claims), cancellationToken);
             var result = _mapper.Map<IEnumerable<OptionViewModel>>(options);
             return Json(result);
         }
 
         [HttpPost]
-        public async Task<JsonResult> Post([FromBody]OptionViewModel viewmodel)
+        public async Task<JsonResult> Post([FromBody] OptionViewModel viewmodel, CancellationToken cancellationToken)
         {
             try
             {
@@ -46,7 +47,7 @@ namespace MvcRDMG.Controllers.Api
                     var dungeonOption = _mapper.Map<OptionModel>(viewmodel);
                     dungeonOption.UserId = UserHelper.GetUserId(User.Claims);
                     _logger.LogInformation("Attempting save dungeon");
-                    await _dungeonService.AddDungeonOptionAsync(dungeonOption);
+                    await _dungeonService.AddDungeonOptionAsync(dungeonOption, cancellationToken);
                     Response.StatusCode = (int)HttpStatusCode.Created;
                     return Json(_mapper.Map<OptionViewModel>(dungeonOption));
                 }

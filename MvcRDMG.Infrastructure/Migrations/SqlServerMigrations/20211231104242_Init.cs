@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace MvcRDMG.Infrastructure.Migrations.SqlServerMigrations
 {
     public partial class Init : Migration
@@ -82,8 +84,7 @@ namespace MvcRDMG.Infrastructure.Migrations.SqlServerMigrations
                         name: "FK_SavedDungeons_Options_OptionId",
                         column: x => x.OptionId,
                         principalTable: "Options",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

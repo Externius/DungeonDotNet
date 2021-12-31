@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MvcRDMG.Infrastructure;
 
+#nullable disable
+
 namespace MvcRDMG.Infrastructure.Migrations.SqliteMigrations
 {
     [DbContext(typeof(SqliteContext))]
@@ -13,8 +15,7 @@ namespace MvcRDMG.Infrastructure.Migrations.SqliteMigrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.8");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
 
             modelBuilder.Entity("MvcRDMG.Core.Domain.Option", b =>
                 {

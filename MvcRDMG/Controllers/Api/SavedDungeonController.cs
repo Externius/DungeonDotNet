@@ -8,6 +8,7 @@ using MvcRDMG.Helpers;
 using MvcRDMG.Models.Dungeon;
 using System;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MvcRDMG.Controllers.Api
@@ -27,11 +28,11 @@ namespace MvcRDMG.Controllers.Api
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<JsonResult> GetJson(string dungeonName)
+        public async Task<JsonResult> GetJson(string dungeonName, CancellationToken cancellationToken)
         {
             try
             {
-                var results =  await _dungeonService.GetSavedDungeonByNameAsync(dungeonName, UserHelper.GetUserId(User.Claims));
+                var results = await _dungeonService.GetSavedDungeonByNameAsync(dungeonName, UserHelper.GetUserId(User.Claims), cancellationToken);
                 if (results == null)
                     return Json(null);
 
@@ -46,14 +47,14 @@ namespace MvcRDMG.Controllers.Api
 
         }
         [HttpPost]
-        public async Task<JsonResult> Post(string dungeonName, [FromBody]SavedDungeonViewModel viewmodel)
+        public async Task<JsonResult> Post(string dungeonName, [FromBody] SavedDungeonViewModel viewmodel, CancellationToken cancellationToken)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     var saveddungeon = _mapper.Map<SavedDungeonModel>(viewmodel);
-                    await _dungeonService.AddSavedDungeonAsync(dungeonName, saveddungeon, UserHelper.GetUserId(User.Claims));
+                    await _dungeonService.AddSavedDungeonAsync(dungeonName, saveddungeon, UserHelper.GetUserId(User.Claims), cancellationToken);
                     Response.StatusCode = (int)HttpStatusCode.Created;
                     return Json(_mapper.Map<SavedDungeonViewModel>(saveddungeon));
                 }

@@ -42,7 +42,7 @@ namespace MvcRDMG.Infrastructure
 
 #if DEBUG
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlServer("DataSource=");
+            => options.UseSqlServer();
 #endif
     }
 

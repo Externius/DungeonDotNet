@@ -7,21 +7,15 @@ namespace MvcRDMG.Core.Helpers
     {
         public static string EncryptPassword(string password)
         {
-            var result = "";
-
-            using (var rNGCryptoServiceProvider = new RNGCryptoServiceProvider())
-            {
-                var salt = new byte[16];
-                rNGCryptoServiceProvider.GetBytes(salt);
-                using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-                var hash = pbkdf2.GetBytes(20);
-                var hashBytes = new byte[36];
-                Array.Copy(salt, 0, hashBytes, 0, 16);
-                Array.Copy(hash, 0, hashBytes, 16, 20);
-                result = Convert.ToBase64String(hashBytes);
-            }
-
-            return result;
+            using var randomNumberGenerator = RandomNumberGenerator.Create();
+            var salt = new byte[16];
+            randomNumberGenerator.GetBytes(salt);
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
+            var hash = pbkdf2.GetBytes(20);
+            var hashBytes = new byte[36];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(hash, 0, hashBytes, 16, 20);
+            return Convert.ToBase64String(hashBytes);
         }
 
         public static bool CheckPassword(string savedPasswordHash, string password)
