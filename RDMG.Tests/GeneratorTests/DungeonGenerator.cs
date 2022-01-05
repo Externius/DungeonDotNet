@@ -1,74 +1,66 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RDMG.Core.Abstractions.Dungeon.Models;
-using RDMG.Core.Domain;
-using RDMG.Core.Generator;
-using RDMG.Core.Helpers;
+﻿using RDMG.Core.Domain;
+using Shouldly;
 using System.Linq;
+using Xunit;
 
-namespace RDMG.Tests
+namespace RDMG.Tests.GeneratorTests
 {
-    [TestClass]
-    public class DungeonTest
+    public class DungeonGenerator
     {
-        private readonly Dungeon dungeon = new(800, 800, 15, 10, 15, 15, true, 10);
-
-        [TestInitialize]
-        public void Setup()
+        [Fact]
+        public void CanInit()
         {
-            Utils.Instance.DoorGenerator = new Door();
-            Utils.Instance.TrapGenerator = new Trap();
-            Utils.Instance.TreasureGenerator = new Treasure();
-            Utils.Instance.EncouterGenerator = new Encounter();
-            Utils.Instance.PartyLevel = 1;
-            Utils.Instance.PartySize = 4;
-            Utils.Instance.TreasureValue = 1;
-            Utils.Instance.ItemsRarity = 1;
-            Utils.Instance.DungeonDifficulty = 1;
-            Utils.Instance.MonsterType = "any";
-            Utils.Instance.MonsterList = Helpers.DeseraliazerJSON<Monster>("5e-SRD-Monsters.json");
-            Utils.Instance.TreasureList = Helpers.DeseraliazerJSON<Treasures>("treasures.json");
+            using var env = new TestEnvironment();
+            var dungeon = env.GetDungeon();
             dungeon.Init();
-        }
-
-        [TestMethod]
-        public void TestInit()
-        {
             DrawTestDungeon.Draw(dungeon.DungeonTiles);
-            Assert.IsTrue(dungeon.RoomDescription.Count == 0);
+            dungeon.RoomDescription.Count.ShouldBe(0);
         }
 
-        [TestMethod]
-        public void TestGenerateRoom()
+        [Fact]
+        public void CanGenerateRoom()
         {
+            using var env = new TestEnvironment();
+            var dungeon = env.GetDungeon();
+            dungeon.Init();
             dungeon.GenerateRoom();
             DrawTestDungeon.Draw(dungeon.DungeonTiles);
-            Assert.IsTrue(dungeon.RoomDescription.Count == 2);
+            dungeon.RoomDescription.Count.ShouldBe(2);
         }
 
-        [TestMethod]
-        public void TestAddEntryPoint()
+        [Fact]
+        public void CanAddEntryPoint()
         {
+            using var env = new TestEnvironment();
+            var dungeon = env.GetDungeon();
+            dungeon.Init();
             dungeon.GenerateRoom();
             dungeon.AddEntryPoint();
             DrawTestDungeon.Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.ENTRY);
-            Assert.IsTrue(match != null);
+            match.ShouldNotBeNull();
         }
-        [TestMethod]
+        [Fact]
         public void TestGenerateCorridors()
         {
+            using var env = new TestEnvironment();
+            var dungeon = env.GetDungeon();
+            dungeon.Init();
             dungeon.GenerateRoom();
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
             DrawTestDungeon.Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.CORRIDOR);
-            Assert.IsTrue(match != null);
+            match.ShouldNotBeNull();
         }
-        [TestMethod]
+        [Fact]
         public void TestAddDeadEnds()
         {
+            using var env = new TestEnvironment();
+            var dungeon = env.GetDungeon();
+            dungeon.Init();
             dungeon.GenerateRoom();
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
@@ -76,11 +68,14 @@ namespace RDMG.Tests
             DrawTestDungeon.Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.CORRIDOR);
-            Assert.IsTrue(match != null);
+            match.ShouldNotBeNull();
         }
-        [TestMethod]
+        [Fact]
         public void TestAddTrap()
         {
+            using var env = new TestEnvironment();
+            var dungeon = env.GetDungeon();
+            dungeon.Init();
             dungeon.GenerateRoom();
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
@@ -89,11 +84,14 @@ namespace RDMG.Tests
             DrawTestDungeon.Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.TRAP);
-            Assert.IsTrue(match != null);
+            match.ShouldNotBeNull();
         }
-        [TestMethod]
+        [Fact]
         public void TestAddRoamingMonster()
         {
+            using var env = new TestEnvironment();
+            var dungeon = env.GetDungeon();
+            dungeon.Init();
             dungeon.GenerateRoom();
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
@@ -102,7 +100,7 @@ namespace RDMG.Tests
             DrawTestDungeon.Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
             var match = list.Where(x => x.Texture == Textures.ROAMING_MONSTER);
-            Assert.IsTrue(match != null);
+            match.ShouldNotBeNull();
         }
     }
 }

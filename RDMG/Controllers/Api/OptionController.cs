@@ -47,7 +47,7 @@ namespace RDMG.Controllers.Api
                     var dungeonOption = _mapper.Map<OptionModel>(viewmodel);
                     dungeonOption.UserId = UserHelper.GetUserId(User.Claims);
                     _logger.LogInformation("Attempting save dungeon");
-                    await _dungeonService.AddDungeonOptionAsync(dungeonOption, cancellationToken);
+                    await _dungeonService.CreateDungeonOptionAsync(dungeonOption, cancellationToken);
                     Response.StatusCode = (int)HttpStatusCode.Created;
                     return Json(_mapper.Map<OptionViewModel>(dungeonOption));
                 }

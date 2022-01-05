@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RDMG.Core.Abstractions.Dungeon;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
+using RDMG.Core.Generator;
 using RDMG.Core.Services;
 using RDMG.Infrastructure;
 using RDMG.Seed;
@@ -148,6 +150,7 @@ namespace RDMG
 
             services.AddScoped<IUserService, UserService>()
                     .AddScoped<IAuthService, AuthService>()
+                    .AddScoped<IDungeonHelper, DungeonHelper>()
                     .AddScoped<IDungeonService, DungeonService>();
 
             return services;

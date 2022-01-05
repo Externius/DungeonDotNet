@@ -9,9 +9,9 @@ namespace RDMG.Core.Abstractions.Services
     {
         Task<IEnumerable<OptionModel>> GetAllOptionsAsync(CancellationToken cancellationToken);
         Task<IEnumerable<OptionModel>> GetAllOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken);
-        Task AddDungeonOptionAsync(OptionModel dungeonOption, CancellationToken cancellationToken);
+        Task<int> CreateDungeonOptionAsync(OptionModel dungeonOption, CancellationToken cancellationToken);
         Task<OptionModel> GetSavedDungeonByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
-        Task AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId, CancellationToken cancellationToken);
+        Task<int> AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId, CancellationToken cancellationToken);
         Task<IEnumerable<OptionModel>> GetUserOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken);
         Task<bool> GenerateAsync(OptionModel model);
     }

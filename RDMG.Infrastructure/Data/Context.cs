@@ -58,7 +58,7 @@ namespace RDMG.Infrastructure
         }
 #if DEBUG
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("DataSource=dungeons.sqlite");
+            => options.UseSqlite();
 #endif
     }
 }

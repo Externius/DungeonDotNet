@@ -1,6 +1,6 @@
+using RDMG.Core.Abstractions.Dungeon;
 using RDMG.Core.Abstractions.Dungeon.Models;
 using RDMG.Core.Domain;
-using RDMG.Core.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,7 @@ namespace RDMG.Core.Generator
 {
     public class Dungeon
     {
+        private readonly IDungeonHelper _dungeonHelper;
         private const int Movement = 10;
         internal List<DungeonTile> Rooms = new();
         internal List<DungeonTile> Doors = new();
@@ -31,18 +32,22 @@ namespace RDMG.Core.Generator
         public int RoomSizePercent { get; set; }
         public int RoomSize { get; set; }
 
-        public Dungeon() { }
-
-        public Dungeon(int dungeonWidth, int dungeonHeight, int dungeonSize, int roomDensity, int roomSizePercent, int trapPercent, bool hasDeadEnds, int roamingPercent)
+        public Dungeon(IDungeonHelper dungeonHelper)
         {
-            DungeonWidth = dungeonWidth;
-            DungeonHeight = dungeonHeight;
-            DungeonSize = dungeonSize;
-            RoomDensity = roomDensity;
-            RoomSizePercent = roomSizePercent;
-            TrapPercent = trapPercent;
-            HasDeadEnds = hasDeadEnds;
-            RoamingPercent = roamingPercent;
+            _dungeonHelper = dungeonHelper;
+        }
+
+        public Dungeon(DungeonOptionsModel optionsModel, IDungeonHelper dungeonHelper)
+        {
+            DungeonWidth = optionsModel.Width;
+            DungeonHeight = optionsModel.Height;
+            DungeonSize = optionsModel.Size;
+            RoomDensity = optionsModel.RoomDensity;
+            RoomSizePercent = optionsModel.RoomSizePercent;
+            TrapPercent = optionsModel.TrapPercent;
+            HasDeadEnds = optionsModel.HasDeadEnds;
+            RoamingPercent = optionsModel.RoamingPercent;
+            _dungeonHelper = dungeonHelper;
         }
 
         public virtual void Generate()
@@ -62,7 +67,7 @@ namespace RDMG.Core.Generator
             var count = 0;
             while (inCount > count)
             {
-                var x = Utils.GetRandomInt(0, Corridors.Count);
+                var x = _dungeonHelper.GetRandomInt(0, Corridors.Count);
                 var i = Corridors[x].I;
                 var j = Corridors[x].J;
                 if (DungeonTiles[i][j].Texture == Textures.CORRIDOR)
@@ -91,13 +96,13 @@ namespace RDMG.Core.Generator
         private void AddTrap(int x, int y)
         {
             DungeonTiles[x][y].Texture = Textures.TRAP;
-            Utils.Instance.AddTrapDescription(DungeonTiles, x, y, TrapDescription);
+            _dungeonHelper.AddTrapDescription(DungeonTiles, x, y, TrapDescription);
         }
 
         private void AddRoamingMonster(int x, int y)
         {
             DungeonTiles[x][y].Texture = Textures.ROAMING_MONSTER;
-            Utils.Instance.AddRoamingMonsterDescription(DungeonTiles, x, y, RoamingMonsterDescription);
+            _dungeonHelper.AddRoamingMonsterDescription(DungeonTiles, x, y, RoamingMonsterDescription);
         }
 
         public void AddDeadEnds()
@@ -136,7 +141,7 @@ namespace RDMG.Core.Generator
             var maxAttempt = dungeonList.Count * 2;
             do
             {
-                var tile = dungeonList[Utils.GetRandomInt(0, dungeonList.Count)];
+                var tile = dungeonList[_dungeonHelper.GetRandomInt(0, dungeonList.Count)];
                 if (CheckTileForDeadEnd(tile.I, tile.J))
                 {
                     DungeonTiles[tile.I][tile.J].Texture = Textures.CORRIDOR;
@@ -175,7 +180,7 @@ namespace RDMG.Core.Generator
                 {
                     for (var j = 1; j < DungeonTiles.Length - 1; j++) // preconfig H value + restore default values
                     {
-                        DungeonTiles[i][j].H = Utils.Manhattan(Math.Abs(i - end.I), Math.Abs(j - end.J));
+                        DungeonTiles[i][j].H = _dungeonHelper.Manhattan(Math.Abs(i - end.I), Math.Abs(j - end.J));
                         DungeonTiles[i][j].G = 0;
                         DungeonTiles[i][j].Parent = null;
                         DungeonTiles[i][j].F = 9999;
@@ -223,10 +228,7 @@ namespace RDMG.Core.Generator
 
         private static void CalcFValue(List<DungeonTile> openList)
         {
-            foreach (var tile in openList)
-            {
-                tile.F = (tile.G + tile.H);
-            }
+            openList.ForEach(tile => tile.F = tile.G + tile.H);
             // sort it
             openList.Sort((dt1, dt2) => dt1.F - dt2.F);
             //openList.Sort((x, y) => x.F.CompareTo(y.F));
@@ -234,10 +236,7 @@ namespace RDMG.Core.Generator
 
         private static void CalcGValue(List<DungeonTile> openList)
         {
-            foreach (var tile in openList)
-            {
-                tile.G = tile.Parent.G + Movement;
-            }
+            openList.ForEach(tile => tile.G = tile.Parent.G + Movement);
         }
 
         private void AddToOpenList(DungeonTile node, int x, int y, List<DungeonTile> openList, List<DungeonTile> closedList, DungeonTile end)
@@ -303,8 +302,8 @@ namespace RDMG.Core.Generator
             int y;
             do
             {
-                x = Utils.GetRandomInt(1, DungeonTiles.Length - 1);
-                y = Utils.GetRandomInt(1, DungeonTiles.Length - 1);
+                x = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
+                y = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
                 entryIsOk = DungeonTiles[x][y].Texture == Textures.MARBLE;
             }
             while (!entryIsOk);
@@ -350,7 +349,7 @@ namespace RDMG.Core.Generator
             }
             var newSize = Doors.Count;
             var currentDoors = Doors.GetRange(currentSize, newSize - currentSize);
-            Utils.Instance.AddRoomDescription(DungeonTiles, x, y, RoomDescription, currentDoors);
+            _dungeonHelper.AddRoomDescription(DungeonTiles, x, y, RoomDescription, currentDoors);
         }
 
         internal void AddDoor(int x, int y, int down, int right)
@@ -360,8 +359,8 @@ namespace RDMG.Core.Generator
             int doorY;
             do
             {
-                doorX = Utils.GetRandomInt(x, x + down);
-                doorY = Utils.GetRandomInt(y, y + right);
+                doorX = _dungeonHelper.GetRandomInt(x, x + down);
+                doorY = _dungeonHelper.GetRandomInt(y, y + right);
                 doorIsOK = CheckDoor(doorX, doorY);
             }
             while (!doorIsOK);
@@ -409,9 +408,9 @@ namespace RDMG.Core.Generator
 
         internal virtual void SetDoor(int x, int y)
         {
-            if (Utils.GetRandomInt(0, 101) < 40)
+            if (_dungeonHelper.GetRandomInt(0, 101) < 40)
                 DungeonTiles[x][y].Texture = Textures.DOOR_TRAPPED;
-            else if (Utils.GetRandomInt(0, 101) < 50)
+            else if (_dungeonHelper.GetRandomInt(0, 101) < 50)
                 DungeonTiles[x][y].Texture = Textures.DOOR_LOCKED;
             else
                 DungeonTiles[x][y].Texture = Textures.DOOR;
@@ -421,9 +420,9 @@ namespace RDMG.Core.Generator
         internal virtual int GetDoorCount(int down, int right)
         {
             if (down < 4 || right < 4)
-                return Utils.GetRandomInt(1, 3);
+                return _dungeonHelper.GetRandomInt(1, 3);
             else
-                return Utils.GetRandomInt(2, 5);
+                return _dungeonHelper.GetRandomInt(2, 5);
         }
 
         private int[] SetTilesForRoom()
@@ -437,10 +436,10 @@ namespace RDMG.Core.Generator
             int down;
             do
             {
-                x = Utils.GetRandomInt(3, max); // 3 because of edge + room_edge
-                y = Utils.GetRandomInt(3, max);
-                right = Utils.GetRandomInt(2, RoomSize + 1);
-                down = Utils.GetRandomInt(2, RoomSize + 1);
+                x = _dungeonHelper.GetRandomInt(3, max); // 3 because of edge + room_edge
+                y = _dungeonHelper.GetRandomInt(3, max);
+                right = _dungeonHelper.GetRandomInt(2, RoomSize + 1);
+                down = _dungeonHelper.GetRandomInt(2, RoomSize + 1);
                 roomIsOk = CheckTileGoodForRoom(x - 2, y - 2, right + 2, down + 2); // -2/+2 because i want min 3 tiles between rooms
                 failSafeCount--;
             }

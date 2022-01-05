@@ -1,41 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using RDMG.Core.Abstractions.Dungeon;
 using RDMG.Core.Abstractions.Dungeon.Models;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Core.Generator;
-using RDMG.Core.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RDMG.Core.Services
 {
     public class DungeonService : IDungeonService
     {
         private readonly IDungeonRepository _dungeonRepository;
+        private readonly IDungeonHelper _dungeonHelper;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private static readonly int dungeonWidthAndHeight = 800;
 
-        public DungeonService(IMapper mapper, IDungeonRepository dungeonRepository, ILogger<DungeonService> logger)
+        public DungeonService(IMapper mapper, 
+            IDungeonRepository dungeonRepository,
+            IDungeonHelper dungeonHelper,
+            ILogger<DungeonService> logger)
         {
             _dungeonRepository = dungeonRepository;
+            _dungeonHelper = dungeonHelper;
             _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task AddDungeonOptionAsync(OptionModel dungeonOption, CancellationToken cancellationToken)
+        public async Task<int> CreateDungeonOptionAsync(OptionModel dungeonOption, CancellationToken cancellationToken)
         {
             try
             {
-                await _dungeonRepository.AddDungeonOptionAsync(_mapper.Map<Option>(dungeonOption), cancellationToken);
+                var option = await _dungeonRepository.AddDungeonOptionAsync(_mapper.Map<Option>(dungeonOption), cancellationToken);
+                return option.Id;
             }
             catch (Exception ex)
             {
@@ -44,11 +49,12 @@ namespace RDMG.Core.Services
             }         
         }
 
-        public async Task AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId, CancellationToken cancellationToken)
+        public async Task<int> AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId, CancellationToken cancellationToken)
         {
             try
             {
-                await _dungeonRepository.AddSavedDungeonAsync(dungeonName, _mapper.Map<SavedDungeon>(saveddungeon), userId, cancellationToken);
+                var sd = await _dungeonRepository.AddSavedDungeonAsync(dungeonName, _mapper.Map<SavedDungeon>(saveddungeon), userId, cancellationToken);
+                return sd.Id;
             }
             catch (Exception ex)
             {
@@ -59,23 +65,21 @@ namespace RDMG.Core.Services
 
         public async Task<bool> GenerateAsync(OptionModel model)
         {
-            Utils.Instance.DoorGenerator = new Door();
-            Utils.Instance.TrapGenerator = new Trap();
-            Utils.Instance.TreasureGenerator = new Treasure();
-            Utils.Instance.EncouterGenerator = new Encounter();
-            Utils.Instance.PartyLevel = model.PartyLevel;
-            Utils.Instance.PartySize = model.PartySize;
-            Utils.Instance.TreasureValue = model.TreasureValue;
-            Utils.Instance.ItemsRarity = model.ItemsRarity;
-            Utils.Instance.DungeonDifficulty = model.DungeonDifficulty;
-            Utils.Instance.MonsterType = model.MonsterType;
-            Utils.Instance.MonsterList = DeseraliazerJSON<Monster>("5e-SRD-Monsters.json");
-            Utils.Instance.TreasureList = DeseraliazerJSON<Treasures>("treasures.json");
+            _dungeonHelper.Init(model);
+            var dungeonOptions = new DungeonOptionsModel
+            {
+                Size = model.DungeonSize,
+                RoomDensity = model.RoomDensity,
+                RoomSizePercent = model.RoomSize,
+                TrapPercent = model.TrapPercent,
+                HasDeadEnds = model.DeadEnd,
+                RoamingPercent = model.RoamingPercent
+            };
             try
             {
                 if (model.Corridor)
                 {
-                    var dungeon = new Dungeon(dungeonWidthAndHeight, dungeonWidthAndHeight, model.DungeonSize, model.RoomDensity, model.RoomSize, model.TrapPercent, model.DeadEnd, model.RoamingPercent);
+                    var dungeon = new Dungeon(dungeonOptions, _dungeonHelper);
                     dungeon.Generate();
                     model.SavedDungeons = new List<SavedDungeonModel>()
                     {
@@ -91,7 +95,7 @@ namespace RDMG.Core.Services
                 }
                 else
                 {
-                    var dungeonNoCorridor = new DungeonNoCorridor(dungeonWidthAndHeight, dungeonWidthAndHeight, model.DungeonSize, model.RoomSize);
+                    var dungeonNoCorridor = new DungeonNoCorridor(dungeonWidthAndHeight, dungeonWidthAndHeight, model.DungeonSize, model.RoomSize, _dungeonHelper);
                     dungeonNoCorridor.Generate();
                     model.SavedDungeons = new List<SavedDungeonModel>()
                     {
@@ -168,15 +172,6 @@ namespace RDMG.Core.Services
                 _logger.LogError(ex, $"List Applications failed.");
                 throw;
             }
-        }
-
-        public static List<T> DeseraliazerJSON<T>(string fileName)
-        {
-            var json = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/Data/" + fileName);
-            return JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            });
         }
     }
 }

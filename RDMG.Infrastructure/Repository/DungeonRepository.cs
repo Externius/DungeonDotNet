@@ -52,10 +52,11 @@ namespace RDMG.Infrastructure
             }
         }
 
-        public async Task AddDungeonOptionAsync(Option dungeonOption, CancellationToken cancellationToken)
+        public async Task<Option> AddDungeonOptionAsync(Option dungeonOption, CancellationToken cancellationToken)
         {
             _context.Add(dungeonOption);
             await _context.SaveChangesAsync(cancellationToken);
+            return dungeonOption;
         }
 
         public async Task<Option> GetSavedDungeonByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
@@ -66,12 +67,13 @@ namespace RDMG.Infrastructure
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task AddSavedDungeonAsync(string dungeonName, SavedDungeon savedDungeon, int userId, CancellationToken cancellationToken)
+        public async Task<SavedDungeon> AddSavedDungeonAsync(string dungeonName, SavedDungeon savedDungeon, int userId, CancellationToken cancellationToken)
         {
-            var dungeon = await GetSavedDungeonByNameAsync(dungeonName, userId, cancellationToken);
-            dungeon.SavedDungeons.Add(savedDungeon);
+            var option = await GetSavedDungeonByNameAsync(dungeonName, userId, cancellationToken);
+            option.SavedDungeons.Add(savedDungeon);
             _context.SavedDungeons.Add(savedDungeon);
             await _context.SaveChangesAsync(cancellationToken);
+            return savedDungeon;
         }
 
         public async Task<IEnumerable<Option>> GetUserOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken)

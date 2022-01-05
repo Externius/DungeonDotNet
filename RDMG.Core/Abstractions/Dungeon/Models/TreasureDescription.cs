@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace RDMG.Core.Abstractions.Dungeon.Models
 {
-    public class Treasures
+    public class TreasureDescription
     {
         public string Name { get; set; }
         public int Cost { get; set; }

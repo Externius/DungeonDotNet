@@ -17,7 +17,7 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
 
-            modelBuilder.Entity("MvcRDMG.Core.Domain.Option", b =>
+            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,7 +86,7 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     b.ToTable("Options");
                 });
 
-            modelBuilder.Entity("MvcRDMG.Core.Domain.SavedDungeon", b =>
+            modelBuilder.Entity("RDMG.Core.Domain.SavedDungeon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -119,7 +119,7 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     b.ToTable("SavedDungeons");
                 });
 
-            modelBuilder.Entity("MvcRDMG.Core.Domain.User", b =>
+            modelBuilder.Entity("RDMG.Core.Domain.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -157,9 +157,9 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MvcRDMG.Core.Domain.Option", b =>
+            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
                 {
-                    b.HasOne("MvcRDMG.Core.Domain.User", "User")
+                    b.HasOne("RDMG.Core.Domain.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -168,14 +168,14 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MvcRDMG.Core.Domain.SavedDungeon", b =>
+            modelBuilder.Entity("RDMG.Core.Domain.SavedDungeon", b =>
                 {
-                    b.HasOne("MvcRDMG.Core.Domain.Option", null)
+                    b.HasOne("RDMG.Core.Domain.Option", null)
                         .WithMany("SavedDungeons")
                         .HasForeignKey("OptionId");
                 });
 
-            modelBuilder.Entity("MvcRDMG.Core.Domain.Option", b =>
+            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
                 {
                     b.Navigation("SavedDungeons");
                 });

@@ -2,7 +2,7 @@
 **/Debug
 **/obj
 **/wwwroot/lib
-*.sqlite
+*.sqlite*
 /.vscode
 /.vs
 **/Logs
