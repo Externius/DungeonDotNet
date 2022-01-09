@@ -6,8 +6,8 @@ namespace RDMG.Infrastructure
 {
     public partial class Context : DbContext
     {
-        public DbSet<Option> Options { get; set; }
-        public DbSet<SavedDungeon> SavedDungeons { get; set; }
+        public DbSet<DungeonOption> DungeonOptions { get; set; }
+        public DbSet<Dungeon> Dungeons { get; set; }
         public DbSet<User> Users { get; set; }
         public Context()
         {
@@ -21,7 +21,7 @@ namespace RDMG.Infrastructure
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Option>()
+            modelBuilder.Entity<DungeonOption>()
                 .HasIndex(o => new { o.DungeonName, o.UserId })
                 .IsUnique();
 

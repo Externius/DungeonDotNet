@@ -15,7 +15,7 @@ namespace RDMG.Tests.DungeonServiceTests
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonService>();
-            var optionsModel = new OptionModel
+            var optionsModel = new DungeonOptionModel
             {
                 DungeonName = "UT Dungeon",
                 Created = DateTime.UtcNow,
@@ -35,38 +35,22 @@ namespace RDMG.Tests.DungeonServiceTests
                 UserId = 1
             };
             var source = new CancellationTokenSource();
-            CancellationToken token = source.Token;
+            var token = source.Token;
             var result = await service.CreateDungeonOptionAsync(optionsModel, token);
             result.ShouldBeGreaterThan(0);
         }
         [Fact]
-        public async void CanAddSavedDungeon()
+        public async void CanAddDungeon()
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonService>();
             var source = new CancellationTokenSource();
-            CancellationToken token = source.Token;
-            var optionsModel = new OptionModel
-            {
-                DungeonName = "UT Dungeon",
-                Created = DateTime.UtcNow,
-                ItemsRarity = 1,
-                DeadEnd = true,
-                DungeonDifficulty = 1,
-                DungeonSize = 25,
-                MonsterType = "any",
-                PartyLevel = 4,
-                PartySize = 4,
-                TrapPercent = 20,
-                RoamingPercent = 0,
-                TreasureValue = 1,
-                RoomDensity = 10,
-                RoomSize = 20,
-                Corridor = false,
-            };
-            await service.GenerateAsync(optionsModel);
-            var saveddungeon = optionsModel.SavedDungeons.ToList().First();
-            var result = await service.AddSavedDungeonAsync("Test1", saveddungeon, 1, token);
+            var token = source.Token;
+
+            var optionsModel = (await service.GetAllDungeonOptionsForUserAsync(1, token)).First();
+            var saveddungeon = await service.GenerateDungeonAsync(optionsModel);
+
+            var result = await service.AddDungeonAsync(saveddungeon, token);
             result.ShouldBeGreaterThan(1);
         }
     }

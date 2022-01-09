@@ -13,7 +13,7 @@ namespace RDMG.Tests.DungeonServiceTests
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonService>();
-            var success = await service.GenerateAsync(new OptionModel
+            var result = await service.GenerateDungeonAsync(new DungeonOptionModel
             {
                 DungeonName = "UT Dungeon",
                 Created = DateTime.UtcNow,
@@ -32,7 +32,7 @@ namespace RDMG.Tests.DungeonServiceTests
                 Corridor = false
             });
 
-            success.ShouldBeTrue();
+            result.DungeonTiles.ShouldNotBeNull();
         }
     }
 }

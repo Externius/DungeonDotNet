@@ -4,11 +4,11 @@ using RDMG.Models.Dungeon;
 
 namespace RDMG.Automapper
 {
-    public class SavedDungeonProfile : Profile
+    public class DungeonProfile : Profile
     {
-        public SavedDungeonProfile()
+        public DungeonProfile()
         {
-            CreateMap<SavedDungeonModel, SavedDungeonViewModel>().ReverseMap();
+            CreateMap<DungeonModel, DungeonViewModel>().ReverseMap();
         }
     }
 }

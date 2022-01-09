@@ -93,7 +93,7 @@ namespace RDMG.Controllers.Web
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace RDMG.Controllers.Web
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Restore(int id)
+        public async Task<IActionResult> Restore(int id)
         {
             try
             {

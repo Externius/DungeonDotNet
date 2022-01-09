@@ -2,9 +2,8 @@
 
 namespace RDMG.Models.User
 {
-    public class UserEditViewModel
+    public class UserEditViewModel : EditViewModel
     {
-        public int Id { get; set; }
         public string Username { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resources.Error), ErrorMessageResourceName = "RequiredValidation")]
         [Display(ResourceType = typeof(Resources.User), Name = "FirstName")]
@@ -19,6 +18,5 @@ namespace RDMG.Models.User
         [Display(ResourceType = typeof(Resources.User), Name = "Role")]
         public string Role { get; set; }
         public bool Deleted { get; set; }
-        public byte[] Timestamp { get; set; }
     }
 }

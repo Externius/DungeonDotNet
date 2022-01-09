@@ -28,6 +28,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Common.resx</DependentUpon>
     </Compile>
+    <Compile Update="Dungeon.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Dungeon.resx</DependentUpon>
+    </Compile>
     <Compile Update="Error.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -54,6 +59,10 @@
     <EmbeddedResource Update="Common.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Common.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Dungeon.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Dungeon.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Error.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

@@ -117,70 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AccessDenied" xml:space="preserve">
-    <value>You don't have permission to access this page.</value>
+  <data name="ChooseTheme" xml:space="preserve">
+    <value>Choose a theme</value>
   </data>
-  <data name="Activate" xml:space="preserve">
-    <value>Activate</value>
+  <data name="Corridor" xml:space="preserve">
+    <value>Corridors</value>
   </data>
-  <data name="Alert" xml:space="preserve">
-    <value>Are you sure?</value>
+  <data name="Created" xml:space="preserve">
+    <value>Created</value>
   </data>
-  <data name="Back" xml:space="preserve">
-    <value>Back</value>
+  <data name="CreateTitle" xml:space="preserve">
+    <value>Create dungeon</value>
   </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+  <data name="Dark" xml:space="preserve">
+    <value>Dark</value>
   </data>
-  <data name="Copyright" xml:space="preserve">
-    <value>2022 - RDMG</value>
+  <data name="DeadEnd" xml:space="preserve">
+    <value>Dead ends</value>
   </data>
-  <data name="Create" xml:space="preserve">
-    <value>Create</value>
+  <data name="DungeonCount" xml:space="preserve">
+    <value>Dungeon count</value>
   </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
+  <data name="DungeonDifficulty" xml:space="preserve">
+    <value>Dungeon difficulty</value>
   </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Edit</value>
+  <data name="DungeonSize" xml:space="preserve">
+    <value>Dungeon size</value>
   </data>
-  <data name="Forbidden" xml:space="preserve">
-    <value>Forbidden</value>
+  <data name="ItemsRarity" xml:space="preserve">
+    <value>Items max rarity</value>
   </data>
-  <data name="Login" xml:space="preserve">
-    <value>Login</value>
+  <data name="Light" xml:space="preserve">
+    <value>Light</value>
   </data>
-  <data name="NavAbout" xml:space="preserve">
-    <value>About</value>
+  <data name="Load" xml:space="preserve">
+    <value>Load dungeon</value>
   </data>
-  <data name="NavContact" xml:space="preserve">
-    <value>Contact</value>
+  <data name="Minimal" xml:space="preserve">
+    <value>Minimal</value>
   </data>
-  <data name="NavDungeons" xml:space="preserve">
+  <data name="MonsterType" xml:space="preserve">
+    <value>Monsters type</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Dungeon name</value>
+  </data>
+  <data name="PartyLevel" xml:space="preserve">
+    <value>Party level</value>
+  </data>
+  <data name="PartySize" xml:space="preserve">
+    <value>Party size</value>
+  </data>
+  <data name="RoamingPercent" xml:space="preserve">
+    <value>Roaming monsters</value>
+  </data>
+  <data name="RoomDensity" xml:space="preserve">
+    <value>Room density</value>
+  </data>
+  <data name="RoomSize" xml:space="preserve">
+    <value>Room size</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="Title" xml:space="preserve">
     <value>Dungeons</value>
   </data>
-  <data name="NavHome" xml:space="preserve">
-    <value>RDMG</value>
+  <data name="TrapPercent" xml:space="preserve">
+    <value>Traps</value>
   </data>
-  <data name="NavLogout" xml:space="preserve">
-    <value>Logout</value>
-  </data>
-  <data name="NavUserManagement" xml:space="preserve">
-    <value>User management</value>
-  </data>
-  <data name="No" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="Ok" xml:space="preserve">
-    <value>Ok</value>
-  </data>
-  <data name="Privacy" xml:space="preserve">
-    <value>Privacy</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Save</value>
-  </data>
-  <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
+  <data name="TreasureValue" xml:space="preserve">
+    <value>Treasure value</value>
   </data>
 </root>

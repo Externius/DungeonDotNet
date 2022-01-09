@@ -1,13 +1,11 @@
-using RDMG.Core.Abstractions.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace RDMG.Models.Dungeon
 {
-    public class OptionViewModel
+    public class DungeonOptionViewModel : EditViewModel
     {
-        public int Id { get; set; }
         [Required]
         [StringLength(255, MinimumLength = 3)]
         public string DungeonName { get; set; }
@@ -38,10 +36,10 @@ namespace RDMG.Models.Dungeon
         [Required]
         public int RoamingPercent { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
-        public ICollection<SavedDungeonModel> SavedDungeons { get; set; }
-        public OptionViewModel()
+        public IList<DungeonViewModel> Dungeons { get; set; }
+        public DungeonOptionViewModel()
         {
-            SavedDungeons = new List<SavedDungeonModel>();
+            Dungeons = new List<DungeonViewModel>();
         }
     }
 }

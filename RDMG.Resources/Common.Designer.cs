@@ -178,11 +178,11 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generate dungeons.
+        ///   Looks up a localized string similar to Dungeons.
         /// </summary>
-        public static string NavGenerateDungeons {
+        public static string NavDungeons {
             get {
-                return ResourceManager.GetString("NavGenerateDungeons", resourceCulture);
+                return ResourceManager.GetString("NavDungeons", resourceCulture);
             }
         }
         
@@ -192,15 +192,6 @@ namespace RDMG.Resources {
         public static string NavHome {
             get {
                 return ResourceManager.GetString("NavHome", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Load dungeons.
-        /// </summary>
-        public static string NavLoadDungeons {
-            get {
-                return ResourceManager.GetString("NavLoadDungeons", resourceCulture);
             }
         }
         

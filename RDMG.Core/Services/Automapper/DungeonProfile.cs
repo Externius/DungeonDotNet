@@ -8,8 +8,8 @@ namespace RDMG.Core.Services.Automapper
     {
         public DungeonProfile()
         {
-            CreateMap<Option, OptionModel>().ReverseMap();
-            CreateMap<SavedDungeon, SavedDungeonModel>().ReverseMap();
+            CreateMap<DungeonOption, DungeonOptionModel>().ReverseMap();
+            CreateMap<Dungeon, DungeonModel>().ReverseMap();
         }
     }
 }

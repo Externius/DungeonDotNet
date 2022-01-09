@@ -1,6 +1,6 @@
 # DungeonDotNet
 
-I just wanted to see how is the .NET Core under Linux so i ported my app to ASP.NET Core + Entity Framework Core. There are some AngularJS code too.
+I just wanted to see how is .NET under Linux so i ported my app to ASP.NET Core + Entity Framework Core.
 
 You will need the .NET 6.0 SDK to build/run this project (simply run dotnet build/run in the terminal).
 
@@ -8,6 +8,6 @@ You will need the .NET 6.0 SDK to build/run this project (simply run dotnet buil
 
 Open the <https://localhost:5001/> address in a browser.
 
-You can log in with TestUser/testPassword12345
+You can log in with TestUser/testPassword12345 or with TestUser/simplePassword123
 
 From there you can Generate/Save/Load dungeons, just like in the Android app.

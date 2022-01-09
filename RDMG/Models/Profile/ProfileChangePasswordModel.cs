@@ -2,9 +2,8 @@
 
 namespace RDMG.Models.Profile
 {
-    public class ProfileChangePasswordModel
+    public class ProfileChangePasswordModel : EditViewModel
     {
-        public int Id { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resources.Error), ErrorMessageResourceName = "RequiredValidation")]
         [DataType(DataType.Password)]
         [Display(ResourceType = typeof(Resources.User), Name = "CurrentPassword")]

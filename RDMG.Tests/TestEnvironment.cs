@@ -56,13 +56,13 @@ namespace RDMG.Tests
             return _scope.ServiceProvider.GetService<T>();
         }
 
-        public Dungeon GetDungeon(OptionModel optionModel = null)
+        public Dungeon GetDungeon(DungeonOptionModel optionModel = null)
         {
             var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
 
             if (optionModel is null)
             {
-                optionModel = new OptionModel
+                optionModel = new DungeonOptionModel
                 {
                     DungeonName = "UT Dungeon",
                     Created = DateTime.UtcNow,
@@ -97,13 +97,13 @@ namespace RDMG.Tests
             return new Dungeon(model, helperService);
         }
 
-        public DungeonNoCorridor GetNCDungeon(OptionModel optionModel = null)
+        public DungeonNoCorridor GetNCDungeon(DungeonOptionModel optionModel = null)
         {
             var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
 
             if (optionModel is null)
             {
-                optionModel = new OptionModel
+                optionModel = new DungeonOptionModel
                 {
                     DungeonName = "UT Dungeon",
                     Created = DateTime.UtcNow,
@@ -133,7 +133,11 @@ namespace RDMG.Tests
             services.AddOptions()
                 .AddDatabase(Connection)
                 .AddApplicationServices()
-                .AddAutoMapper(new Type[] { typeof(Core.Services.Automapper.DungeonProfile)
+                .AddAutoMapper(cfg =>
+                {
+                    cfg.AllowNullCollections = true;
+                }
+                , new Type[] { typeof(Core.Services.Automapper.DungeonProfile)
                 , typeof(Core.Services.Automapper.UserProfile)
                 , typeof(Infrastructure.Repository.Automapper.DungeonProfile)
                 , typeof(Infrastructure.Repository.Automapper.UserProfile)
@@ -164,6 +168,7 @@ namespace RDMG.Tests
             services.AddDbContext<Context>(options =>
             {
                 options.UseSqlite(connection);
+                options.ConfigureWarnings(wcb => wcb.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.AmbientTransactionWarning));
             });
             services.AddDbContext<SqliteContext>(options =>
             {

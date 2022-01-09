@@ -27,8 +27,7 @@ namespace RDMG
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews()
-                    .AddRazorRuntimeCompilation();
+            services.AddControllersWithViews();
             services.AddCookiePolicy()
                     .AddDatabase(Configuration)
                     .AddLogging(builder =>
@@ -37,13 +36,26 @@ namespace RDMG
                     })
                     .AddHttpContextAccessor()
                     .AddApplicationServices()
-                    .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
+                    .AddAutoMapper(cfg =>
+                    {
+                        cfg.AllowNullCollections = true;
+                    }
+                    , AppDomain.CurrentDomain.GetAssemblies())
                     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options =>
                     {
                         options.LoginPath = new PathString("/Auth/Login");
                         options.AccessDeniedPath = new PathString("/Auth/Forbidden/");
                     });
+            services.AddMvc()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                })
+#if DEBUG
+                .AddRazorRuntimeCompilation()
+#endif
+                ;
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ContextSeedData seedData)

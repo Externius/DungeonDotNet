@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace RDMG.Core.Abstractions.Services.Models
+namespace RDMG.Core.Domain
 {
-    public class OptionModel : EditModel
+    public class DungeonOption : BaseEntity
     {
         public string DungeonName { get; set; }
         public int UserId { get; set; }
+        public User User { get; set; }
         public int DungeonSize { get; set; }
         public int DungeonDifficulty { get; set; }
         public int PartyLevel { get; set; }
@@ -21,10 +22,5 @@ namespace RDMG.Core.Abstractions.Services.Models
         public bool Corridor { get; set; }
         public int RoamingPercent { get; set; }
         public DateTime Created { get; set; }
-        public ICollection<SavedDungeonModel> SavedDungeons { get; set; }
-        public OptionModel()
-        {
-            SavedDungeons = new List<SavedDungeonModel>();
-        }
     }
 }

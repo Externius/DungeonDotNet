@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Repository;
@@ -14,83 +14,129 @@ namespace RDMG.Infrastructure
     {
         private readonly Context _context;
         private readonly ILogger<DungeonRepository> _logger;
-        public DungeonRepository(Context context, ILogger<DungeonRepository> logger)
+        private readonly IMapper _mapper;
+        public DungeonRepository(Context context, IMapper mapper, ILogger<DungeonRepository> logger)
         {
             _context = context;
             _logger = logger;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Option>> GetAllOptionsAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<DungeonOption>> GetAllDungeonOptionsAsync(CancellationToken cancellationToken)
         {
-            try
-            {
-                return await _context.Options
-                                        .OrderBy(d => d.Created)
-                                        .ToListAsync(cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Could not get options from DB", ex);
-                return null;
-            }
+            return await _context.DungeonOptions
+                                    .OrderBy(d => d.Created)
+                                    .ToListAsync(cancellationToken);
+
         }
 
-        public async Task<IEnumerable<Option>> GetAllOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<DungeonOption>> GetAllDungeonOptionsForUserAsync(int userId, CancellationToken cancellationToken)
         {
-            try
-            {
-                return await _context.Options
-                    .Include(d => d.SavedDungeons)
-                    .OrderBy(d => d.Created)
-                    .Where(d => d.UserId == userId)
-                    .ToListAsync(cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Could not get options with saved dungeons from DB", ex);
-                return null;
-            }
+
+            return await _context.DungeonOptions
+                                    .Where(d => d.UserId == userId)
+                                    .OrderBy(d => d.Created)
+                                    .ToListAsync(cancellationToken);
         }
 
-        public async Task<Option> AddDungeonOptionAsync(Option dungeonOption, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Dungeon>> GetAllDungeonsForUserAsync(int userId, CancellationToken cancellationToken)
+        {
+            return await _context.Dungeons
+                                    .Include(d => d.DungeonOption)
+                                    .Where(d => d.DungeonOption.UserId == userId)
+                                    .OrderBy(d => d.DungeonOption.Created)
+                                    .ToListAsync(cancellationToken);
+        }
+
+        public async Task<DungeonOption> AddDungeonOptionAsync(DungeonOption dungeonOption, CancellationToken cancellationToken)
         {
             _context.Add(dungeonOption);
             await _context.SaveChangesAsync(cancellationToken);
             return dungeonOption;
+
         }
 
-        public async Task<Option> GetSavedDungeonByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
+        public async Task<DungeonOption> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
         {
-            return await _context.Options
-                .Include(d => d.SavedDungeons)
-                .Where(d => d.DungeonName == dungeonName && d.UserId == userId)
-                .FirstOrDefaultAsync(cancellationToken);
+            return await _context.DungeonOptions
+                                    .Where(d => d.DungeonName == dungeonName && d.UserId == userId)
+                                    .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<SavedDungeon> AddSavedDungeonAsync(string dungeonName, SavedDungeon savedDungeon, int userId, CancellationToken cancellationToken)
+        public async Task<Dungeon> AddDungeonAsync(Dungeon dungeon, CancellationToken cancellationToken)
         {
-            var option = await GetSavedDungeonByNameAsync(dungeonName, userId, cancellationToken);
-            option.SavedDungeons.Add(savedDungeon);
-            _context.SavedDungeons.Add(savedDungeon);
+            _context.Dungeons.Add(dungeon);
             await _context.SaveChangesAsync(cancellationToken);
-            return savedDungeon;
+            return dungeon;
         }
 
-        public async Task<IEnumerable<Option>> GetUserOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken)
+        public async Task<bool> DeleteDungeonOptionAsync(int id, CancellationToken cancellationToken)
         {
-            try
+            var entity = await _context.DungeonOptions
+                                            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            if (entity != null)
             {
-                return await _context.Options
-                    .Include(d => d.SavedDungeons)
-                    .OrderBy(d => d.Created)
-                    .Where(d => d.UserId == userId)
-                    .ToListAsync(cancellationToken);
+                var dungeons = await _context.Dungeons.Where(sd => sd.DungeonOptionId == entity.Id).ToListAsync(cancellationToken);
+                _context.Dungeons.RemoveRange(dungeons);
+                _context.DungeonOptions.Remove(entity);
+                await _context.SaveChangesAsync(cancellationToken);
+                return true;
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError("Could not get options with saved dungeons from DB", ex);
-                return null;
+                _logger.LogError($" Entity not found (Option# {id})");
+                return false;
             }
+        }
+
+        public async Task<bool> DeleteSavedDungeonAsync(int id, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Dungeons.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            if (entity != null)
+            {
+                _context.Dungeons.Remove(entity);
+                await _context.SaveChangesAsync(cancellationToken);
+                return true;
+            }
+            else
+            {
+                _logger.LogError($" Entity not found (SavedDungeon# {id})");
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<Dungeon>> GetAllDungeonByOptionNameAsync(string dungeonName, CancellationToken cancellationToken)
+        {
+            return await _context.Dungeons
+                                    .Include(d => d.DungeonOption)
+                                    .Where(d => d.DungeonOption.DungeonName == dungeonName)
+                                    .OrderBy(d => d.DungeonOption.Created)
+                                    .ToListAsync(cancellationToken);
+        }
+
+        public async Task<Dungeon> GetDungeonAsync(int id, CancellationToken cancellationToken)
+        {
+            return await _context.Dungeons.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
+        }
+
+        public async Task<Dungeon> UpdateDungeonAsync(Dungeon dungeon, CancellationToken cancellationToken)
+        {
+            var local = await _context.Dungeons.FirstOrDefaultAsync(d => d.Id == dungeon.Id, cancellationToken);
+
+            if (local != null)
+            {
+                _mapper.Map(dungeon, local);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            return local;
+        }
+
+        public async Task<DungeonOption> GetDungeonOptionAsync(int id, CancellationToken cancellationToken)
+        {
+            return await _context.DungeonOptions.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
         }
     }
 }

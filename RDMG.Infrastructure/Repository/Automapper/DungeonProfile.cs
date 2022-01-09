@@ -7,8 +7,8 @@ namespace RDMG.Infrastructure.Repository.Automapper
     {
         public DungeonProfile()
         {
-            CreateMap<Option, Option>().ForMember(x => x.Id, o => o.Ignore());
-            CreateMap<SavedDungeon, SavedDungeon>().ForMember(x => x.Id, o => o.Ignore());
+            CreateMap<DungeonOption, DungeonOption>().ForMember(x => x.Id, o => o.Ignore());
+            CreateMap<Dungeon, Dungeon>().ForMember(x => x.Id, o => o.Ignore());
         }
     }
 }

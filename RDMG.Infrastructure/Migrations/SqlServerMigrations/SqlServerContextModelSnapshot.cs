@@ -22,7 +22,42 @@ namespace RDMG.Infrastructure.Migrations.SqlServerMigrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
+            modelBuilder.Entity("RDMG.Core.Domain.Dungeon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("DungeonOptionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DungeonTiles")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoamingMonsterDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoomDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("TrapDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DungeonOptionId");
+
+                    b.ToTable("Dungeons");
+                });
+
+            modelBuilder.Entity("RDMG.Core.Domain.DungeonOption", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,42 +126,7 @@ namespace RDMG.Infrastructure.Migrations.SqlServerMigrations
                         .IsUnique()
                         .HasFilter("[DungeonName] IS NOT NULL");
 
-                    b.ToTable("Options");
-                });
-
-            modelBuilder.Entity("RDMG.Core.Domain.SavedDungeon", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("DungeonTiles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("OptionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RoamingMonsterDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoomDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Timestamp")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("TrapDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OptionId");
-
-                    b.ToTable("SavedDungeons");
+                    b.ToTable("DungeonOptions");
                 });
 
             modelBuilder.Entity("RDMG.Core.Domain.User", b =>
@@ -169,7 +169,18 @@ namespace RDMG.Infrastructure.Migrations.SqlServerMigrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
+            modelBuilder.Entity("RDMG.Core.Domain.Dungeon", b =>
+                {
+                    b.HasOne("RDMG.Core.Domain.DungeonOption", "DungeonOption")
+                        .WithMany()
+                        .HasForeignKey("DungeonOptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DungeonOption");
+                });
+
+            modelBuilder.Entity("RDMG.Core.Domain.DungeonOption", b =>
                 {
                     b.HasOne("RDMG.Core.Domain.User", "User")
                         .WithMany()
@@ -178,18 +189,6 @@ namespace RDMG.Infrastructure.Migrations.SqlServerMigrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("RDMG.Core.Domain.SavedDungeon", b =>
-                {
-                    b.HasOne("RDMG.Core.Domain.Option", null)
-                        .WithMany("SavedDungeons")
-                        .HasForeignKey("OptionId");
-                });
-
-            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
-                {
-                    b.Navigation("SavedDungeons");
                 });
 #pragma warning restore 612, 618
         }

@@ -24,7 +24,7 @@ namespace RDMG.Core.Services
         private readonly ILogger _logger;
         private static readonly int dungeonWidthAndHeight = 800;
 
-        public DungeonService(IMapper mapper, 
+        public DungeonService(IMapper mapper,
             IDungeonRepository dungeonRepository,
             IDungeonHelper dungeonHelper,
             ILogger<DungeonService> logger)
@@ -35,35 +35,36 @@ namespace RDMG.Core.Services
             _logger = logger;
         }
 
-        public async Task<int> CreateDungeonOptionAsync(OptionModel dungeonOption, CancellationToken cancellationToken)
+        public async Task<int> CreateDungeonOptionAsync(DungeonOptionModel dungeonOption, CancellationToken cancellationToken)
         {
             try
             {
-                var option = await _dungeonRepository.AddDungeonOptionAsync(_mapper.Map<Option>(dungeonOption), cancellationToken);
+                var option = await _dungeonRepository.AddDungeonOptionAsync(_mapper.Map<DungeonOption>(dungeonOption), cancellationToken);
                 return option.Id;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Dungeon AddDungeonOption failed.");
+                _logger.LogError(ex, $"Create dungeon option failed.");
                 throw;
-            }         
+            }
         }
 
-        public async Task<int> AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId, CancellationToken cancellationToken)
+        public async Task<int> AddDungeonAsync(DungeonModel saveddungeon, CancellationToken cancellationToken)
         {
             try
             {
-                var sd = await _dungeonRepository.AddSavedDungeonAsync(dungeonName, _mapper.Map<SavedDungeon>(saveddungeon), userId, cancellationToken);
+                var dungeon = _mapper.Map<Domain.Dungeon>(saveddungeon);
+                var sd = await _dungeonRepository.AddDungeonAsync(dungeon, cancellationToken);
                 return sd.Id;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Dungeon AddSavedDungeon failed.");
+                _logger.LogError(ex, $"Add dungeon failed.");
                 throw;
             }
         }
 
-        public async Task<bool> GenerateAsync(OptionModel model)
+        public async Task<DungeonModel> GenerateDungeonAsync(DungeonOptionModel model)
         {
             _dungeonHelper.Init(model);
             var dungeonOptions = new DungeonOptionsModel
@@ -79,97 +80,180 @@ namespace RDMG.Core.Services
             {
                 if (model.Corridor)
                 {
-                    var dungeon = new Dungeon(dungeonOptions, _dungeonHelper);
+                    var dungeon = new Generator.Dungeon(dungeonOptions, _dungeonHelper);
                     dungeon.Generate();
-                    model.SavedDungeons = new List<SavedDungeonModel>()
-                    {
-                        new SavedDungeonModel()
+                    return await Task.FromResult(
+                        new DungeonModel()
                         {
                             DungeonTiles = JsonSerializer.Serialize(dungeon.DungeonTiles),
                             RoomDescription = JsonSerializer.Serialize(dungeon.RoomDescription),
                             TrapDescription = JsonSerializer.Serialize(dungeon.TrapDescription),
-                            RoamingMonsterDescription = JsonSerializer.Serialize(dungeon.RoamingMonsterDescription)
+                            RoamingMonsterDescription = JsonSerializer.Serialize(dungeon.RoamingMonsterDescription),
+                            DungeonOptionId = model.Id
                         }
-                    };
-                    return await Task.FromResult(true);
+                    );
                 }
                 else
                 {
                     var dungeonNoCorridor = new DungeonNoCorridor(dungeonWidthAndHeight, dungeonWidthAndHeight, model.DungeonSize, model.RoomSize, _dungeonHelper);
                     dungeonNoCorridor.Generate();
-                    model.SavedDungeons = new List<SavedDungeonModel>()
-                    {
-                        new SavedDungeonModel()
+                    return await Task.FromResult(
+                        new DungeonModel()
                         {
                             DungeonTiles = JsonSerializer.Serialize(dungeonNoCorridor.DungeonTiles),
-                            RoomDescription = JsonSerializer.Serialize(dungeonNoCorridor.RoomDescription)
+                            RoomDescription = JsonSerializer.Serialize(dungeonNoCorridor.RoomDescription),
+                            DungeonOptionId = model.Id,
+                            TrapDescription = "[]",
+                            RoamingMonsterDescription = "[]"
                         }
-                    };
-                    return await Task.FromResult(true);
+                    );
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError("Error: " + ex.Message);
-                return await Task.FromResult(false);
-            }
-        }
-
-        public async Task<IEnumerable<OptionModel>> GetAllOptionsAsync(CancellationToken cancellationToken)
-        {
-            try
-            {
-                var options = await _dungeonRepository.GetAllOptionsAsync(cancellationToken);
-
-                return options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
-            } 
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Dungeon GetAllOptions failed.");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<OptionModel>> GetAllOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<DungeonOptionModel>> GetAllDungeonOptionsAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var options = await _dungeonRepository.GetAllOptionsWithSavedDungeonsAsync(userId, cancellationToken);
+                var options = await _dungeonRepository.GetAllDungeonOptionsAsync(cancellationToken);
 
-                return options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
+                return options.Select(o => _mapper.Map<DungeonOptionModel>(o)).ToList();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"List Applications failed.");
-                throw;
-            }
-
-        }
-
-        public async Task<OptionModel> GetSavedDungeonByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
-        {
-            try
-            {
-                return  _mapper.Map<OptionModel>(await _dungeonRepository.GetSavedDungeonByNameAsync(dungeonName, userId, cancellationToken));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"List Applications failed.");
+                _logger.LogError(ex, $"Get all dungeon options failed.");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<OptionModel>> GetUserOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<DungeonOptionModel>> GetAllDungeonOptionsForUserAsync(int userId, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _dungeonRepository.GetUserOptionsWithSavedDungeonsAsync(userId, cancellationToken);
-                
-                return result.Select(o => _mapper.Map<OptionModel>(o)).ToList();
+                var options = await _dungeonRepository.GetAllDungeonOptionsForUserAsync(userId, cancellationToken);
+
+                return options.Select(o => _mapper.Map<DungeonOptionModel>(o)).ToList();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"List Applications failed.");
+                _logger.LogError(ex, $"Get all dungeon options for user failed.");
+                throw;
+            }
+        }
+
+        public async Task<DungeonOptionModel> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return _mapper.Map<DungeonOptionModel>(await _dungeonRepository.GetDungeonOptionByNameAsync(dungeonName, userId, cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Get dungeon option by name failed.");
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteDungeonOptionAsync(int id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await _dungeonRepository.DeleteDungeonOptionAsync(id, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Delete dungeon option failed.");
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await _dungeonRepository.DeleteSavedDungeonAsync(id, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Delete dungeon failed.");
+                throw;
+            }
+        }
+
+        public async Task<List<DungeonModel>> ListUserDungeonsAsync(int userId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _dungeonRepository.GetAllDungeonsForUserAsync(userId, cancellationToken);
+                return result.Select(d => _mapper.Map<DungeonModel>(d)).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"List dungeons for user failed.");
+                throw;
+            }
+        }
+
+        public async Task<List<DungeonModel>> ListDungeonsByNameAsync(string dungeonName, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var result = await _dungeonRepository.GetAllDungeonByOptionNameAsync(dungeonName, cancellationToken);
+                return result.Select(d => _mapper.Map<DungeonModel>(d)).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"List dungeons by name failed.");
+                throw;
+            }
+        }
+
+        public async Task<DungeonModel> GetDungeonAsync(int id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return _mapper.Map<DungeonModel>(await _dungeonRepository.GetDungeonAsync(id, cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Get dungeon failed.");
+                throw;
+            }
+        }
+
+        public async Task UpdateDungeonAsync(DungeonModel model, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var entity = await _dungeonRepository.GetDungeonAsync(model.Id, cancellationToken);
+                // TODO use mapper?
+                entity.TrapDescription = model.TrapDescription;
+                entity.DungeonTiles = model.DungeonTiles;
+                entity.RoomDescription = model.RoomDescription;
+                entity.RoamingMonsterDescription = model.RoamingMonsterDescription;
+                await _dungeonRepository.UpdateDungeonAsync(entity, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Update dungeon failed.");
+                throw;
+            }
+        }
+
+        public async Task<DungeonOptionModel> GetDungeonOptionAsync(int id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return _mapper.Map<DungeonOptionModel>(await _dungeonRepository.GetDungeonOptionAsync(id, cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Get dungeon option failed.");
                 throw;
             }
         }

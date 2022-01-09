@@ -7,12 +7,18 @@ namespace RDMG.Core.Abstractions.Services
 {
     public interface IDungeonService
     {
-        Task<IEnumerable<OptionModel>> GetAllOptionsAsync(CancellationToken cancellationToken);
-        Task<IEnumerable<OptionModel>> GetAllOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken);
-        Task<int> CreateDungeonOptionAsync(OptionModel dungeonOption, CancellationToken cancellationToken);
-        Task<OptionModel> GetSavedDungeonByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
-        Task<int> AddSavedDungeonAsync(string dungeonName, SavedDungeonModel saveddungeon, int userId, CancellationToken cancellationToken);
-        Task<IEnumerable<OptionModel>> GetUserOptionsWithSavedDungeonsAsync(int userId, CancellationToken cancellationToken);
-        Task<bool> GenerateAsync(OptionModel model);
+        Task<IEnumerable<DungeonOptionModel>> GetAllDungeonOptionsAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<DungeonOptionModel>> GetAllDungeonOptionsForUserAsync(int userId, CancellationToken cancellationToken);
+        Task<DungeonOptionModel> GetDungeonOptionAsync(int id, CancellationToken cancellationToken);
+        Task<DungeonOptionModel> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
+        Task<DungeonModel> GetDungeonAsync(int id, CancellationToken cancellationToken);
+        Task UpdateDungeonAsync(DungeonModel model, CancellationToken cancellationToken);
+        Task<int> CreateDungeonOptionAsync(DungeonOptionModel dungeonOption, CancellationToken cancellationToken);
+        Task<List<DungeonModel>> ListUserDungeonsAsync(int userId, CancellationToken cancellationToken);
+        Task<List<DungeonModel>> ListDungeonsByNameAsync(string dungeonName, CancellationToken cancellationToken);
+        Task<int> AddDungeonAsync(DungeonModel saveddungeon, CancellationToken cancellationToken);
+        Task<bool> DeleteDungeonOptionAsync(int id, CancellationToken cancellationToken);
+        Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken);
+        Task<DungeonModel> GenerateDungeonAsync(DungeonOptionModel model);
     }
 }

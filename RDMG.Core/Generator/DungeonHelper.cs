@@ -190,7 +190,7 @@ namespace RDMG.Core.Generator
             }
         }
 
-        public void Init(OptionModel model)
+        public void Init(DungeonOptionModel model)
         {
             PartyLevel = model.PartyLevel;
             PartySize = model.PartySize;

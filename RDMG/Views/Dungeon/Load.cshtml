@@ -1,0 +1,60 @@
+﻿@model RDMG.Models.Dungeon.DungeonOptionViewModel
+
+@{
+    ViewData["Title"] = @Model.DungeonName;
+}
+<div class="row g-3 mb-3">
+    <div class="col-auto">
+        <a class="btn btn-success" href="@ViewData["ReturnUrl"]" title="@Resources.Common.Back"><i class="fas fa-arrow-left"></i> </a>
+    </div>
+    <div class="col-auto">
+        <label class="col-form-label">@Resources.Dungeon.Theme </label>
+    </div>
+    <div class="col-4">
+        <select id="theme" class="form-control" required>
+            <option value="" disabled selected hidden>@Resources.Dungeon.ChooseTheme</option>
+            <option value="0">@Resources.Dungeon.Dark</option>
+            <option value="1">@Resources.Dungeon.Light</option>
+            <option value="2">@Resources.Dungeon.Minimal</option>
+        </select>
+    </div>
+</div>
+<div class="row col-lg-12">
+    @foreach (var dungeon in Model.Dungeons)
+    {
+        <div id="@dungeon.Id" class="col-lg-8">
+            <canvas id="mapArea_@dungeon.Id" style="border:0px #000000;"> </canvas>
+        </div>
+        <div id="desc_@dungeon.Id" class="col-lg-12" hidden>
+            <table id="table_description_@dungeon.Id" class="table table-borderless" style="white-space: pre-wrap;"> </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    Utils.preloadImages();
+    $(document).ready(function () {
+        $(document).on('change', '#theme', function (e) {
+            @foreach (var dungeon in Model.Dungeons)
+            {
+                <text>
+                Utils.setCanvasSize($("#@dungeon.Id"), "mapArea_@dungeon.Id");
+                Utils.drawDungeonOneCanvas(@Html.Raw(dungeon.DungeonTiles),
+                    @Html.Raw(dungeon.RoomDescription),
+                    @Html.Raw(dungeon.TrapDescription),
+                    "mapArea_@dungeon.Id",
+                    @Html.Raw(@Model.DungeonSize),
+                    '@Html.Raw(@Model.Corridor)',
+                    $("#theme").val(),
+                    @Html.Raw(dungeon.RoamingMonsterDescription),
+                    "table_description_@dungeon.Id");
+                if ($("#desc_@dungeon.Id")[0].hasAttribute('hidden')) {
+                  $("#desc_@dungeon.Id").removeAttr('hidden');
+                }
+                </text>
+            }
+        });
+    });
+</script>
+}

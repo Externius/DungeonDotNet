@@ -1,14 +1,80 @@
+@model RDMG.Models.Dungeon.DungeonListViewModel
+
 @{
-    ViewData["Title"] = "Generate Dungeon";
+    ViewData["Title"] = Resources.Dungeon.Title;
 }
-@section Scripts {
-    <script src="~/js/utils.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-route.min.js"></script>
-    <script src="~/js/dungeon-generator.js"></script>
-    <script src="~/js/dungeonDrawController.js"></script>
-    <script src="~/js/simpleControls.js"></script>
-}
-<div class="row" ng-app="dungeon-generator">
-    <div ng-view></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <a asp-action="Create" class="btn btn-sm btn-success"> @Resources.Common.Create </a>
+    </div>
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>@Resources.Dungeon.Name</th>
+                    <th>@Resources.Dungeon.Created</th>
+                    <th>@Resources.Dungeon.DungeonCount</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dungeon in Model.List)
+                {
+                        <tr>
+                            <td>
+                            @dungeon.DungeonName
+                            </td>
+                            <td>
+                            @dungeon.Created
+                            </td>
+                            <td>
+                            @dungeon.Dungeons.Count
+                            </td>
+                            <td>
+                                <a asp-action="Load" asp-route-name="@dungeon.DungeonName" class="btn btn-sm btn-primary"> @Resources.Dungeon.Load </a>
+                                <form method="post" asp-action="DeleteOption" asp-controller="Dungeon" asp-route-id="@dungeon.Id" class="list-inline-item">
+                                    <button id="deleteOptnBtn" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+    var confirm = function (msg, form, confirmLabel, cancelLabel) {
+        bootbox.confirm({
+            message: msg,
+            buttons: {
+                confirm: {
+                    label: confirmLabel,
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: cancelLabel,
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result === true) {
+                    form.submit();
+                }
+            }
+        });
+    };
+
+    $(document).ready(function () {
+
+        $(document).on('click', '#deleteOptnBtn', function (e) {
+            e.preventDefault();
+            confirm('@Resources.Common.Alert', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
+        });
+
+    });
+</script>
+}

@@ -1,29 +1,29 @@
 var Utils = (function () {
     var SOURCES = [
-        'images/dark/marble.png',
-        'images/dark/corridor.png',
-        'images/dark/door.png',
-        'images/dark/room.png',
-        'images/dark/entry.png',
-        'images/dark/trap.png',
-        'images/dark/room_edge.png',
-        'images/dark/nc_door.png',
-        'images/dark/door_locked.png',
-        'images/dark/door_trapped.png',
-        'images/dark/nc_door_locked.png',
-        'images/dark/nc_door_trapped.png',
-        'images/dark/monster.png',
-        'images/light/marble.png',
-        'images/light/room.png',
-        'images/light/room_edge.png',
-        'images/light/nc_door.png',
-        'images/light/nc_door_locked.png',
-        'images/light/nc_door_trapped.png',
-        'images/white/marble.png',
-        'images/white/room.png',
-        'images/white/nc_door.png',
-        'images/white/nc_door_locked.png',
-        'images/white/nc_door_trapped.png'
+        '/images/dark/marble.png',
+        '/images/dark/corridor.png',
+        '/images/dark/door.png',
+        '/images/dark/room.png',
+        '/images/dark/entry.png',
+        '/images/dark/trap.png',
+        '/images/dark/room_edge.png',
+        '/images/dark/nc_door.png',
+        '/images/dark/door_locked.png',
+        '/images/dark/door_trapped.png',
+        '/images/dark/nc_door_locked.png',
+        '/images/dark/nc_door_trapped.png',
+        '/images/dark/monster.png',
+        '/images/light/marble.png',
+        '/images/light/room.png',
+        '/images/light/room_edge.png',
+        '/images/light/nc_door.png',
+        '/images/light/nc_door_locked.png',
+        '/images/light/nc_door_trapped.png',
+        '/images/white/marble.png',
+        '/images/white/room.png',
+        '/images/white/nc_door.png',
+        '/images/white/nc_door_locked.png',
+        '/images/white/nc_door_trapped.png'
     ];
     var IMAGEOBJECT = [];
     var THEMEINDEX = [];
@@ -33,17 +33,6 @@ var Utils = (function () {
         } else {
             return "10pt Calibri bold";
         }
-    };
-    var createTrapTableNode = function (nodeText, isRoot) {
-        var tr = document.createElement('tr');
-        var td = document.createElement('td');
-        var text = document.createTextNode(nodeText);
-        if (isRoot) {
-            td.rowSpan = 2;
-        }
-        td.appendChild(text);
-        tr.appendChild(td);
-        return tr;
     };
     var createTableNode = function (nodeText, isRoot, parent) {
         var tr;
@@ -55,19 +44,21 @@ var Utils = (function () {
         var td = document.createElement('td');
         var text = document.createTextNode(nodeText);
         if (isRoot) {
-            td.rowSpan = 3;
+            td.colSpan = 5;
+            td.setAttribute('class', 'font-weight-bold text-center root');
         }
         td.appendChild(text);
         tr.appendChild(td);
         return tr;
     };
-    var addDescription = function (roomDescription, trapDescription, roamingDescription) {
-        var table = document.getElementById("table_description");
+    var addDescription = function (roomDescription, trapDescription, roamingDescription, descId) {
+        var table = document.getElementById(descId);
+        var tr;
         table.innerHTML = "";
         for (var i = 0; i < roomDescription.length; i++) {
-            var tr = createTableNode(roomDescription[i].Name, true);
+            tr = createTableNode(roomDescription[i].Name, true);
             table.appendChild(tr);
-            tr = createTableNode(roomDescription[i].Monster, false, tr);
+            tr = createTableNode(roomDescription[i].Monster, false);
             table.appendChild(tr);
             tr = createTableNode(roomDescription[i].Treasure, false);
             table.appendChild(tr);
@@ -75,15 +66,15 @@ var Utils = (function () {
             table.appendChild(tr);
         }
         for (i = 0; i < trapDescription.length; i++) {
-            tr = createTrapTableNode(trapDescription[i].Name, true);
+            tr = createTableNode(trapDescription[i].Name, true);
             table.appendChild(tr);
-            tr = createTrapTableNode(trapDescription[i].Description, false);
+            tr = createTableNode(trapDescription[i].Description, false);
             table.appendChild(tr);
         }
         for (i = 0; i < roamingDescription.length; i++) {
-            tr = createTrapTableNode(roamingDescription[i].Name, true);
+            tr = createTableNode(roamingDescription[i].Name, true);
             table.appendChild(tr);
-            tr = createTrapTableNode(roamingDescription[i].Description, false);
+            tr = createTableNode(roamingDescription[i].Description, false);
             table.appendChild(tr);
         }
     };
@@ -211,12 +202,12 @@ var Utils = (function () {
             }
         }
     };
-    var drawDungeonOneCanvas = function (tiles, roomDescription, trapDescription, canvasID, dungeonSize, hasCorridor, themeID, roamingDescription) {
+    var drawDungeonOneCanvas = function (tiles, roomDescription, trapDescription, canvasID, dungeonSize, hasCorridor, themeID, roamingDescription, descId) {
         var canvas = document.getElementById(canvasID);
         var contextFont = getFontSize(dungeonSize);
         var context = canvas.getContext("2d"); // get canvas context
         context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
-        addDescription(roomDescription, trapDescription, roamingDescription);
+        addDescription(roomDescription, trapDescription, roamingDescription, descId);
         getTheme(themeID);
         drawMap(tiles, context, contextFont, hasCorridor);
     };
@@ -274,23 +265,23 @@ var Utils = (function () {
     };
     var corridorOnchange = function (e) {
         if (e.value === "true") {
-            document.getElementById("roomDensity").disabled = false;
-            document.getElementById("trapPercent").disabled = false;
-            document.getElementById("deadEnd").disabled = false;
-            monsterTypeOnChange(document.getElementById("monsterType"));
+            document.getElementById("RoomDensity").disabled = false;
+            document.getElementById("TrapPercent").disabled = false;
+            document.getElementById("DeadEnd").disabled = false;
+            monsterTypeOnChange(document.getElementById("MonsterType"));
         } else {
-            document.getElementById("roomDensity").disabled = true;
-            document.getElementById("trapPercent").disabled = true;
-            document.getElementById("deadEnd").disabled = true;
-            document.getElementById("roamingPercent").disabled = true;
+            document.getElementById("RoomDensity").disabled = true;
+            document.getElementById("TrapPercent").disabled = true;
+            document.getElementById("DeadEnd").disabled = true;
+            document.getElementById("RoamingPercent").disabled = true;
         }
     };
     var monsterTypeOnChange = function (e) {
         if (e.selectedOptions.length === 0) {
-            document.getElementById("roamingPercent").disabled = true;
-            document.getElementById("roamingPercent").selectedIndex = 0;
-        } else if (document.getElementById("corridor").value === "true") {
-            document.getElementById("roamingPercent").disabled = false;
+            document.getElementById("RoamingPercent").disabled = true;
+            document.getElementById("RoamingPercent").selectedIndex = 0;
+        } else if (document.getElementById("Corridor").value === "true") {
+            document.getElementById("RoamingPercent").disabled = false;
         }
     };
     var preloadImages = function () {
@@ -301,6 +292,14 @@ var Utils = (function () {
             IMAGEOBJECT[j].src = SOURCES[i];
         }
     };
+    var setCanvasSize = function (canvasDiv, canvasId) {
+        var size = Math.round((canvasDiv.width() / 100)) * 100;
+        var canvas = document.getElementById(canvasId);
+        canvas.width = size;
+        canvas.height = size;
+        var context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    };
     return {
         corridorOnchange: corridorOnchange,
         monsterTypeOnChange: monsterTypeOnChange,
@@ -308,6 +307,7 @@ var Utils = (function () {
         downloadDescription: downloadDescription,
         downloadHTML: downloadHTML,
         preloadImages: preloadImages,
-        drawDungeonOneCanvas: drawDungeonOneCanvas
+        drawDungeonOneCanvas: drawDungeonOneCanvas,
+        setCanvasSize: setCanvasSize
     };
 })();
