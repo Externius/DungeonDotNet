@@ -52,9 +52,24 @@ namespace RDMG.Controllers.Web
         public async Task<IActionResult> Load(string name, CancellationToken cancellationToken)
         {
             var model = _mapper.Map<DungeonOptionViewModel>(await _dungeonService.GetDungeonOptionByNameAsync(name, UserHelper.GetUserId(User.Claims), cancellationToken));
-            model.Dungeons = (await _dungeonService.ListDungeonsByNameAsync(model.DungeonName, cancellationToken)).Select(dm => _mapper.Map<DungeonViewModel>(dm)).ToList();
+            model.Dungeons = (await _dungeonService.ListUserDungeonsByNameAsync(model.DungeonName, UserHelper.GetUserId(User.Claims), cancellationToken)).Select(dm => _mapper.Map<DungeonViewModel>(dm)).ToList();
             ViewData["ReturnUrl"] = Url.Action("Index", "Dungeon");
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _dungeonService.DeleteDungeonAsync(id, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting dungeon.");
+            }
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -81,26 +96,8 @@ namespace RDMG.Controllers.Web
                 try
                 {
                     var optionModel = _mapper.Map<DungeonOptionModel>(model);
-                    var dungeon = new DungeonModel();
-                    var existingDungeonOption = await _dungeonService.GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
-                    if (existingDungeonOption is null)
-                    {
-                        optionModel.MonsterType = GetMonsterType(model);
-                        await _dungeonService.CreateDungeonOptionAsync(optionModel, cancellationToken);
-                        var created = await _dungeonService.GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
-                        dungeon = await GenerateDungeonAsync(optionModel, created.Id);
-                        var id = await _dungeonService.AddDungeonAsync(dungeon, cancellationToken);
-                        dungeon.Id = id;
-                    }
-                    else
-                    {
-                        optionModel.MonsterType = GetMonsterType(model);
-                        dungeon = await GenerateDungeonAsync(optionModel, existingDungeonOption.Id);
-                        var existingDungeons = await _dungeonService.ListDungeonsByNameAsync(optionModel.DungeonName, cancellationToken);
-                        var oldDungeon = existingDungeons.First();
-                        dungeon.Id = oldDungeon.Id;
-                        await _dungeonService.UpdateDungeonAsync(dungeon, cancellationToken);
-                    }
+                    optionModel.MonsterType = GetMonsterType(model);
+                    var dungeon = await _dungeonService.CreateOrUpdateDungeonAsync(optionModel, model.AddDungeon, UserHelper.GetUserId(User.Claims), cancellationToken);
                     return Json(JsonSerializer.Serialize(dungeon));
                 }
                 catch (Exception ex)
@@ -110,13 +107,6 @@ namespace RDMG.Controllers.Web
             }
             FillCreateModelDropDowns(model);
             return View(model);
-        }
-
-        private async Task<DungeonModel> GenerateDungeonAsync(DungeonOptionModel optionModel, int optionId)
-        {
-            var dungeon = await _dungeonService.GenerateDungeonAsync(optionModel);
-            dungeon.DungeonOptionId = optionId;
-            return dungeon;
         }
 
         private static string GetMonsterType(DungeonOptionCreateViewModel model)
@@ -134,15 +124,28 @@ namespace RDMG.Controllers.Web
             return monsterType;
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int optionId, CancellationToken cancellationToken)
         {
             var model = new DungeonOptionCreateViewModel
             {
                 DeadEnd = true,
                 Corridor = true,
                 ItemsRarity = 1,
-                UserId = UserHelper.GetUserId(User.Claims)
+                UserId = UserHelper.GetUserId(User.Claims),
+                TrapPercent = 15
             };
+
+            if (optionId != 0)
+            {
+                var option = await _dungeonService.GetDungeonOptionAsync(optionId, cancellationToken);
+                model = _mapper.Map<DungeonOptionCreateViewModel>(option);
+                model.AddDungeon = true;
+                if (model.MonsterType[0].Equals("any"))
+                {
+                    model.MonsterType = null;
+                }
+            }
+
             FillCreateModelDropDowns(model);
             return View(model);
         }

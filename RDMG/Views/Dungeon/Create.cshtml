@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = Resources.Dungeon.CreateTitle;
+    var isReadonly = @Model.AddDungeon;
 }
 
 <div class="row">
@@ -11,10 +12,11 @@
             <input asp-for="Id" type="hidden" />
             <input asp-for="Timestamp" type="hidden" />
             <input asp-for="UserId" type="hidden" />
+            <input asp-for="AddDungeon" type="hidden" />
             <div class="mb-3 row">
                 <label asp-for="DungeonName" class="col-md-4 col-form-label"></label>
                 <div class="col-md-8">
-                    <input asp-for="DungeonName" type="text" class="form-control" tabindex="1" />
+                    <input asp-for="DungeonName" type="text" class="form-control" tabindex="1" readonly=@isReadonly/>
                     <span asp-validation-for="DungeonName" class="text-danger"></span>
                 </div>
             </div>
@@ -105,7 +107,14 @@
                 </tr>
             </table>
             <div class="mb-3">
-                <input type="submit" value="Generate Dungeon" class="btn btn-sm btn-success btn-block" />
+                @if (Model.AddDungeon)
+                {
+                    <input type="submit" value="@Resources.Dungeon.AddDungeon" class="btn btn-sm btn-success btn-block" />
+                }
+                else
+                {
+                    <input type="submit" value="@Resources.Dungeon.GenerateDungeon" class="btn btn-sm btn-success btn-block" />
+                }
             </div>
         </form>
     </div>
@@ -137,7 +146,6 @@
                 }).then(response => response.json())
                 .then(data => {
                     var dungeon = JSON.parse(data);
-                    $("#Id").val(dungeon.Id);
                     Utils.drawDungeonOneCanvas(JSON.parse(dungeon.DungeonTiles),
                         JSON.parse(dungeon.RoomDescription),
                         JSON.parse(dungeon.TrapDescription),

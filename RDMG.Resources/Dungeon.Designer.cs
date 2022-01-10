@@ -61,6 +61,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add dungeon.
+        /// </summary>
+        public static string AddDungeon {
+            get {
+                return ResourceManager.GetString("AddDungeon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose a theme.
         /// </summary>
         public static string ChooseTheme {
@@ -142,6 +151,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate dungeon.
+        /// </summary>
+        public static string GenerateDungeon {
+            get {
+                return ResourceManager.GetString("GenerateDungeon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Items max rarity.
         /// </summary>
         public static string ItemsRarity {
@@ -151,20 +169,20 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Level.
+        /// </summary>
+        public static string Level {
+            get {
+                return ResourceManager.GetString("Level", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Light.
         /// </summary>
         public static string Light {
             get {
                 return ResourceManager.GetString("Light", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Load dungeon.
-        /// </summary>
-        public static string Load {
-            get {
-                return ResourceManager.GetString("Load", resourceCulture);
             }
         }
         
@@ -237,6 +255,24 @@ namespace RDMG.Resources {
         public static string RoomSize {
             get {
                 return ResourceManager.GetString("RoomSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show dungeons.
+        /// </summary>
+        public static string ShowDungeons {
+            get {
+                return ResourceManager.GetString("ShowDungeons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sub dungeons.
+        /// </summary>
+        public static string SubDungeons {
+            get {
+                return ResourceManager.GetString("SubDungeons", resourceCulture);
             }
         }
         

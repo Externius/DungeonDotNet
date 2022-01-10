@@ -5,39 +5,60 @@
 }
 
 <div class="row">
-    <div class="col-md-4">
-        <a asp-action="Create" class="btn btn-sm btn-success"> @Resources.Common.Create </a>
-    </div>
     <div class="col-md-12">
+        <a asp-action="Create" class="btn btn-sm btn-success"> @Resources.Dungeon.CreateTitle </a>
+    </div>
+    <div class="col-md-8">
         <table class="table table-striped">
             <thead class="thead-light">
                 <tr>
                     <th>@Resources.Dungeon.Name</th>
-                    <th>@Resources.Dungeon.Created</th>
-                    <th>@Resources.Dungeon.DungeonCount</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var dungeon in Model.List)
+                @foreach (var dungeonOption in Model.List)
                 {
+                    <tr>
+                        <td>
+                            @dungeonOption.DungeonName
+                        </td>
+                        <td class="text-end">
+                            <form method="post" asp-action="DeleteOption" asp-controller="Dungeon" asp-route-id="@dungeonOption.Id" class="list-inline-item">
+                                <button id="deleteOptnBtn" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
+                            </form>
+                            <a asp-action="Create" asp-route-optionId="@dungeonOption.Id" class="btn btn-sm btn-success"> @Resources.Dungeon.AddDungeon </a>
+                            <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" class="btn btn-sm btn-primary"> @Resources.Dungeon.ShowDungeons </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>@Resources.Dungeon.SubDungeons</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dungeonOption in Model.List)
+                {
+                    @foreach (var dungeon in dungeonOption.Dungeons)
+                    {
                         <tr>
                             <td>
-                            @dungeon.DungeonName
+                                @dungeonOption.DungeonName - @Resources.Dungeon.Level - @dungeon.Level
                             </td>
-                            <td>
-                            @dungeon.Created
-                            </td>
-                            <td>
-                            @dungeon.Dungeons.Count
-                            </td>
-                            <td>
-                                <a asp-action="Load" asp-route-name="@dungeon.DungeonName" class="btn btn-sm btn-primary"> @Resources.Dungeon.Load </a>
-                                <form method="post" asp-action="DeleteOption" asp-controller="Dungeon" asp-route-id="@dungeon.Id" class="list-inline-item">
-                                    <button id="deleteOptnBtn" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
+                            <td class="text-end">
+                                <form method="post" asp-action="Delete" asp-controller="Dungeon" asp-route-id="@dungeon.Id" class="list-inline-item">
+                                    <button id="deleteBtn" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
                                 </form>
                             </td>
                         </tr>
+                    }
                 }
             </tbody>
         </table>
@@ -75,6 +96,10 @@
             confirm('@Resources.Common.Alert', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
         });
 
+        $(document).on('click', '#deleteBtn', function (e) {
+            e.preventDefault();
+            confirm('@Resources.Common.Alert', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
+        });
     });
 </script>
 }

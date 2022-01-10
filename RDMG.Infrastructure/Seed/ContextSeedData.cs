@@ -79,7 +79,7 @@ namespace RDMG.Seed
             };
 
             var sd = await _dungeonService.GenerateDungeonAsync(model);
-
+            sd.Level = 1;
             await _dungeonService.AddDungeonAsync(sd, token);
 
             dungeonOption = new DungeonOption()
@@ -126,7 +126,7 @@ namespace RDMG.Seed
             };
 
             sd = await _dungeonService.GenerateDungeonAsync(model);
-
+            sd.Level = 1;
             await _dungeonService.AddDungeonAsync(sd, token);
         }
 

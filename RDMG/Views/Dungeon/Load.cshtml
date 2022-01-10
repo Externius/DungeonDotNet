@@ -22,6 +22,7 @@
 <div class="row col-lg-12">
     @foreach (var dungeon in Model.Dungeons)
     {
+        <h1 id="header_@dungeon.Id" class="text-center" hidden>@Resources.Dungeon.Level - @dungeon.Level</h1>
         <div id="@dungeon.Id" class="col-lg-8">
             <canvas id="mapArea_@dungeon.Id" style="border:0px #000000;"> </canvas>
         </div>
@@ -49,6 +50,9 @@
                     $("#theme").val(),
                     @Html.Raw(dungeon.RoamingMonsterDescription),
                     "table_description_@dungeon.Id");
+                if ($("#header_@dungeon.Id")[0].hasAttribute('hidden')) {
+                  $("#header_@dungeon.Id").removeAttr('hidden');
+                }
                 if ($("#desc_@dungeon.Id")[0].hasAttribute('hidden')) {
                   $("#desc_@dungeon.Id").removeAttr('hidden');
                 }

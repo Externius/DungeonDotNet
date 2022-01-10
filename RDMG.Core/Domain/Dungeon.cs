@@ -8,5 +8,6 @@ namespace RDMG.Core.Domain
         public string RoamingMonsterDescription { get; set; }
         public int DungeonOptionId { get; set; }
         public DungeonOption DungeonOption { get; set; }
+        public int Level { get; set; }
     }
 }

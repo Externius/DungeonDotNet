@@ -90,7 +90,7 @@ namespace RDMG.Infrastructure
             }
         }
 
-        public async Task<bool> DeleteSavedDungeonAsync(int id, CancellationToken cancellationToken)
+        public async Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken)
         {
             var entity = await _context.Dungeons.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
@@ -107,11 +107,11 @@ namespace RDMG.Infrastructure
             }
         }
 
-        public async Task<IEnumerable<Dungeon>> GetAllDungeonByOptionNameAsync(string dungeonName, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Dungeon>> GetAllDungeonByOptionNameForUserAsync(string dungeonName, int userId, CancellationToken cancellationToken)
         {
             return await _context.Dungeons
                                     .Include(d => d.DungeonOption)
-                                    .Where(d => d.DungeonOption.DungeonName == dungeonName)
+                                    .Where(d => d.DungeonOption.DungeonName == dungeonName && d.DungeonOption.UserId == userId)
                                     .OrderBy(d => d.DungeonOption.Created)
                                     .ToListAsync(cancellationToken);
         }

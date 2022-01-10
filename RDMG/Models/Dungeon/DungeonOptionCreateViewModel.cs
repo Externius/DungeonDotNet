@@ -68,5 +68,6 @@ namespace RDMG.Models.Dungeon
         [Display(ResourceType = typeof(Resources.Dungeon), Name = "Theme")]
         public IList<SelectListItem> Themes { get; set; }
         public int UserId { get; set; }
+        public bool AddDungeon { get; set; }
     }
 }

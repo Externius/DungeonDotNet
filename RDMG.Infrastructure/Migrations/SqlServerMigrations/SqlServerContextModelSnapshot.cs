@@ -36,6 +36,9 @@ namespace RDMG.Infrastructure.Migrations.SqlServerMigrations
                     b.Property<string>("DungeonTiles")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
                     b.Property<string>("RoamingMonsterDescription")
                         .HasColumnType("nvarchar(max)");
 

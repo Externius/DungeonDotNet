@@ -9,7 +9,7 @@ namespace RDMG.Core.Abstractions.Repository
     {
         Task<IEnumerable<DungeonOption>> GetAllDungeonOptionsAsync(CancellationToken cancellationToken);
         Task<IEnumerable<DungeonOption>> GetAllDungeonOptionsForUserAsync(int userId, CancellationToken cancellationToken);
-        Task<IEnumerable<Domain.Dungeon>> GetAllDungeonByOptionNameAsync(string dungeonName, CancellationToken cancellationToken);
+        Task<IEnumerable<Domain.Dungeon>> GetAllDungeonByOptionNameForUserAsync(string dungeonName, int userId, CancellationToken cancellationToken);
         Task<IEnumerable<Domain.Dungeon>> GetAllDungeonsForUserAsync(int userId, CancellationToken cancellationToken);
         Task<Domain.Dungeon> GetDungeonAsync(int id, CancellationToken cancellationToken);
         Task<DungeonOption> GetDungeonOptionAsync(int id, CancellationToken cancellationToken);
@@ -17,7 +17,7 @@ namespace RDMG.Core.Abstractions.Repository
         Task<DungeonOption> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
         Task<Domain.Dungeon> AddDungeonAsync(Domain.Dungeon saveddungeon, CancellationToken cancellationToken);
         Task<bool> DeleteDungeonOptionAsync(int id, CancellationToken cancellationToken);
-        Task<bool> DeleteSavedDungeonAsync(int id, CancellationToken cancellationToken);
+        Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken);
         Task<Domain.Dungeon> UpdateDungeonAsync(Domain.Dungeon dungeon, CancellationToken cancellationToken);
     }
 }

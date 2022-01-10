@@ -27,7 +27,7 @@ namespace RDMG.Tests.DungeonServiceTests
             var source = new CancellationTokenSource();
             var token = source.Token;
             var dungeonName = (await service.GetAllDungeonOptionsAsync(token)).First().DungeonName;
-            var result = await service.ListDungeonsByNameAsync(dungeonName, token);
+            var result = await service.ListUserDungeonsByNameAsync(dungeonName, 1, token);
             result.Count.ShouldBe(1);
         }
     }

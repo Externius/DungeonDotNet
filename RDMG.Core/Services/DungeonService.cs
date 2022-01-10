@@ -64,6 +64,77 @@ namespace RDMG.Core.Services
             }
         }
 
+        public async Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon, int userId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (addDungeon)
+                {
+                    return await AddDungeonToExistingOptionAsync(optionModel, userId, cancellationToken);
+                }
+
+                var existingDungeonOption = await GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
+                if (existingDungeonOption is null)
+                {
+                    return await CreateOptionAndAddDungeonToItAsync(optionModel, cancellationToken);
+                }
+                else // regenerate
+                {
+                    var existingDungeons = await ListUserDungeonsByNameAsync(optionModel.DungeonName, userId, cancellationToken);
+                    var oldDungeon = existingDungeons.FirstOrDefault();
+                    if (oldDungeon is not null)
+                    {
+                        return await UpdateExistingDungeonAsync(optionModel, existingDungeonOption, oldDungeon, cancellationToken);
+                    }
+                    else
+                    {
+                        return await AddDungeonToExistingOptionAsync(optionModel, userId, cancellationToken);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating dungeon.");
+                throw;
+            }
+        }
+
+        private async Task<DungeonModel> UpdateExistingDungeonAsync(DungeonOptionModel optionModel, DungeonOptionModel existingDungeonOption, DungeonModel oldDungeon, CancellationToken cancellationToken)
+        {
+            var dungeon = await GenerateDungeonAsync(optionModel, existingDungeonOption.Id);
+            dungeon.Id = oldDungeon.Id;
+            dungeon.Level = oldDungeon.Level;
+            await UpdateDungeonAsync(dungeon, cancellationToken);
+            return dungeon;
+        }
+
+        private async Task<DungeonModel> CreateOptionAndAddDungeonToItAsync(DungeonOptionModel optionModel, CancellationToken cancellationToken)
+        {
+            await CreateDungeonOptionAsync(optionModel, cancellationToken);
+            var created = await GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
+            var dungeon = await GenerateDungeonAsync(optionModel, created.Id);
+            dungeon.Level = 1;
+            var id = await AddDungeonAsync(dungeon, cancellationToken);
+            dungeon.Id = id;
+            return dungeon;
+        }
+
+        private async Task<DungeonModel> AddDungeonToExistingOptionAsync(DungeonOptionModel optionModel, int userId, CancellationToken cancellationToken)
+        {
+            var dungeon = await GenerateDungeonAsync(optionModel, optionModel.Id);
+            dungeon.Level = (await _dungeonRepository.GetAllDungeonByOptionNameForUserAsync(optionModel.DungeonName, userId, cancellationToken)).Count() + 1;
+            var id = await AddDungeonAsync(dungeon, cancellationToken);
+            dungeon.Id = id;
+            return dungeon;
+        }
+
+        private async Task<DungeonModel> GenerateDungeonAsync(DungeonOptionModel optionModel, int optionId)
+        {
+            var dungeon = await GenerateDungeonAsync(optionModel);
+            dungeon.DungeonOptionId = optionId;
+            return dungeon;
+        }
+
         public async Task<DungeonModel> GenerateDungeonAsync(DungeonOptionModel model)
         {
             _dungeonHelper.Init(model);
@@ -176,7 +247,7 @@ namespace RDMG.Core.Services
         {
             try
             {
-                return await _dungeonRepository.DeleteSavedDungeonAsync(id, cancellationToken);
+                return await _dungeonRepository.DeleteDungeonAsync(id, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -199,11 +270,11 @@ namespace RDMG.Core.Services
             }
         }
 
-        public async Task<List<DungeonModel>> ListDungeonsByNameAsync(string dungeonName, CancellationToken cancellationToken)
+        public async Task<List<DungeonModel>> ListUserDungeonsByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _dungeonRepository.GetAllDungeonByOptionNameAsync(dungeonName, cancellationToken);
+                var result = await _dungeonRepository.GetAllDungeonByOptionNameForUserAsync(dungeonName, userId, cancellationToken);
                 return result.Select(d => _mapper.Map<DungeonModel>(d)).ToList();
             }
             catch (Exception ex)
@@ -236,6 +307,7 @@ namespace RDMG.Core.Services
                 entity.DungeonTiles = model.DungeonTiles;
                 entity.RoomDescription = model.RoomDescription;
                 entity.RoamingMonsterDescription = model.RoamingMonsterDescription;
+                entity.Level = model.Level;
                 await _dungeonRepository.UpdateDungeonAsync(entity, cancellationToken);
             }
             catch (Exception ex)
