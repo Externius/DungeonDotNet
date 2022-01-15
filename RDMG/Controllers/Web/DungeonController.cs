@@ -56,8 +56,14 @@ namespace RDMG.Controllers.Web
 
         public async Task<IActionResult> Load(string name, CancellationToken cancellationToken)
         {
-            var model = _mapper.Map<DungeonOptionViewModel>(await _dungeonService.GetDungeonOptionByNameAsync(name, UserHelper.GetUserId(User.Claims), cancellationToken));
-            model.Dungeons = (await _dungeonService.ListUserDungeonsByNameAsync(model.DungeonName, UserHelper.GetUserId(User.Claims), cancellationToken)).Select(dm => _mapper.Map<DungeonViewModel>(dm)).ToList();
+            var id = UserHelper.GetUserId(User.Claims);
+            var model = new LoadViewModel
+            {
+                Theme = "",
+                Option = _mapper.Map<DungeonOptionViewModel>(await _dungeonService.GetDungeonOptionByNameAsync(name, id, cancellationToken)),
+                Themes = (await _optionService.ListOptionsAsync(cancellationToken, OptionKey.Theme)).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList()
+            };
+            model.Option.Dungeons = (await _dungeonService.ListUserDungeonsByNameAsync(model.Option.DungeonName, id, cancellationToken)).Select(dm => _mapper.Map<DungeonViewModel>(dm)).ToList();
             ViewData["ReturnUrl"] = Url.Action("Index", "Dungeon");
             return View(model);
         }

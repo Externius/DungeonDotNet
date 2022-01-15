@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Dungeon;
 using RDMG.Core.Abstractions.Repository;
@@ -59,12 +60,13 @@ namespace RDMG
                 ;
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ContextSeedData seedData)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env, ContextSeedData seedData)
         {
             app.ConfigureDB(Configuration);
-            if (env.EnvironmentName.StartsWith("Development"))
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                seedData.SeedDataAsync().Wait();
             }
             else
             {
@@ -83,7 +85,6 @@ namespace RDMG
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            seedData.SeedDataAsync().Wait();
         }
     }
 

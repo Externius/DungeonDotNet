@@ -202,6 +202,49 @@ var Utils = (function () {
             }
         }
     };
+    var drawPlainMap = function (tiles, context, hasCorridor) {
+        for (var i = 1; i < tiles.length - 1; i++) {
+            for (var j = 1; j < tiles[i].length - 1; j++) {
+                switch (tiles[i][j].Texture) {
+                    case 1: // marble
+                        context.drawImage(IMAGEOBJECT[THEMEINDEX[0]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
+                        break;
+                    case 2: // corridor
+                    case 6: // trap
+                    case 13: // roaming monster
+                        context.drawImage(IMAGEOBJECT[THEMEINDEX[1]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
+                        break;
+                    case 3: // door
+                    case 9: // door_locked
+                    case 10: // door_trapped
+                        rotateImage(context, IMAGEOBJECT[THEMEINDEX[2]], getDegree(tiles, i, j), tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
+                        break;
+                    case 4: // room
+                        context.drawImage(IMAGEOBJECT[THEMEINDEX[3]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
+                        break;
+                    case 5: // entry
+                        context.drawImage(IMAGEOBJECT[THEMEINDEX[4]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
+                        break;
+                    case 7: // room_edge
+                        context.drawImage(hasCorridor ? IMAGEOBJECT[THEMEINDEX[0]] : IMAGEOBJECT[THEMEINDEX[6]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
+                        break;
+                    case 8: // nc_Door
+                    case 11: // nc_door_locked
+                    case 12: // nc_door_trapped
+                        rotateImage(context, IMAGEOBJECT[THEMEINDEX[7]], getDegree(tiles, i, j), tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
+    var generatePlainMap = function (tiles, hasCorridor, canvasPlainId) {
+        var canvasPlain = document.getElementById(canvasPlainId);
+        var contextPlain = canvasPlain.getContext("2d");
+        contextPlain.clearRect(0, 0, canvasPlain.width, canvasPlain.height); // clear canvas
+        drawPlainMap(tiles, contextPlain, hasCorridor);
+    };
     var drawDungeonOneCanvas = function (tiles, roomDescription, trapDescription, canvasID, dungeonSize, hasCorridor, themeID, roamingDescription, descId) {
         var canvas = document.getElementById(canvasID);
         var contextFont = getFontSize(dungeonSize);
@@ -308,6 +351,7 @@ var Utils = (function () {
         downloadHTML: downloadHTML,
         preloadImages: preloadImages,
         drawDungeonOneCanvas: drawDungeonOneCanvas,
-        setCanvasSize: setCanvasSize
+        setCanvasSize: setCanvasSize,
+        generatePlainMap: generatePlainMap
     };
 })();

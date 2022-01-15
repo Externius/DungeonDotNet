@@ -160,6 +160,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate plain map.
+        /// </summary>
+        public static string GeneratePlainMap {
+            get {
+                return ResourceManager.GetString("GeneratePlainMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Items max rarity.
         /// </summary>
         public static string ItemsRarity {

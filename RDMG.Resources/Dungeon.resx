@@ -150,6 +150,9 @@
   <data name="GenerateDungeon" xml:space="preserve">
     <value>Generate dungeon</value>
   </data>
+  <data name="GeneratePlainMap" xml:space="preserve">
+    <value>Generate plain map</value>
+  </data>
   <data name="ItemsRarity" xml:space="preserve">
     <value>Items max rarity</value>
   </data>
