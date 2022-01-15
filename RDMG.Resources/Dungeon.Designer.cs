@@ -268,6 +268,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show dungeon.
+        /// </summary>
+        public static string ShowDungeon {
+            get {
+                return ResourceManager.GetString("ShowDungeon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show dungeons.
         /// </summary>
         public static string ShowDungeons {

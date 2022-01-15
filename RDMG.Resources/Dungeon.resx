@@ -186,6 +186,9 @@
   <data name="RoomSize" xml:space="preserve">
     <value>Room size</value>
   </data>
+  <data name="ShowDungeon" xml:space="preserve">
+    <value>Show dungeon</value>
+  </data>
   <data name="ShowDungeons" xml:space="preserve">
     <value>Show dungeons</value>
   </data>

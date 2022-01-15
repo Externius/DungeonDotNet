@@ -54,7 +54,7 @@ namespace RDMG.Controllers.Web
             return View(model);
         }
 
-        public async Task<IActionResult> Load(string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> Load(string name, int level, CancellationToken cancellationToken)
         {
             var id = UserHelper.GetUserId(User.Claims);
             var model = new LoadViewModel
@@ -63,7 +63,12 @@ namespace RDMG.Controllers.Web
                 Option = _mapper.Map<DungeonOptionViewModel>(await _dungeonService.GetDungeonOptionByNameAsync(name, id, cancellationToken)),
                 Themes = (await _optionService.ListOptionsAsync(cancellationToken, OptionKey.Theme)).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList()
             };
-            model.Option.Dungeons = (await _dungeonService.ListUserDungeonsByNameAsync(model.Option.DungeonName, id, cancellationToken)).Select(dm => _mapper.Map<DungeonViewModel>(dm)).ToList();
+
+            var dungeons = await _dungeonService.ListUserDungeonsByNameAsync(model.Option.DungeonName, id, cancellationToken);
+            if (level != 0)
+                dungeons = dungeons.Where(dm => dm.Level == level).ToList();
+
+            model.Option.Dungeons = dungeons.Select(dm => _mapper.Map<DungeonViewModel>(dm)).ToList();
             ViewData["ReturnUrl"] = Url.Action("Index", "Dungeon");
             return View(model);
         }
