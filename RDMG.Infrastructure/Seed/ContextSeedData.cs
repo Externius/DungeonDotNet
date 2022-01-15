@@ -27,10 +27,19 @@ namespace RDMG.Seed
             if (!_context.Users.Any())
             {
                 var source = new CancellationTokenSource();
-                CancellationToken token = source.Token;
+                var token = source.Token;
                 await SeedUsers(token);
                 await SeedOptions(token);
                 await SeedDungeons(token);
+            }
+        }
+
+        public async Task SeedBaseAsync()
+        {
+            if (!_context.Options.Any())
+            {
+                var source = new CancellationTokenSource();
+                await SeedOptions(source.Token);
             }
         }
 

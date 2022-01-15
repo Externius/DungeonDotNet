@@ -134,6 +134,7 @@ namespace RDMG.Tests
             services.AddOptions()
                 .AddDatabase(Connection)
                 .AddApplicationServices()
+                .AddMemoryCache()
                 .AddAutoMapper(cfg =>
                 {
                     cfg.AllowNullCollections = true;

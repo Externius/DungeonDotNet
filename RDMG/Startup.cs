@@ -49,6 +49,7 @@ namespace RDMG
                         options.LoginPath = new PathString("/Auth/Login");
                         options.AccessDeniedPath = new PathString("/Auth/Forbidden/");
                     });
+            services.AddMemoryCache();
             services.AddMvc()
                 .AddJsonOptions(options =>
                 {
@@ -70,6 +71,7 @@ namespace RDMG
             }
             else
             {
+                seedData.SeedBaseAsync().Wait();
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }

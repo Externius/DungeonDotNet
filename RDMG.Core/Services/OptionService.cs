@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
@@ -15,14 +16,17 @@ namespace RDMG.Core.Services
     public class OptionService : IOptionService
     {
         private readonly IOptionRepository _optionRepository;
+        private readonly IMemoryCache _memoryCache;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public OptionService(IMapper mapper,
             IOptionRepository optionRepository,
+            IMemoryCache memoryCache,
             ILogger<DungeonService> logger)
         {
             _optionRepository = optionRepository;
+            _memoryCache = memoryCache;
             _mapper = mapper;
             _logger = logger;
         }
@@ -31,9 +35,21 @@ namespace RDMG.Core.Services
         {
             try
             {
-                var options = await _optionRepository.ListAsync(cancellationToken, filter);
+                if (!_memoryCache.TryGetValue(nameof(ListOptionsAsync), out List<OptionModel> cacheEntry))
+                {
+                    var options = await _optionRepository.ListAsync(cancellationToken);
+                    cacheEntry = options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
 
-                return options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
+                    var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromMinutes(1));
+
+                    _memoryCache.Set(nameof(ListOptionsAsync), cacheEntry, cacheEntryOptions);
+                }
+
+                if (filter.HasValue)
+                    return cacheEntry.Where(o => o.Key == filter.Value).ToList();
+                else
+                    return cacheEntry;
             }
             catch (Exception ex)
             {

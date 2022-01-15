@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,9 +17,6 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex ">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">@Resources.Common.NavAbout</a>
-                        </li>
                         @if (User.Identity.IsAuthenticated)
                         {
                             if (User.Claims.Any(c => c.Value == RDMG.Core.Domain.Roles.Admin))
@@ -45,11 +42,11 @@
 
     <footer class="border-top footer text-muted text-center">
         <div class="container">
-            &copy; @Resources.Common.Copyright - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Resources.Common.Privacy</a>
+            &copy; @Resources.Common.Copyright - @System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString() - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Resources.Common.Privacy</a>
         </div>
     </footer>
 
-    <i class="far fa-arrow-alt-circle-up toparrow" onclick="topFunction()" style="display:none"></i>
+    <em class="far fa-arrow-alt-circle-up toparrow" onclick="topFunction()" style="display:none"></em>
 
     <partial name="_ScriptsPartial" />
     @RenderSection("Scripts", required: false)
