@@ -122,6 +122,35 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     b.ToTable("DungeonOptions");
                 });
 
+            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Options");
+                });
+
             modelBuilder.Entity("RDMG.Core.Domain.User", b =>
                 {
                     b.Property<int>("Id")

@@ -12,6 +12,7 @@ using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Generator;
 using RDMG.Core.Services;
 using RDMG.Infrastructure;
+using RDMG.Infrastructure.Repository;
 using RDMG.Seed;
 using System;
 using System.Reflection;
@@ -158,11 +159,13 @@ namespace RDMG
         {
             services.AddTransient<ContextSeedData>()
                     .AddScoped<IDungeonRepository, DungeonRepository>()
+                    .AddScoped<IOptionRepository, OptionRepository>()
                     .AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IUserService, UserService>()
                     .AddScoped<IAuthService, AuthService>()
                     .AddScoped<IDungeonHelper, DungeonHelper>()
+                    .AddScoped<IOptionService, OptionService>()
                     .AddScoped<IDungeonService, DungeonService>();
 
             return services;

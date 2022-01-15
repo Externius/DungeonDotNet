@@ -12,7 +12,7 @@ namespace RDMG.Core.Abstractions.Services
         Task<DungeonOptionModel> GetDungeonOptionAsync(int id, CancellationToken cancellationToken);
         Task<DungeonOptionModel> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
         Task<DungeonModel> GetDungeonAsync(int id, CancellationToken cancellationToken);
-        Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon, int userId, CancellationToken cancellationToken);
+        Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon, int level, CancellationToken cancellationToken);
         Task UpdateDungeonAsync(DungeonModel model, CancellationToken cancellationToken);
         Task<int> CreateDungeonOptionAsync(DungeonOptionModel dungeonOption, CancellationToken cancellationToken);
         Task<List<DungeonModel>> ListUserDungeonsAsync(int userId, CancellationToken cancellationToken);

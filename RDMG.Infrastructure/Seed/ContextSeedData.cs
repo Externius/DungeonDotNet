@@ -4,6 +4,7 @@ using RDMG.Core.Domain;
 using RDMG.Core.Helpers;
 using RDMG.Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,8 +29,383 @@ namespace RDMG.Seed
                 var source = new CancellationTokenSource();
                 CancellationToken token = source.Token;
                 await SeedUsers(token);
+                await SeedOptions(token);
                 await SeedDungeons(token);
             }
+        }
+
+        private async Task SeedOptions(CancellationToken token)
+        {
+            await SeedSizeAsync(token);
+            await SeedDifficultyAsync(token);
+            await SeedTreasureValueAsync(token);
+            await SeedItemsRarityAsync(token);
+            await SeedRoomDensityAsync(token);
+            await SeedRoomSizeAsync(token);
+            await SeedMonsterTypeAsync(token);
+            await SeedTrapPercentAsync(token);
+            await SeedRoamingPercentAsync(token);
+            await SeedThemeAsync(token);
+        }
+
+        private async Task SeedThemeAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.Theme,
+                    Name = Resources.Dungeon.Dark,
+                    Value = "0"
+                },
+                new Option()
+                {
+                    Key = OptionKey.Theme,
+                    Name = Resources.Dungeon.Light,
+                    Value = "1"
+                },
+                new Option()
+                {
+                    Key = OptionKey.Theme,
+                    Name = Resources.Dungeon.Minimal,
+                    Value = "2"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedRoamingPercentAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.RoamingPercent,
+                    Name = "None",
+                    Value = "0"
+                },
+                new Option()
+                {
+                    Key = OptionKey.RoamingPercent,
+                    Name = "Few",
+                    Value = "10"
+                },
+                new Option()
+                {
+                    Key = OptionKey.RoamingPercent,
+                    Name = "More",
+                    Value = "20"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedTrapPercentAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.TrapPercent,
+                    Name = "None",
+                    Value = "0"
+                },
+                new Option()
+                {
+                    Key = OptionKey.TrapPercent,
+                    Name = "Few",
+                    Value = "15"
+                },
+                new Option()
+                {
+                    Key = OptionKey.TrapPercent,
+                    Name = "More",
+                    Value = "30"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedMonsterTypeAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Aberrations",
+                    Value = "aberration"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Beasts",
+                    Value = "beast"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Celestials",
+                    Value = "celestial"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Constructs",
+                    Value = "construct"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Dragons",
+                    Value = "dragon"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Elementals",
+                    Value = "elemental"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Fey",
+                    Value = "fey"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Fiends",
+                    Value = "fiend"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Giants",
+                    Value = "giant"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Humanoids",
+                    Value = "humanoid"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Monstrosities",
+                    Value = "monstrosity"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Oozes",
+                    Value = "ooze"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Plants",
+                    Value = "plant"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Swarm of tiny beasts",
+                    Value = "swarm of Tiny beasts"
+                },
+                new Option()
+                {
+                    Key = OptionKey.MonsterType,
+                    Name = "Undead",
+                    Value = "undead"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedRoomSizeAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.RoomSize,
+                    Name = "Small",
+                    Value = "20"
+                },
+                new Option()
+                {
+                    Key = OptionKey.RoomSize,
+                    Name = "Medium",
+                    Value = "35"
+                },
+                new Option()
+                {
+                    Key = OptionKey.RoomSize,
+                    Name = "Large",
+                    Value = "45"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedRoomDensityAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.RoomDensity,
+                    Name = "Low",
+                    Value = "20"
+                },
+                new Option()
+                {
+                    Key = OptionKey.RoomDensity,
+                    Name = "Medium",
+                    Value = "30"
+                },
+                new Option()
+                {
+                    Key = OptionKey.RoomDensity,
+                    Name = "High",
+                    Value = "40"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedItemsRarityAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.ItemsRarity,
+                    Name = "Common",
+                    Value = "0"
+                },
+                new Option()
+                {
+                    Key = OptionKey.ItemsRarity,
+                    Name = "Unommon",
+                    Value = "1"
+                },
+                new Option()
+                {
+                    Key = OptionKey.ItemsRarity,
+                    Name = "Rare",
+                    Value = "2"
+                },
+                new Option()
+                {
+                    Key = OptionKey.ItemsRarity,
+                    Name = "Very Rare",
+                    Value = "3"
+                },
+                new Option()
+                {
+                    Key = OptionKey.ItemsRarity,
+                    Name = "Legendary",
+                    Value = "4"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedTreasureValueAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.TreasureValue,
+                    Name = "Low",
+                    Value = "0.5"
+                },
+                new Option()
+                {
+                    Key = OptionKey.TreasureValue,
+                    Name = "Standard",
+                    Value = "1"
+                },
+                new Option()
+                {
+                    Key = OptionKey.TreasureValue,
+                    Name = "High",
+                    Value = "1.5"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedDifficultyAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.Difficulty,
+                    Name = "Easy",
+                    Value = "0"
+                },
+                new Option()
+                {
+                    Key = OptionKey.Difficulty,
+                    Name = "Medium",
+                    Value = "1"
+                },
+                new Option()
+                {
+                    Key = OptionKey.Difficulty,
+                    Name = "Hard",
+                    Value = "2"
+                },
+                new Option()
+                {
+                    Key = OptionKey.Difficulty,
+                    Name = "Deadly",
+                    Value = "3"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        private async Task SeedSizeAsync(CancellationToken token)
+        {
+            var options = new List<Option>
+            {
+                new Option()
+                {
+                    Key = OptionKey.Size,
+                    Name = "Small",
+                    Value = "20"
+                },
+                new Option()
+                {
+                    Key = OptionKey.Size,
+                    Name = "Medium",
+                    Value = "32"
+                },
+                new Option()
+                {
+                    Key = OptionKey.Size,
+                    Name = "Large",
+                    Value = "44"
+                }
+            };
+            await _context.Options.AddRangeAsync(options, token);
+            await _context.SaveChangesAsync(token);
         }
 
         private async Task SeedDungeons(CancellationToken token)
@@ -139,7 +515,7 @@ namespace RDMG.Seed
                 FirstName = "Test",
                 LastName = "Admin",
                 Email = "admin@admin.com",
-                Role = Role.Admin         
+                Role = Role.Admin
             });
 
             _context.Add(new User

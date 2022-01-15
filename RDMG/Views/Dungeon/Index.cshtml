@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var dungeonOption in Model.List)
+                @foreach (var dungeonOption in Model.List.OrderBy(dovm => dovm.DungeonName))
                 {
                     <tr>
                         <td>
@@ -27,8 +27,8 @@
                             <form method="post" asp-action="DeleteOption" asp-controller="Dungeon" asp-route-id="@dungeonOption.Id" class="list-inline-item">
                                 <button id="deleteOptnBtn" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
                             </form>
-                            <a asp-action="Create" asp-route-optionId="@dungeonOption.Id" class="btn btn-sm btn-success"> @Resources.Dungeon.AddDungeon </a>
-                            <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" class="btn btn-sm btn-primary"> @Resources.Dungeon.ShowDungeons </a>
+                            <a asp-action="Create" asp-route-optionId="@dungeonOption.Id" title="@Resources.Dungeon.AddDungeon" class="btn btn-sm btn-success"> <i class="fas fa-plus"></i>  </a>
+                            <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" title=" @Resources.Dungeon.ShowDungeons" class="btn btn-sm btn-primary"> <i class="fas fa-list"></i> </a>
                         </td>
                     </tr>
                 }
@@ -44,9 +44,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var dungeonOption in Model.List)
+                @foreach (var dungeonOption in Model.List.OrderBy(dovm => dovm.DungeonName))
                 {
-                    @foreach (var dungeon in dungeonOption.Dungeons)
+                    @foreach (var dungeon in dungeonOption.Dungeons.OrderBy(dvm => dvm.Level))
                     {
                         <tr>
                             <td>

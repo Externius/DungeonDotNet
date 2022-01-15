@@ -9,6 +9,7 @@ namespace RDMG.Infrastructure
         public DbSet<DungeonOption> DungeonOptions { get; set; }
         public DbSet<Dungeon> Dungeons { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Option> Options { get; set; }
         public Context()
         {
 
@@ -23,6 +24,10 @@ namespace RDMG.Infrastructure
         {
             modelBuilder.Entity<DungeonOption>()
                 .HasIndex(o => new { o.DungeonName, o.UserId })
+                .IsUnique();
+
+            modelBuilder.Entity<Option>()
+                .HasIndex(o => new { o.Key, o.Name })
                 .IsUnique();
 
             modelBuilder.UseEnumStringConverter();

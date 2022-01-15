@@ -8,7 +8,7 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var tables = new string[] { "Users", "Dungeons", "DungeonOptions" };
+            var tables = new string[] { "Users", "Dungeons", "DungeonOptions", "Options" };
             foreach (var table in tables)
             {
                 migrationBuilder.Sql(

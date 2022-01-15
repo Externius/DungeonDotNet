@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
+using RDMG.Core.Domain;
 using RDMG.Helpers;
 using RDMG.Models.Dungeon;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -20,12 +20,17 @@ namespace RDMG.Controllers.Web
     [Authorize]
     public class DungeonController : Controller
     {
+        private readonly IOptionService _optionService;
         private readonly IDungeonService _dungeonService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public DungeonController(IDungeonService dungeonService, IMapper mapper, ILogger<DungeonController> logger)
+        public DungeonController(IDungeonService dungeonService,
+            IOptionService optionService,
+            IMapper mapper,
+            ILogger<DungeonController> logger)
         {
+            _optionService = optionService;
             _dungeonService = dungeonService;
             _mapper = mapper;
             _logger = logger;
@@ -82,7 +87,7 @@ namespace RDMG.Controllers.Web
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting dungeon.");
+                _logger.LogError(ex, "Error deleting dungeon option.");
             }
             return RedirectToAction("Index");
         }
@@ -96,8 +101,8 @@ namespace RDMG.Controllers.Web
                 try
                 {
                     var optionModel = _mapper.Map<DungeonOptionModel>(model);
-                    optionModel.MonsterType = GetMonsterType(model);
-                    var dungeon = await _dungeonService.CreateOrUpdateDungeonAsync(optionModel, model.AddDungeon, UserHelper.GetUserId(User.Claims), cancellationToken);
+                    optionModel.MonsterType = await GetMonsterTypeAsync(model, cancellationToken);
+                    var dungeon = await _dungeonService.CreateOrUpdateDungeonAsync(optionModel, model.AddDungeon, model.Level, cancellationToken);
                     return Json(JsonSerializer.Serialize(dungeon));
                 }
                 catch (Exception ex)
@@ -105,14 +110,15 @@ namespace RDMG.Controllers.Web
                     _logger.LogError(ex, "Error creating dungeon.");
                 }
             }
-            FillCreateModelDropDowns(model);
+            await FillCreateModelDropDownsAsync(model, cancellationToken);
             return View(model);
         }
 
-        private static string GetMonsterType(DungeonOptionCreateViewModel model)
+        private async Task<string> GetMonsterTypeAsync(DungeonOptionCreateViewModel model, CancellationToken cancellationToken)
         {
             var monsterType = string.Join(",", model.MonsterType);
-            if (model.MonsterType.Length == GetMonsters().Count)
+            var monsters = await _optionService.ListOptionsAsync(cancellationToken, OptionKey.MonsterType);
+            if (model.MonsterType.Length == monsters.Count)
             {
                 monsterType = "any";
             }
@@ -132,7 +138,8 @@ namespace RDMG.Controllers.Web
                 Corridor = true,
                 ItemsRarity = 1,
                 UserId = UserHelper.GetUserId(User.Claims),
-                TrapPercent = 15
+                TrapPercent = 15,
+                Level = 1
             };
 
             if (optionId != 0)
@@ -144,85 +151,39 @@ namespace RDMG.Controllers.Web
                 {
                     model.MonsterType = null;
                 }
+                //model.Level = _dungeonService.GetLastLevelForDungeonOption()
             }
 
-            FillCreateModelDropDowns(model);
+            await FillCreateModelDropDownsAsync(model, cancellationToken);
             return View(model);
         }
 
-        private static void FillCreateModelDropDowns(DungeonOptionCreateViewModel model)
+        private async Task FillCreateModelDropDownsAsync(DungeonOptionCreateViewModel model, CancellationToken cancellationToken)
         {
-            // TODO get this from db
-            model.DungeonSizes = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "Small", Value = "20" },
-                    new SelectListItem{ Text = "Medium", Value = "32" },
-                    new SelectListItem{ Text = "Large", Value = "44"}
-                };
-            model.DungeonDifficulties = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "Easy", Value = "0" },
-                    new SelectListItem{ Text = "Medium", Value = "1" },
-                    new SelectListItem{ Text = "Hard", Value = "2" },
-                    new SelectListItem{ Text = "Deadly", Value = "3"}
-                };
+            var options = await _optionService.ListOptionsAsync(cancellationToken);
+
+            model.DungeonSizes = options.Where(om => om.Key == OptionKey.Size).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
+            model.DungeonDifficulties = options.Where(om => om.Key == OptionKey.Difficulty).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
             model.PartyLevels = GenerateIntSelectList(1, 21);
             model.PartySizes = GenerateIntSelectList(1, 9);
-            model.TreasureValues = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "Low", Value = (0.5d).ToString(CultureInfo.InvariantCulture) },
-                    new SelectListItem{ Text = "Standard", Value = "1" },
-                    new SelectListItem{ Text = "High", Value = (1.5d).ToString(CultureInfo.InvariantCulture) }
-                };
-            model.ItemsRarities = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "Common", Value = "0" },
-                    new SelectListItem{ Text = "Unommon", Value = "1", Selected = true  },
-                    new SelectListItem{ Text = "Rare", Value = "2" },
-                    new SelectListItem{ Text = "Very Rare", Value = "3" },
-                    new SelectListItem{ Text = "Legendary", Value = "4"}
-                };
-            model.RoomDensities = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "Low", Value = "20" },
-                    new SelectListItem{ Text = "Medium", Value = "30" },
-                    new SelectListItem{ Text = "High", Value = "40"}
-                };
-            model.RoomSizes = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "Small", Value = "20" },
-                    new SelectListItem{ Text = "Medium", Value = "35" },
-                    new SelectListItem{ Text = "Large", Value = "45"}
-                };
-            model.MonsterTypes = GetMonsters();
-            model.TrapPercents = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "None", Value = "0" },
-                    new SelectListItem{ Text = "Few", Value = "15" },
-                    new SelectListItem{ Text = "More", Value = "30"}
-                };
+            model.TreasureValues = options.Where(om => om.Key == OptionKey.TreasureValue).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
+            model.ItemsRarities = options.Where(om => om.Key == OptionKey.ItemsRarity).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
+            model.RoomDensities = options.Where(om => om.Key == OptionKey.RoomDensity).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
+            model.RoomSizes = options.Where(om => om.Key == OptionKey.RoomSize).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
+            model.MonsterTypes = options.Where(om => om.Key == OptionKey.MonsterType).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList();
+            model.TrapPercents = options.Where(om => om.Key == OptionKey.TrapPercent).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList();
             model.DeadEnds = GetBools();
             model.Corridors = GetBools();
-            model.RoamingPercents = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "None", Value = "0" },
-                    new SelectListItem{ Text = "Few", Value = "10" },
-                    new SelectListItem{ Text = "More", Value = "20"}
-                };
-            model.Themes = new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = @Resources.Dungeon.Dark, Value = "0" },
-                    new SelectListItem{ Text = @Resources.Dungeon.Light, Value = "1" },
-                    new SelectListItem{ Text = @Resources.Dungeon.Minimal, Value = "2"}
-                };
+            model.RoamingPercents = options.Where(om => om.Key == OptionKey.RoamingPercent).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList();
+            model.Themes = options.Where(om => om.Key == OptionKey.Theme).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList();
         }
 
         private static List<SelectListItem> GetBools()
         {
             return new List<SelectListItem>
                 {
-                    new SelectListItem{ Text = "Yes", Value = "true", Selected = true },
-                    new SelectListItem{ Text = "No", Value = "false" }
+                    new SelectListItem{ Text = Resources.Common.Yes, Value = "true", Selected = true },
+                    new SelectListItem{ Text = Resources.Common.No, Value = "false" }
                 };
         }
 
@@ -234,28 +195,6 @@ namespace RDMG.Controllers.Web
                 list.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
             }
             return list;
-        }
-
-        private static List<SelectListItem> GetMonsters()
-        {
-            return new List<SelectListItem>
-                {
-                    new SelectListItem{ Text = "Aberrations", Value = "aberration", Selected = true },
-                    new SelectListItem{ Text = "Beasts", Value = "beast", Selected = true },
-                    new SelectListItem{ Text = "Celestials", Value = "celestial", Selected = true},
-                    new SelectListItem{ Text = "Constructs", Value = "construct", Selected = true},
-                    new SelectListItem{ Text = "Dragons", Value = "dragon", Selected = true},
-                    new SelectListItem{ Text = "Elementals", Value = "elemental", Selected = true},
-                    new SelectListItem{ Text = "Fey", Value = "fey", Selected = true},
-                    new SelectListItem{ Text = "Fiends", Value = "fiend", Selected = true},
-                    new SelectListItem{ Text = "Giants", Value = "giant", Selected = true},
-                    new SelectListItem{ Text = "Humanoids", Value = "humanoid", Selected = true},
-                    new SelectListItem{ Text = "Monstrosities", Value = "monstrosity", Selected = true},
-                    new SelectListItem{ Text = "Oozes", Value = "ooze", Selected = true},
-                    new SelectListItem{ Text = "Plants", Value = "plant", Selected = true},
-                    new SelectListItem{ Text = "Swarm of tiny beasts", Value = "swarm of Tiny beasts", Selected = true},
-                    new SelectListItem{ Text = "Undead", Value = "undead", Selected = true}
-                };
         }
     }
 }

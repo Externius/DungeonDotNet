@@ -63,4 +63,20 @@ namespace RDMG.Core.Domain
         Dangerous,
         Deadly
     }
+
+    public enum OptionKey
+    {
+        Size,
+        Difficulty,
+        PartySize,
+        PartyLevel,
+        TreasureValue,
+        ItemsRarity,
+        RoomDensity,
+        RoomSize,
+        MonsterType,
+        TrapPercent,
+        RoamingPercent,
+        Theme
+    }
 }

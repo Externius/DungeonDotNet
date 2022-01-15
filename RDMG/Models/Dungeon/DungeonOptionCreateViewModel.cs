@@ -69,5 +69,6 @@ namespace RDMG.Models.Dungeon
         public IList<SelectListItem> Themes { get; set; }
         public int UserId { get; set; }
         public bool AddDungeon { get; set; }
+        public int Level { get; set; }
     }
 }

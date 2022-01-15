@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Domain;
 
-namespace RDMG.Infrastructure
+namespace RDMG.Infrastructure.Repository
 {
     public class DungeonRepository : IDungeonRepository
     {

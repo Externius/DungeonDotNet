@@ -11,7 +11,7 @@ using RDMG.Infrastructure;
 namespace RDMG.Infrastructure.Migrations.SqliteMigrations
 {
     [DbContext(typeof(SqliteContext))]
-    [Migration("20220110221616_Init")]
+    [Migration("20220115080929_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,6 +122,35 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                         .IsUnique();
 
                     b.ToTable("DungeonOptions");
+                });
+
+            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Options");
                 });
 
             modelBuilder.Entity("RDMG.Core.Domain.User", b =>

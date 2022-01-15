@@ -12,7 +12,7 @@ using RDMG.Infrastructure;
 namespace RDMG.Infrastructure.Migrations.SqlServerMigrations
 {
     [DbContext(typeof(SqlServerContext))]
-    [Migration("20220110221540_Init")]
+    [Migration("20220115080914_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,6 +132,38 @@ namespace RDMG.Infrastructure.Migrations.SqlServerMigrations
                         .HasFilter("[DungeonName] IS NOT NULL");
 
                     b.ToTable("DungeonOptions");
+                });
+
+            modelBuilder.Entity("RDMG.Core.Domain.Option", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("Timestamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key", "Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
+
+                    b.ToTable("Options");
                 });
 
             modelBuilder.Entity("RDMG.Core.Domain.User", b =>

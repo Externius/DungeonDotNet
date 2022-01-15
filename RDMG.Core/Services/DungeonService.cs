@@ -19,17 +19,19 @@ namespace RDMG.Core.Services
     public class DungeonService : IDungeonService
     {
         private readonly IDungeonRepository _dungeonRepository;
+        private readonly IOptionRepository _optionRepository;
         private readonly IDungeonHelper _dungeonHelper;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        private static readonly int dungeonWidthAndHeight = 800;
 
         public DungeonService(IMapper mapper,
             IDungeonRepository dungeonRepository,
+            IOptionRepository optionRepository,
             IDungeonHelper dungeonHelper,
             ILogger<DungeonService> logger)
         {
             _dungeonRepository = dungeonRepository;
+            _optionRepository = optionRepository;
             _dungeonHelper = dungeonHelper;
             _mapper = mapper;
             _logger = logger;
@@ -64,13 +66,13 @@ namespace RDMG.Core.Services
             }
         }
 
-        public async Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon, int userId, CancellationToken cancellationToken)
+        public async Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon, int level, CancellationToken cancellationToken)
         {
             try
             {
                 if (addDungeon)
                 {
-                    return await AddDungeonToExistingOptionAsync(optionModel, userId, cancellationToken);
+                    return await AddDungeonToExistingOptionAsync(optionModel, level, cancellationToken);
                 }
 
                 var existingDungeonOption = await GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
@@ -80,7 +82,7 @@ namespace RDMG.Core.Services
                 }
                 else // regenerate
                 {
-                    var existingDungeons = await ListUserDungeonsByNameAsync(optionModel.DungeonName, userId, cancellationToken);
+                    var existingDungeons = await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
                     var oldDungeon = existingDungeons.FirstOrDefault();
                     if (oldDungeon is not null)
                     {
@@ -88,7 +90,7 @@ namespace RDMG.Core.Services
                     }
                     else
                     {
-                        return await AddDungeonToExistingOptionAsync(optionModel, userId, cancellationToken);
+                        return await AddDungeonToExistingOptionAsync(optionModel, level, cancellationToken);
                     }
                 }
             }
@@ -119,12 +121,20 @@ namespace RDMG.Core.Services
             return dungeon;
         }
 
-        private async Task<DungeonModel> AddDungeonToExistingOptionAsync(DungeonOptionModel optionModel, int userId, CancellationToken cancellationToken)
+        private async Task<DungeonModel> AddDungeonToExistingOptionAsync(DungeonOptionModel optionModel, int level, CancellationToken cancellationToken)
         {
+            var existingDungeons = await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
             var dungeon = await GenerateDungeonAsync(optionModel, optionModel.Id);
-            dungeon.Level = (await _dungeonRepository.GetAllDungeonByOptionNameForUserAsync(optionModel.DungeonName, userId, cancellationToken)).Count() + 1;
-            var id = await AddDungeonAsync(dungeon, cancellationToken);
-            dungeon.Id = id;
+            dungeon.Level = level;
+            if (existingDungeons.Any(d => d.Level == level))
+            {
+                dungeon.Id = existingDungeons.First(dm => dm.Level == level).Id;
+                await UpdateDungeonAsync(dungeon, cancellationToken);
+            }
+            else
+            {
+                dungeon.Id = await AddDungeonAsync(dungeon, cancellationToken);
+            }
             return dungeon;
         }
 
@@ -166,7 +176,7 @@ namespace RDMG.Core.Services
                 }
                 else
                 {
-                    var dungeonNoCorridor = new DungeonNoCorridor(dungeonWidthAndHeight, dungeonWidthAndHeight, model.DungeonSize, model.RoomSize, _dungeonHelper);
+                    var dungeonNoCorridor = new DungeonNoCorridor(dungeonOptions.Width, dungeonOptions.Height, model.DungeonSize, model.RoomSize, _dungeonHelper);
                     dungeonNoCorridor.Generate();
                     return await Task.FromResult(
                         new DungeonModel()
