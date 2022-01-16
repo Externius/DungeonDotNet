@@ -162,6 +162,7 @@ namespace RDMG
         {
             services.AddTransient<ContextSeedData>()
                     .AddScoped<IDungeonRepository, DungeonRepository>()
+                    .AddScoped<IDungeonOptionRepository, DungeonOptionRepository>()
                     .AddScoped<IOptionRepository, OptionRepository>()
                     .AddScoped<IUserRepository, UserRepository>();
 

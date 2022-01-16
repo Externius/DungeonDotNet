@@ -8,7 +8,7 @@ namespace RDMG.Models.Dungeon
     public class DungeonOptionCreateViewModel : EditViewModel
     {
         [Required]
-        [StringLength(255, MinimumLength = 3)]
+        [StringLength(50, MinimumLength = 3)]
         [Display(ResourceType = typeof(Resources.Dungeon), Name = "Name")]
         public string DungeonName { get; set; }
         [Required]

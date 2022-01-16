@@ -1,0 +1,39 @@
+﻿@model RDMG.Models.Dungeon.DungeonRenameViewModel
+
+@{
+    ViewData["Title"] = Resources.Dungeon.Rename;
+}
+
+<div class="row">
+    <form id="Rename" asp-action="Rename" asp-controller="Dungeon">
+        <div class="col-lg-6">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="UserId" type="hidden" />
+            <input asp-for="Timestamp" type="hidden" />
+            <div class="form-group">
+                <label asp-for="DungeonName" class="col-form-label"></label>
+                <input asp-for="DungeonName" class="form-control" readonly />
+                <span asp-validation-for="DungeonName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewDungeonName" class="col-form-label"></label>
+                <input asp-for="NewDungeonName" class="form-control" />
+                <span asp-validation-for="NewDungeonName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-lg-6 mt-3">
+            <button type="submit" class="btn btn-primary">@Resources.Common.Save</button>
+            <a asp-action="Index" asp-controller="Dungeon" class="btn btn-secondary">@Resources.Common.Cancel</a>
+        </div>
+    </form>
+</div>
+@section Scripts {
+<partial name="_AjaxScriptsPartial" />
+<partial name="_ValidationScriptsPartial" />
+<script>
+    $(document).ready(function () {
+
+    });
+</script>
+}

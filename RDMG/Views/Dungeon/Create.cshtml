@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = Resources.Dungeon.CreateTitle;
     var isReadonly = @Model.AddDungeon;
-    var canChangeLevel = !@Model.AddDungeon;
 }
 
 <div class="row">
@@ -22,13 +21,20 @@
                 </div>
             </div>
             <table class="table table-sm table-striped">
-                <tr>
-                    <td><label asp-for="Level" class="col-form-label"></label></td>
-                    <td>
-                        <input asp-for="Level" type="number" class="form-control" min="1" readonly=@canChangeLevel />
-                        <span asp-validation-for="Level" class="text-danger"></span>
-                    </td>
-                </tr>
+                @if (isReadonly)
+                {
+                    <tr>
+                        <td><label asp-for="Level" class="col-form-label"></label></td>
+                        <td>
+                            <input asp-for="Level" type="number" class="form-control" min="1"/>
+                            <span asp-validation-for="Level" class="text-danger"></span>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <input asp-for="Level" type="hidden" />
+                }
                 <tr>
                     <td><label asp-for="DungeonSizes" class="col-form-label"></label></td>
                     <td>

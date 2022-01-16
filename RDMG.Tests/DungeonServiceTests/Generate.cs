@@ -29,7 +29,8 @@ namespace RDMG.Tests.DungeonServiceTests
                 TreasureValue = 1,
                 RoomDensity = 10,
                 RoomSize = 20,
-                Corridor = false
+                Corridor = false,
+                UserId = 1
             });
 
             result.DungeonTiles.ShouldNotBeNull();

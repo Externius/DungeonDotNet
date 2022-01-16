@@ -21,5 +21,6 @@ namespace RDMG.Core.Abstractions.Services
         Task<bool> DeleteDungeonOptionAsync(int id, CancellationToken cancellationToken);
         Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken);
         Task<DungeonModel> GenerateDungeonAsync(DungeonOptionModel model);
+        Task RenameDungeonAsync(int id, int userId, string newName, CancellationToken cancellationToken);
     }
 }

@@ -8,7 +8,7 @@
     <div class="col-md-12">
         <a asp-action="Create" class="btn btn-sm btn-success"> @Resources.Dungeon.CreateTitle </a>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-6">
         <table class="table table-striped">
             <thead class="thead-light">
                 <tr>
@@ -29,13 +29,14 @@
                             </form>
                             <a asp-action="Create" asp-route-optionId="@dungeonOption.Id" title="@Resources.Dungeon.AddDungeon" class="btn btn-sm btn-success"> <i class="fas fa-plus"></i>  </a>
                             <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" title="@Resources.Dungeon.ShowDungeons" class="btn btn-sm btn-primary"> <i class="fas fa-list"></i> </a>
+                            <a asp-action="Rename" asp-route-id="@dungeonOption.Id" asp-route-dungeonName="@dungeonOption.DungeonName" title="@Resources.Dungeon.Rename" class="btn btn-sm btn-primary"> <i class="far fa-edit"></i> </a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <table class="table table-striped">
             <thead class="thead-light">
                 <tr>

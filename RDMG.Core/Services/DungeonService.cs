@@ -4,6 +4,7 @@ using RDMG.Core.Abstractions.Dungeon;
 using RDMG.Core.Abstractions.Dungeon.Models;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
+using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Core.Generator;
@@ -19,6 +20,7 @@ namespace RDMG.Core.Services
     public class DungeonService : IDungeonService
     {
         private readonly IDungeonRepository _dungeonRepository;
+        private readonly IDungeonOptionRepository _dungeonOptionRepository;
         private readonly IOptionRepository _optionRepository;
         private readonly IDungeonHelper _dungeonHelper;
         private readonly IMapper _mapper;
@@ -26,11 +28,13 @@ namespace RDMG.Core.Services
 
         public DungeonService(IMapper mapper,
             IDungeonRepository dungeonRepository,
+            IDungeonOptionRepository dungeonOptionRepository,
             IOptionRepository optionRepository,
             IDungeonHelper dungeonHelper,
             ILogger<DungeonService> logger)
         {
             _dungeonRepository = dungeonRepository;
+            _dungeonOptionRepository = dungeonOptionRepository;
             _optionRepository = optionRepository;
             _dungeonHelper = dungeonHelper;
             _mapper = mapper;
@@ -41,7 +45,8 @@ namespace RDMG.Core.Services
         {
             try
             {
-                var option = await _dungeonRepository.AddDungeonOptionAsync(_mapper.Map<DungeonOption>(dungeonOption), cancellationToken);
+                ValidateModel(dungeonOption);
+                var option = await _dungeonOptionRepository.AddDungeonOptionAsync(_mapper.Map<DungeonOption>(dungeonOption), cancellationToken);
                 return option.Id;
             }
             catch (Exception ex)
@@ -49,6 +54,14 @@ namespace RDMG.Core.Services
                 _logger.LogError(ex, $"Create dungeon option failed.");
                 throw;
             }
+        }
+
+        private static void ValidateModel(DungeonOptionModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.DungeonName))
+                throw new ServiceException(Resources.Error.Required);
+            if (model.UserId == 0)
+                throw new ServiceException(Resources.Error.Required);
         }
 
         public async Task<int> AddDungeonAsync(DungeonModel saveddungeon, CancellationToken cancellationToken)
@@ -70,6 +83,7 @@ namespace RDMG.Core.Services
         {
             try
             {
+                ValidateModel(optionModel);
                 if (addDungeon)
                 {
                     return await AddDungeonToExistingOptionAsync(optionModel, level, cancellationToken);
@@ -90,6 +104,7 @@ namespace RDMG.Core.Services
                     }
                     else
                     {
+                        optionModel.Id = existingDungeonOption.Id;
                         return await AddDungeonToExistingOptionAsync(optionModel, level, cancellationToken);
                     }
                 }
@@ -147,18 +162,19 @@ namespace RDMG.Core.Services
 
         public async Task<DungeonModel> GenerateDungeonAsync(DungeonOptionModel model)
         {
-            _dungeonHelper.Init(model);
-            var dungeonOptions = new DungeonOptionsModel
-            {
-                Size = model.DungeonSize,
-                RoomDensity = model.RoomDensity,
-                RoomSizePercent = model.RoomSize,
-                TrapPercent = model.TrapPercent,
-                HasDeadEnds = model.DeadEnd,
-                RoamingPercent = model.RoamingPercent
-            };
             try
             {
+                ValidateModel(model);
+                _dungeonHelper.Init(model);
+                var dungeonOptions = new DungeonOptionsModel
+                {
+                    Size = model.DungeonSize,
+                    RoomDensity = model.RoomDensity,
+                    RoomSizePercent = model.RoomSize,
+                    TrapPercent = model.TrapPercent,
+                    HasDeadEnds = model.DeadEnd,
+                    RoamingPercent = model.RoamingPercent
+                };
                 if (model.Corridor)
                 {
                     var dungeon = new Generator.Dungeon(dungeonOptions, _dungeonHelper);
@@ -201,7 +217,7 @@ namespace RDMG.Core.Services
         {
             try
             {
-                var options = await _dungeonRepository.GetAllDungeonOptionsAsync(cancellationToken);
+                var options = await _dungeonOptionRepository.GetAllDungeonOptionsAsync(cancellationToken);
 
                 return options.Select(o => _mapper.Map<DungeonOptionModel>(o)).ToList();
             }
@@ -216,7 +232,7 @@ namespace RDMG.Core.Services
         {
             try
             {
-                var options = await _dungeonRepository.GetAllDungeonOptionsForUserAsync(userId, cancellationToken);
+                var options = await _dungeonOptionRepository.GetAllDungeonOptionsForUserAsync(userId, cancellationToken);
 
                 return options.Select(o => _mapper.Map<DungeonOptionModel>(o)).ToList();
             }
@@ -231,7 +247,7 @@ namespace RDMG.Core.Services
         {
             try
             {
-                return _mapper.Map<DungeonOptionModel>(await _dungeonRepository.GetDungeonOptionByNameAsync(dungeonName, userId, cancellationToken));
+                return _mapper.Map<DungeonOptionModel>(await _dungeonOptionRepository.GetDungeonOptionByNameAsync(dungeonName, userId, cancellationToken));
             }
             catch (Exception ex)
             {
@@ -244,7 +260,7 @@ namespace RDMG.Core.Services
         {
             try
             {
-                return await _dungeonRepository.DeleteDungeonOptionAsync(id, cancellationToken);
+                return await _dungeonOptionRepository.DeleteDungeonOptionAsync(id, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -331,11 +347,26 @@ namespace RDMG.Core.Services
         {
             try
             {
-                return _mapper.Map<DungeonOptionModel>(await _dungeonRepository.GetDungeonOptionAsync(id, cancellationToken));
+                return _mapper.Map<DungeonOptionModel>(await _dungeonOptionRepository.GetDungeonOptionAsync(id, cancellationToken));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Get dungeon option failed.");
+                throw;
+            }
+        }
+
+        public async Task RenameDungeonAsync(int id, int userId, string newName, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var entity = await _dungeonOptionRepository.GetDungeonOptionAsync(id, cancellationToken);
+                entity.DungeonName = newName;
+                await _dungeonOptionRepository.UpdateDungeonOptionAsync(entity, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Update dungeon failed.");
                 throw;
             }
         }

@@ -171,11 +171,17 @@
   <data name="Name" xml:space="preserve">
     <value>Dungeon name</value>
   </data>
+  <data name="NewName" xml:space="preserve">
+    <value>New dungeon name</value>
+  </data>
   <data name="PartyLevel" xml:space="preserve">
     <value>Party level</value>
   </data>
   <data name="PartySize" xml:space="preserve">
     <value>Party size</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Rename dungeon</value>
   </data>
   <data name="RoamingPercent" xml:space="preserve">
     <value>Roaming monsters</value>

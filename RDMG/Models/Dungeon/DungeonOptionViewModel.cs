@@ -7,7 +7,7 @@ namespace RDMG.Models.Dungeon
     public class DungeonOptionViewModel : EditViewModel
     {
         [Required]
-        [StringLength(255, MinimumLength = 3)]
+        [StringLength(50, MinimumLength = 3)]
         public string DungeonName { get; set; }
         [Required]
         public int DungeonSize { get; set; }

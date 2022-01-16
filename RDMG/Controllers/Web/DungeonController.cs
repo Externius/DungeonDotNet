@@ -88,6 +88,39 @@ namespace RDMG.Controllers.Web
             return RedirectToAction("Index");
         }
 
+        public IActionResult Rename(int id, string dungeonName)
+        {
+            var model = new DungeonRenameViewModel
+            {
+                Id = id,
+                DungeonName = dungeonName,
+                UserId = UserHelper.GetUserId(User.Claims)
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rename(DungeonRenameViewModel model, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var existing = await _dungeonService.GetDungeonOptionByNameAsync(model.NewDungeonName, model.UserId, cancellationToken);
+                if (existing is null)
+                {
+                    await _dungeonService.RenameDungeonAsync(model.Id, model.UserId, model.NewDungeonName, cancellationToken);
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError(nameof(model.NewDungeonName), string.Format(Resources.Error.DungeonExist, model.NewDungeonName));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error renaming dungeon.");
+            }
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteOption(int id, CancellationToken cancellationToken)
@@ -162,7 +195,6 @@ namespace RDMG.Controllers.Web
                 {
                     model.MonsterType = null;
                 }
-                //model.Level = _dungeonService.GetLastLevelForDungeonOption()
             }
 
             await FillCreateModelDropDownsAsync(model, cancellationToken);

@@ -223,6 +223,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New dungeon name.
+        /// </summary>
+        public static string NewName {
+            get {
+                return ResourceManager.GetString("NewName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Party level.
         /// </summary>
         public static string PartyLevel {
@@ -237,6 +246,15 @@ namespace RDMG.Resources {
         public static string PartySize {
             get {
                 return ResourceManager.GetString("PartySize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename dungeon.
+        /// </summary>
+        public static string Rename {
+            get {
+                return ResourceManager.GetString("Rename", resourceCulture);
             }
         }
         

@@ -70,6 +70,24 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The dungeon {0} is already exists in the system!.
+        /// </summary>
+        public static string DungeonExist {
+            get {
+                return ResourceManager.GetString("DungeonExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The dungeon name is too long!.
+        /// </summary>
+        public static string DungeonNameLength {
+            get {
+                return ResourceManager.GetString("DungeonNameLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The entity not found..
         /// </summary>
         public static string NotFound {
@@ -102,6 +120,15 @@ namespace RDMG.Resources {
         public static string PasswordRequired {
             get {
                 return ResourceManager.GetString("PasswordRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Required.
+        /// </summary>
+        public static string Required {
+            get {
+                return ResourceManager.GetString("Required", resourceCulture);
             }
         }
         

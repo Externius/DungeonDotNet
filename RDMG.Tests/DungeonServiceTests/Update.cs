@@ -28,5 +28,21 @@ namespace RDMG.Tests.DungeonServiceTests
             var result = await service.GetDungeonAsync(dungeonId, token);
             result.RoamingMonsterDescription.ShouldBe("[]");
         }
+
+        [Fact]
+        public async void CanRenameDungeon()
+        {
+            using var env = new TestEnvironment();
+            var service = env.GetService<IDungeonService>();
+            var source = new CancellationTokenSource();
+            var token = source.Token;
+            var id = 1;
+            var existingOption = await service.GetDungeonOptionAsync(id, token);
+            var oldName = existingOption.DungeonName;
+            var newName = "New Name";
+            await service.RenameDungeonAsync(existingOption.Id, existingOption.UserId, newName, token);
+            var renamed = await service.GetDungeonOptionAsync(id, token);
+            renamed.DungeonName.ShouldBe(newName);
+        }
     }
 }
