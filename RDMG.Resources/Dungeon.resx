@@ -120,6 +120,9 @@
   <data name="AddDungeon" xml:space="preserve">
     <value>Add dungeon</value>
   </data>
+  <data name="AddDungeonTooltip" xml:space="preserve">
+    <value>Note: if a dungeon already exist on the selected level this will replace it.</value>
+  </data>
   <data name="ChooseTheme" xml:space="preserve">
     <value>Choose a theme</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="Level" xml:space="preserve">
     <value>Level</value>
+  </data>
+  <data name="LevelTooltip" xml:space="preserve">
+    <value>Please select on which level do you want to add your generated dungeon. If the selected level already exist this will replace the dungeon on that level.</value>
   </data>
   <data name="Light" xml:space="preserve">
     <value>Light</value>

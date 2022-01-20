@@ -24,9 +24,12 @@
                 @if (isReadonly)
                 {
                     <tr>
-                        <td><label asp-for="Level" class="col-form-label"></label></td>
                         <td>
-                            <input asp-for="Level" type="number" class="form-control" min="1"/>
+                            <label asp-for="Level" class="col-form-label"></label>
+                            <i class="far fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Dungeon.LevelTooltip"></i>
+                        </td>
+                        <td>
+                            <input asp-for="Level" type="number" class="form-control" min="1" />
                             <span asp-validation-for="Level" class="text-danger"></span>
                         </td>
                     </tr>
@@ -38,85 +41,85 @@
                 <tr>
                     <td><label asp-for="DungeonSizes" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="DungeonSize" asp-items="@Model.DungeonSizes" class="form-control"></select>
+                        <select asp-for="DungeonSize" asp-items="@Model.DungeonSizes" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="DungeonDifficulties" class="col-md-8 col-form-label"></label></td>
                     <td>
-                        <select asp-for="DungeonDifficulty" asp-items="@Model.DungeonDifficulties" class="form-control"></select>
+                        <select asp-for="DungeonDifficulty" asp-items="@Model.DungeonDifficulties" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="PartyLevels" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="PartyLevel" asp-items="@Model.PartyLevels" class="form-control"></select>
+                        <select asp-for="PartyLevel" asp-items="@Model.PartyLevels" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="PartySizes" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="PartySize" asp-items="@Model.PartySizes" class="form-control"></select>
+                        <select asp-for="PartySize" asp-items="@Model.PartySizes" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="TreasureValues" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="TreasureValue" asp-items="@Model.TreasureValues" class="form-control"></select>
+                        <select asp-for="TreasureValue" asp-items="@Model.TreasureValues" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="ItemsRarities" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="ItemsRarity" asp-items="@Model.ItemsRarities" class="form-control"></select>
+                        <select asp-for="ItemsRarity" asp-items="@Model.ItemsRarities" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="RoomDensities" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="RoomDensity" asp-items="@Model.RoomDensities" class="form-control"></select>
+                        <select asp-for="RoomDensity" asp-items="@Model.RoomDensities" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="RoomSizes" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="RoomSize" asp-items="@Model.RoomSizes" class="form-control"></select>
+                        <select asp-for="RoomSize" asp-items="@Model.RoomSizes" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="MonsterTypes" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="MonsterType" asp-items="@Model.MonsterTypes" class="form-control" multiple onchange="Utils.monsterTypeOnChange(this)"></select>
+                        <select asp-for="MonsterType" asp-items="@Model.MonsterTypes" class="form-select" multiple onchange="Utils.monsterTypeOnChange(this)"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="TrapPercents" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="TrapPercent" asp-items="@Model.TrapPercents" class="form-control"></select>
+                        <select asp-for="TrapPercent" asp-items="@Model.TrapPercents" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="DeadEnds" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="DeadEnd" asp-items="@Model.DeadEnds" class="form-control"></select>
+                        <select asp-for="DeadEnd" asp-items="@Model.DeadEnds" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="Corridors" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="Corridor" asp-items="@Model.Corridors" class="form-control" onchange="Utils.corridorOnchange(this)"></select>
+                        <select asp-for="Corridor" asp-items="@Model.Corridors" class="form-select" onchange="Utils.corridorOnchange(this)"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="RoamingPercents" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="RoamingPercent" asp-items="@Model.RoamingPercents" class="form-control"></select>
+                        <select asp-for="RoamingPercent" asp-items="@Model.RoamingPercents" class="form-select"></select>
                     </td>
                 </tr>
                 <tr>
                     <td><label asp-for="Themes" class="col-form-label"></label></td>
                     <td>
-                        <select asp-for="Theme" asp-items="@Model.Themes" class="form-control"></select>
+                        <select asp-for="Theme" asp-items="@Model.Themes" class="form-select"></select>
                     </td>
                 </tr>
             </table>
@@ -124,6 +127,7 @@
                 @if (Model.AddDungeon)
                 {
                     <input type="submit" value="@Resources.Dungeon.AddDungeon" class="btn btn-sm btn-success btn-block" />
+                    <i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Dungeon.AddDungeonTooltip"></i>
                 }
                 else
                 {

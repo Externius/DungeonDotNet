@@ -5,14 +5,14 @@
 }
 <div class="row g-3 mb-3">
     <div class="col-auto">
-        <a class="btn btn-success" href="@ViewData["ReturnUrl"]" title="@Resources.Common.Back"><i class="fas fa-arrow-left"></i> </a>
+        <a class="btn btn-success" href="@ViewData["ReturnUrl"]" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Common.Back"><i class="fas fa-arrow-left"></i> </a>
     </div>
     <div class="col-md-6">
         <table class="table table-sm align-middle">
             <tr>
                 <td><label asp-for="Themes" class="col-form-label"></label></td>
                 <td>
-                    <select asp-for="Theme" asp-items="@Model.Themes" class="form-control">
+                    <select asp-for="Theme" asp-items="@Model.Themes" class="form-select">
                         <option value="" disabled selected hidden>@Resources.Dungeon.ChooseTheme</option>
                     </select>
                 </td>

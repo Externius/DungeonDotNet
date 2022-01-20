@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <TieredCompilation>true</TieredCompilation>
     <PreserveCompilationReferences>true</PreserveCompilationReferences>
-	  <AssemblyVersion>1.0.0.3</AssemblyVersion>  
+	  <AssemblyVersion>1.0.0.4</AssemblyVersion>  
     <UserSecretsId>b2a492d1-90ea-4e42-b3e5-5d962495bef1</UserSecretsId>
   </PropertyGroup>
 

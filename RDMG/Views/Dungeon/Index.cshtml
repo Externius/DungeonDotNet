@@ -25,11 +25,11 @@
                         </td>
                         <td class="text-end">
                             <form method="post" asp-action="DeleteOption" asp-controller="Dungeon" asp-route-id="@dungeonOption.Id" class="list-inline-item">
-                                <button id="deleteOptnBtn" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
+                                <button id="deleteOptnBtn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
                             </form>
-                            <a asp-action="Create" asp-route-optionId="@dungeonOption.Id" title="@Resources.Dungeon.AddDungeon" class="btn btn-sm btn-success"> <i class="fas fa-plus"></i>  </a>
-                            <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" title="@Resources.Dungeon.ShowDungeons" class="btn btn-sm btn-primary"> <i class="fas fa-list"></i> </a>
-                            <a asp-action="Rename" asp-route-id="@dungeonOption.Id" asp-route-dungeonName="@dungeonOption.DungeonName" title="@Resources.Dungeon.Rename" class="btn btn-sm btn-primary"> <i class="far fa-edit"></i> </a>
+                            <a asp-action="Create" asp-route-optionId="@dungeonOption.Id" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Dungeon.AddDungeon" class="btn btn-sm btn-success"> <i class="fas fa-plus"></i>  </a>
+                            <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Dungeon.ShowDungeons" class="btn btn-sm btn-primary"> <i class="fas fa-list"></i> </a>
+                            <a asp-action="Rename" asp-route-id="@dungeonOption.Id" asp-route-dungeonName="@dungeonOption.DungeonName" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Dungeon.Rename" class="btn btn-sm btn-primary"> <i class="far fa-edit"></i> </a>
                         </td>
                     </tr>
                 }
@@ -55,9 +55,9 @@
                             </td>
                             <td class="text-end">
                                 <form method="post" asp-action="Delete" asp-controller="Dungeon" asp-route-id="@dungeon.Id" class="list-inline-item">
-                                    <button id="deleteBtn" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
+                                    <button id="deleteBtn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i class="fas fa-minus-circle"></i></button>
                                 </form>
-                                <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" asp-route-level="@dungeon.Level" title="@Resources.Dungeon.ShowDungeon" class="btn btn-sm btn-primary"> <i class="far fa-file"></i> </a>
+                                <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" asp-route-level="@dungeon.Level" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Dungeon.ShowDungeon" class="btn btn-sm btn-primary"> <i class="far fa-file"></i> </a>
                             </td>
                         </tr>
                     }

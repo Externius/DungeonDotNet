@@ -70,6 +70,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Note: if a dungeon already exist on the selected level this will replace it..
+        /// </summary>
+        public static string AddDungeonTooltip {
+            get {
+                return ResourceManager.GetString("AddDungeonTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose a theme.
         /// </summary>
         public static string ChooseTheme {
@@ -183,6 +192,15 @@ namespace RDMG.Resources {
         public static string Level {
             get {
                 return ResourceManager.GetString("Level", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select on which level do you want to add your generated dungeon. If the selected level already exist this will replace the dungeon on that level..
+        /// </summary>
+        public static string LevelTooltip {
+            get {
+                return ResourceManager.GetString("LevelTooltip", resourceCulture);
             }
         }
         
