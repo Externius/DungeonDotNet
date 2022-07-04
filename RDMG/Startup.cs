@@ -61,17 +61,15 @@ namespace RDMG
                 ;
         }
 
-        public void Configure(IApplicationBuilder app, IHostEnvironment env, ContextSeedData seedData)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             app.ConfigureDB(Configuration);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                seedData.SeedDataAsync().Wait();
             }
             else
             {
-                seedData.SeedBaseAsync().Wait();
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
@@ -99,10 +97,10 @@ namespace RDMG
             switch (configuration.GetConnectionString("DbProvider").ToLower())
             {
                 case "sqlserver":
-                    MigrateDB<SqlServerContext>(serviceScope);
+                    MigrateAndSeedDB<SqlServerContext>(serviceScope);
                     break;
                 case "sqlite":
-                    MigrateDB<SqliteContext>(serviceScope);
+                    MigrateAndSeedDB<SqliteContext>(serviceScope);
                     break;
                 default:
                     throw new Exception($"DbProvider not recognized: {configuration.GetConnectionString("DbProvider")}");
@@ -110,10 +108,14 @@ namespace RDMG
 
             return app;
         }
-        public static void MigrateDB<T>(IServiceScope serviceScope) where T : Context
+
+        public static void MigrateAndSeedDB<T>(IServiceScope serviceScope) where T : Context
         {
             using var context = serviceScope.ServiceProvider.GetService<T>();
             context.Database.Migrate();
+            var service = serviceScope.ServiceProvider.GetService<IDungeonService>();
+            var seedData = new ContextSeedData(service, context);
+            seedData.SeedDataAsync().Wait();
         }
     }
 
