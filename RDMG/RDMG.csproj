@@ -1,41 +1,36 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <TieredCompilation>true</TieredCompilation>
-    <PreserveCompilationReferences>true</PreserveCompilationReferences>
-	  <AssemblyVersion>1.0.0.4</AssemblyVersion>  
-    <UserSecretsId>b2a492d1-90ea-4e42-b3e5-5d962495bef1</UserSecretsId>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="11.0.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="IdentityModel" Version="6.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="6.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.161" />
-    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\RDMG.Core\RDMG.Core.csproj" />
-    <ProjectReference Include="..\RDMG.Infrastructure\RDMG.Infrastructure.csproj" />
-    <ProjectReference Include="..\RDMG.Resources\RDMG.Resources.csproj" />
-  </ItemGroup>
-
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<TieredCompilation>true</TieredCompilation>
+		<PreserveCompilationReferences>true</PreserveCompilationReferences>
+		<AssemblyVersion>1.0.0.4</AssemblyVersion>
+		<UserSecretsId>b2a492d1-90ea-4e42-b3e5-5d962495bef1</UserSecretsId>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="11.0.1"/>
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
+		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449"/>
+		<PackageReference Include="IdentityModel" Version="6.0.0"/>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6"/>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.6"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.6">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="6.0.6"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6"/>
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0"/>
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.6"/>
+		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175"/>
+		<PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0"/>
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0"/>
+	</ItemGroup>
+	<ItemGroup>
+		<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RDMG.Core\RDMG.Core.csproj"/>
+		<ProjectReference Include="..\RDMG.Infrastructure\RDMG.Infrastructure.csproj"/>
+		<ProjectReference Include="..\RDMG.Resources\RDMG.Resources.csproj"/>
+	</ItemGroup>
 </Project>
