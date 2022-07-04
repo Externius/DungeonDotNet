@@ -10,17 +10,17 @@
     <div class="col-md-6">
         <table class="table table-sm align-middle">
             <tr>
+                <td><label asp-for="GeneratePlainMap" class="col-form-label"></label></td>
+                <td>
+                    <input asp-for="GeneratePlainMap" class="form-check-input" type="checkbox">
+                </td>
+            </tr>   
+            <tr>
                 <td><label asp-for="Themes" class="col-form-label"></label></td>
                 <td>
                     <select asp-for="Theme" asp-items="@Model.Themes" class="form-select">
                         <option value="" disabled selected hidden>@Resources.Dungeon.ChooseTheme</option>
                     </select>
-                </td>
-            </tr>
-            <tr>
-                <td><label asp-for="GeneratePlainMap" class="col-form-label"></label></td>
-                <td>
-                    <input asp-for="GeneratePlainMap" class="form-check-input" type="checkbox">
                 </td>
             </tr>
         </table>

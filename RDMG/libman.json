@@ -11,7 +11,7 @@
       "destination": "wwwroot/lib/bootstrap"
     },
     {
-      "library": "bootbox.js@5.5.2",
+      "library": "bootbox.js@5.5.3",
       "destination": "wwwroot/lib/bootbox"
     },
     {
@@ -23,11 +23,11 @@
       "destination": "wwwroot/lib/jquery-ajax-unobtrusive/"
     },
     {
-      "library": "jquery-validate@1.19.3",
+      "library": "jquery-validate@1.19.5",
       "destination": "wwwroot/lib/jquery-validation"
     },
     {
-      "library": "font-awesome@5.15.4",
+      "library": "font-awesome@6.1.1",
       "destination": "wwwroot/lib/font-awesome"
     }
   ]
