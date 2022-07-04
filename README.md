@@ -8,6 +8,6 @@ You will need the .NET 6.0 SDK to build/run this project (simply run dotnet buil
 
 Open the <https://localhost:5001/> address in a browser.
 
-You can log in with TestUser/testPassword12345 or with TestUser/simplePassword123
+You can log in with TestAdmin/adminPassword123 or with TestUser/simplePassword123
 
 From there you can Generate/Save/Load dungeons, just like in the Android app.
