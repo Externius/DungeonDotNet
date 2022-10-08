@@ -107,14 +107,11 @@
             }
         });
     };
-
     $(document).ready(function () {
-
         $(document).on('click', '#deleteOptnBtn', function (e) {
             e.preventDefault();
             confirm('@Resources.Common.Alert', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
         });
-
         $(document).on('click', '#deleteBtn', function (e) {
             e.preventDefault();
             confirm('@Resources.Common.Alert', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
