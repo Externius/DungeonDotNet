@@ -16,17 +16,17 @@ namespace RDMG.Core.Generator
             "Mithral",
             "Adamantine"
         };
-        public static readonly int[] DoorAC = {
+        public static readonly int[] DoorAc = {
                 13, 15, 17, 19, 19, 21, 23
         };
-        public static readonly int[] DoorHP = {
+        public static readonly int[] DoorHp = {
                 10, 10, 15, 15, 18, 18, 27
         };
         public static readonly int[] LockDifficulty = {
                 5, 10, 15, 20, 25, 25, 30
         };
         // treasure
-        public static readonly int[] TreasureGP = {
+        public static readonly int[] TreasureGp = {
             0, 300, 600, 900, 1200, 1600, 2000, 2600, 3400, 4500, 5800,
             7500, 9800, 13000, 17000, 22000, 28000, 36000, 47000, 61000, 80000
         };
@@ -70,7 +70,7 @@ namespace RDMG.Core.Generator
             new Trap("Energy Drain", Save.Constitution, 15, 15, DisableCheck.DispelMagic, false, DamageType.Necrotic, "")
         };
         // encounter
-        public static readonly int[] ChallengeRatingXP = {
+        public static readonly int[] ChallengeRatingXp = {
             10,
             25,
             50,
@@ -114,7 +114,7 @@ namespace RDMG.Core.Generator
             {11, 3},
             {15, 4}
         };
-        public static readonly List<string> ChallengeRating = new(new string[] {"0", "1/8", "1/4", "1/2", "1", "2", "3", "4", "5",
+        public static readonly List<string> ChallengeRating = new(new[] {"0", "1/8", "1/4", "1/2", "1", "2", "3", "4", "5",
                 "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
                 "16", "17", "18", "19", "20", "21", "22", "23", "24", "25",
                 "26", "27", "28", "29", "30"});

@@ -36,11 +36,10 @@ namespace RDMG.Infrastructure.Repository
         {
             var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
 
-            if (local != null)
-            {
-                _mapper.Map(user, local);
-               await _context.SaveChangesAsync();
-            }
+            if (local == null) 
+                return null;
+            _mapper.Map(user, local);
+            await _context.SaveChangesAsync();
 
             return local;
         }
@@ -54,11 +53,9 @@ namespace RDMG.Infrastructure.Repository
                 await _context.SaveChangesAsync();
                 return true;
             }
-            else
-            {
-                _logger.LogError($" Entity not found (User# {id})");
-                return false;
-            }
+
+            _logger.LogError($" Entity not found (User# {id})");
+            return false;
         }
 
         public async Task<User> GetByUsernameAsync(string username, bool? deleted = false)

@@ -22,37 +22,37 @@ namespace RDMG.Tests.DungeonHelperTests
         }
 
         [Fact]
-        public void CanGetNCDoor()
+        public void CanGetNcDoor()
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonHelper>();
 
             var currentDoors = new List<DungeonTile>(){
-                    new DungeonTile(2,2,2,2,50,50,Textures.NO_CORRIDOR_DOOR),
-                    new DungeonTile(5,5,2,2,50,50,Textures.NO_CORRIDOR_DOOR_TRAPPED),
-                    new DungeonTile(5,2,2,2,50,50,Textures.NO_CORRIDOR_DOOR_LOCKED)
+                    new(2,2,2,2,50,50,Textures.NoCorridorDoor),
+                    new(5,5,2,2,50,50,Textures.NoCorridorDoorTrapped),
+                    new(5,2,2,2,50,50,Textures.NoCorridorDoorLocked)
                 };
 
             var result = new string[currentDoors.Count];
-            for (int i = 0; i < currentDoors.Count; i++)
+            for (var i = 0; i < currentDoors.Count; i++)
             {
-                result[i] = service.GetNCDoor(currentDoors[i]);
+                result[i] = service.GetNcDoor(currentDoors[i]);
             }
 
             result.Any(s => !string.IsNullOrWhiteSpace(s)).ShouldBeTrue();
         }
 
         [Fact]
-        public void CanGetNCDoorDescription()
+        public void CanGetNcDoorDescription()
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonHelper>();
-            var dungeonNoCorridor = env.GetNCDungeon();
+            var dungeonNoCorridor = env.GetNcDungeon();
             dungeonNoCorridor.Init();
             dungeonNoCorridor.AddFirstRoom();
             var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
-            var match = list.Where(x => x.Texture == Textures.ROOM);
-            var result = service.GetNCDoorDescription(dungeonNoCorridor.DungeonTiles, match.ToList());
+            var match = list.Where(x => x.Texture == Textures.Room);
+            var result = service.GetNcDoorDescription(dungeonNoCorridor.DungeonTiles, match.ToList());
             result.ShouldNotBeNull();
         }
 
@@ -61,7 +61,7 @@ namespace RDMG.Tests.DungeonHelperTests
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonHelper>();
-            var dungeon = env.GetDungeon();
+            env.GetDungeon();
             var result = new string[20];
             for (var i = 0; i < 20; i++)
             {
@@ -75,7 +75,7 @@ namespace RDMG.Tests.DungeonHelperTests
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonHelper>();
-            var dungeon = env.GetDungeon();
+            env.GetDungeon();
             var result = new string[20];
             for (var i = 0; i < 20; i++)
             {
@@ -89,7 +89,7 @@ namespace RDMG.Tests.DungeonHelperTests
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonHelper>();
-            var dungeon = env.GetDungeon();
+            env.GetDungeon();
             var result = new string[20];
             for (var i = 0; i < 20; i++)
             {
@@ -103,7 +103,7 @@ namespace RDMG.Tests.DungeonHelperTests
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonHelper>();
-            var dungeon = env.GetDungeon();
+            env.GetDungeon();
             var result = new string[20];
             for (var i = 0; i < 20; i++)
             {

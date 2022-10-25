@@ -225,15 +225,15 @@ namespace RDMG.Controllers.Web
         {
             return new List<SelectListItem>
                 {
-                    new SelectListItem{ Text = Resources.Common.Yes, Value = "true", Selected = true },
-                    new SelectListItem{ Text = Resources.Common.No, Value = "false" }
+                    new() { Text = Resources.Common.Yes, Value = "true", Selected = true },
+                    new() { Text = Resources.Common.No, Value = "false" }
                 };
         }
 
         private static List<SelectListItem> GenerateIntSelectList(int from, int to)
         {
             var list = new List<SelectListItem>();
-            for (int i = from; i <= to; i++)
+            for (var i = from; i <= to; i++)
             {
                 list.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
             }

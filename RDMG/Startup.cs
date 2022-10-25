@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,27 +13,27 @@ using RDMG.Core.Generator;
 using RDMG.Core.Services;
 using RDMG.Infrastructure;
 using RDMG.Infrastructure.Repository;
-using RDMG.Seed;
 using System;
 using System.Reflection;
+using RDMG.Infrastructure.Seed;
 
 namespace RDMG
 {
     public class Startup
     {
-        private static IConfiguration Configuration;
+        private static IConfiguration _configuration;
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
             services.AddCookiePolicy()
-                    .AddDatabase(Configuration)
+                    .AddDatabase(_configuration)
                     .AddLogging(builder =>
                     {
-                        builder.AddFile(Configuration.GetSection("Logging"));
+                        builder.AddFile(_configuration.GetSection("Logging"));
                     })
                     .AddHttpContextAccessor()
                     .AddApplicationServices()
@@ -63,7 +62,7 @@ namespace RDMG
 
         public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
-            app.ConfigureDB(Configuration);
+            app.ConfigureDb(_configuration);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -90,17 +89,17 @@ namespace RDMG
 
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder ConfigureDB(this IApplicationBuilder app, IConfiguration configuration)
+        public static IApplicationBuilder ConfigureDb(this IApplicationBuilder app, IConfiguration configuration)
         {
             using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
             switch (configuration.GetConnectionString("DbProvider").ToLower())
             {
                 case "sqlserver":
-                    MigrateAndSeedDB<SqlServerContext>(serviceScope);
+                    MigrateAndSeedDb<SqlServerContext>(serviceScope);
                     break;
                 case "sqlite":
-                    MigrateAndSeedDB<SqliteContext>(serviceScope);
+                    MigrateAndSeedDb<SqliteContext>(serviceScope);
                     break;
                 default:
                     throw new Exception($"DbProvider not recognized: {configuration.GetConnectionString("DbProvider")}");
@@ -109,10 +108,10 @@ namespace RDMG
             return app;
         }
 
-        public static void MigrateAndSeedDB<T>(IServiceScope serviceScope) where T : Context
+        public static void MigrateAndSeedDb<T>(IServiceScope serviceScope) where T : Context
         {
             using var context = serviceScope.ServiceProvider.GetService<T>();
-            context.Database.Migrate();
+            context?.Database.Migrate();
             var service = serviceScope.ServiceProvider.GetService<IDungeonService>();
             var seedData = new ContextSeedData(service, context);
             seedData.SeedDataAsync().Wait();
@@ -182,7 +181,7 @@ namespace RDMG
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
+                options.CheckConsentNeeded = _ => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 

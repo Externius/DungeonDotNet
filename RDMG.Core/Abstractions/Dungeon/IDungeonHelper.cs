@@ -11,11 +11,11 @@ namespace RDMG.Core.Abstractions.Dungeon
         void AddTrapDescription(DungeonTile[][] dungeonTiles, int x, int y, List<TrapDescription> trapDescription);
         void AddRoamingMonsterDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoamingMonsterDescription> roamingMonsterDescription);
         int Manhattan(int dx, int dy);
-        void AddNCRoomDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoomDescription> roomDescription, string doors);
+        void AddNcRoomDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoomDescription> roomDescription, string doors);
         void Init(DungeonOptionModel model);
-        bool CheckNCDoor(DungeonTile[][] dungeonTiles, int i, int j);
-        string GetNCDoorDescription(DungeonTile[][] dungeonTiles, List<DungeonTile> closedList);
-        string GetNCDoor(DungeonTile door);
+        bool CheckNcDoor(DungeonTile[][] dungeonTiles, int i, int j);
+        string GetNcDoorDescription(DungeonTile[][] dungeonTiles, List<DungeonTile> closedList);
+        string GetNcDoor(DungeonTile door);
         string GetTreasure();
         string GetMonster();
         string GetCurrentTrap(bool door);

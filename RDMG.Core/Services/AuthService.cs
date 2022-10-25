@@ -31,14 +31,11 @@ namespace RDMG.Core.Services
                 if (user == null)
                     return null;
 
-                if (PasswordHelper.CheckPassword(user.Password, model.Password))
-                    return _mapper.Map<UserModel>(user);
-                else
-                    return null;
+                return PasswordHelper.CheckPassword(user.Password, model.Password) ? _mapper.Map<UserModel>(user) : null;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Login User failed.");
+                _logger.LogError(ex, "Login User failed.");
                 throw;
             }
         }

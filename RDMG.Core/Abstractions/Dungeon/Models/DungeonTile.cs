@@ -18,7 +18,7 @@ namespace RDMG.Core.Abstractions.Dungeon.Models
         public string Description { get; set; }
         public int Index { get; set; }
 
-        public DungeonTile(int x, int y, int i = 0, int j = 0, int width = 0, int height = 0, Textures texture = Textures.EDGE)
+        public DungeonTile(int x, int y, int i = 0, int j = 0, int width = 0, int height = 0, Textures texture = Textures.Edge)
         {
             X = x;
             Y = y;

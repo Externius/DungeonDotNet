@@ -29,11 +29,10 @@ namespace RDMG.Core.Helpers
 
             for (var i = 0; i < 20; i++)
             {
-                if (hashBytes[i + 16] != hash[i])
-                {
-                    result = false;
-                    break;
-                }
+                if (hashBytes[i + 16] == hash[i]) 
+                    continue;
+                result = false;
+                break;
             }
 
             return result;

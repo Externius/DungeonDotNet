@@ -3,28 +3,25 @@ using RDMG.Core.Domain;
 
 namespace RDMG.Core.Helpers
 {
-    public class RoomPosition
+    public static class RoomPosition
     {
-        public static RoomPosition Instance { get; } = new RoomPosition();
         public static bool Up { get; set; }
         public static bool Down { get; set; }
         public static bool Left { get; set; }
         public static bool Right { get; set; }
-        private RoomPosition() { }
-
         internal static void CheckRoomPosition(DungeonTile[][] dungeonTiles, int x, int y)
         {
             Up = false;
             Down = false;
             Left = false;
             Right = false;
-            if (dungeonTiles[x][y - 1].Texture == Textures.ROOM) // left
+            if (dungeonTiles[x][y - 1].Texture == Textures.Room) // left
                 Left = true;
-            if (dungeonTiles[x][y + 1].Texture == Textures.ROOM) // right
+            if (dungeonTiles[x][y + 1].Texture == Textures.Room) // right
                 Right = true;
-            if (dungeonTiles[x + 1][y].Texture == Textures.ROOM) // bottom
+            if (dungeonTiles[x + 1][y].Texture == Textures.Room) // bottom
                 Down = true;
-            if (dungeonTiles[x - 1][y].Texture == Textures.ROOM) // top
+            if (dungeonTiles[x - 1][y].Texture == Textures.Room) // top
                 Up = true;
         }
     }

@@ -151,7 +151,6 @@ var Utils = (function () {
                 switch (tiles[i][j].Texture) {
                     case 1: // marble
                         context.drawImage(IMAGEOBJECT[THEMEINDEX[0]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
-                        context.drawImage(IMAGEOBJECT[THEMEINDEX[0]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
                         break;
                     case 2: // corridor
                         context.drawImage(IMAGEOBJECT[THEMEINDEX[1]], tiles[i][j].X, tiles[i][j].Y, tiles[i][j].Width, tiles[i][j].Height);
@@ -252,7 +251,7 @@ var Utils = (function () {
         context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
         addDescription(roomDescription, trapDescription, roamingDescription, descId);
         getTheme(themeID);
-        drawMap(tiles, context, contextFont, hasCorridor);
+        drawMap(tiles, context, contextFont, hasCorridor === "True");
     };
     var downloadHTML = function (linkID) {
         var link = document.getElementById(linkID);

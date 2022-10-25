@@ -6,27 +6,12 @@ namespace RDMG.Controllers.Web
 {
     public class HomeController : Controller
     {
-
-        public HomeController()
-        {
-        }
-
         public IActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (User.Identity is { IsAuthenticated: false })
             {
                 return RedirectToAction("Login", "Auth");
             }
-            return View();
-        }
-
-        public IActionResult About()
-        {
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
             return View();
         }
 

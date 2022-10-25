@@ -67,11 +67,9 @@ namespace RDMG.Infrastructure.Repository
                 await _context.SaveChangesAsync(cancellationToken);
                 return true;
             }
-            else
-            {
-                _logger.LogError($" Entity not found (Option# {id})");
-                return false;
-            }
+
+            _logger.LogError(" Entity not found (Option# {id})", id);
+            return false;
         }
 
         public async Task<DungeonOption> GetDungeonOptionAsync(int id, CancellationToken cancellationToken)
@@ -83,11 +81,10 @@ namespace RDMG.Infrastructure.Repository
         {
             var local = await _context.DungeonOptions.FirstOrDefaultAsync(d => d.Id == dungeonOption.Id, cancellationToken);
 
-            if (local != null)
-            {
-                _mapper.Map(dungeonOption, local);
-                await _context.SaveChangesAsync(cancellationToken);
-            }
+            if (local == null) 
+                return null;
+            _mapper.Map(dungeonOption, local);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return local;
         }

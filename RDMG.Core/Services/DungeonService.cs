@@ -21,7 +21,6 @@ namespace RDMG.Core.Services
     {
         private readonly IDungeonRepository _dungeonRepository;
         private readonly IDungeonOptionRepository _dungeonOptionRepository;
-        private readonly IOptionRepository _optionRepository;
         private readonly IDungeonHelper _dungeonHelper;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -29,13 +28,11 @@ namespace RDMG.Core.Services
         public DungeonService(IMapper mapper,
             IDungeonRepository dungeonRepository,
             IDungeonOptionRepository dungeonOptionRepository,
-            IOptionRepository optionRepository,
             IDungeonHelper dungeonHelper,
             ILogger<DungeonService> logger)
         {
             _dungeonRepository = dungeonRepository;
             _dungeonOptionRepository = dungeonOptionRepository;
-            _optionRepository = optionRepository;
             _dungeonHelper = dungeonHelper;
             _mapper = mapper;
             _logger = logger;
@@ -51,7 +48,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Create dungeon option failed.");
+                _logger.LogError(ex, "Create dungeon option failed.");
                 throw;
             }
         }
@@ -64,17 +61,17 @@ namespace RDMG.Core.Services
                 throw new ServiceException(Resources.Error.Required);
         }
 
-        public async Task<int> AddDungeonAsync(DungeonModel saveddungeon, CancellationToken cancellationToken)
+        public async Task<int> AddDungeonAsync(DungeonModel savedDungeon, CancellationToken cancellationToken)
         {
             try
             {
-                var dungeon = _mapper.Map<Domain.Dungeon>(saveddungeon);
+                var dungeon = _mapper.Map<Domain.Dungeon>(savedDungeon);
                 var sd = await _dungeonRepository.AddDungeonAsync(dungeon, cancellationToken);
                 return sd.Id;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Add dungeon failed.");
+                _logger.LogError(ex, "Add dungeon failed.");
                 throw;
             }
         }
@@ -94,20 +91,17 @@ namespace RDMG.Core.Services
                 {
                     return await CreateOptionAndAddDungeonToItAsync(optionModel, cancellationToken);
                 }
-                else // regenerate
+
+                // regenerate
+                var existingDungeons = await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
+                var oldDungeon = existingDungeons.FirstOrDefault();
+                if (oldDungeon is not null)
                 {
-                    var existingDungeons = await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
-                    var oldDungeon = existingDungeons.FirstOrDefault();
-                    if (oldDungeon is not null)
-                    {
-                        return await UpdateExistingDungeonAsync(optionModel, existingDungeonOption, oldDungeon, cancellationToken);
-                    }
-                    else
-                    {
-                        optionModel.Id = existingDungeonOption.Id;
-                        return await AddDungeonToExistingOptionAsync(optionModel, level, cancellationToken);
-                    }
+                    return await UpdateExistingDungeonAsync(optionModel, existingDungeonOption, oldDungeon, cancellationToken);
                 }
+
+                optionModel.Id = existingDungeonOption.Id;
+                return await AddDungeonToExistingOptionAsync(optionModel, level, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -190,25 +184,23 @@ namespace RDMG.Core.Services
                         }
                     );
                 }
-                else
-                {
-                    var dungeonNoCorridor = new DungeonNoCorridor(dungeonOptions.Width, dungeonOptions.Height, model.DungeonSize, model.RoomSize, _dungeonHelper);
-                    dungeonNoCorridor.Generate();
-                    return await Task.FromResult(
-                        new DungeonModel()
-                        {
-                            DungeonTiles = JsonSerializer.Serialize(dungeonNoCorridor.DungeonTiles),
-                            RoomDescription = JsonSerializer.Serialize(dungeonNoCorridor.RoomDescription),
-                            DungeonOptionId = model.Id,
-                            TrapDescription = "[]",
-                            RoamingMonsterDescription = "[]"
-                        }
-                    );
-                }
+
+                var dungeonNoCorridor = new DungeonNoCorridor(dungeonOptions.Width, dungeonOptions.Height, model.DungeonSize, model.RoomSize, _dungeonHelper);
+                dungeonNoCorridor.Generate();
+                return await Task.FromResult(
+                    new DungeonModel()
+                    {
+                        DungeonTiles = JsonSerializer.Serialize(dungeonNoCorridor.DungeonTiles),
+                        RoomDescription = JsonSerializer.Serialize(dungeonNoCorridor.RoomDescription),
+                        DungeonOptionId = model.Id,
+                        TrapDescription = "[]",
+                        RoamingMonsterDescription = "[]"
+                    }
+                );
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error: " + ex.Message);
+                _logger.LogError("Error: {message}", ex.Message);
                 throw;
             }
         }
@@ -223,7 +215,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Get all dungeon options failed.");
+                _logger.LogError(ex, "Get all dungeon options failed.");
                 throw;
             }
         }
@@ -238,7 +230,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Get all dungeon options for user failed.");
+                _logger.LogError(ex, "Get all dungeon options for user failed.");
                 throw;
             }
         }
@@ -251,7 +243,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Get dungeon option by name failed.");
+                _logger.LogError(ex, "Get dungeon option by name failed.");
                 throw;
             }
         }
@@ -264,7 +256,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Delete dungeon option failed.");
+                _logger.LogError(ex, "Delete dungeon option failed.");
                 throw;
             }
         }
@@ -277,7 +269,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Delete dungeon failed.");
+                _logger.LogError(ex, "Delete dungeon failed.");
                 throw;
             }
         }
@@ -291,7 +283,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"List dungeons for user failed.");
+                _logger.LogError(ex, "List dungeons for user failed.");
                 throw;
             }
         }
@@ -305,7 +297,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"List dungeons by name failed.");
+                _logger.LogError(ex, "List dungeons by name failed.");
                 throw;
             }
         }
@@ -318,7 +310,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Get dungeon failed.");
+                _logger.LogError(ex, "Get dungeon failed.");
                 throw;
             }
         }
@@ -338,7 +330,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Update dungeon failed.");
+                _logger.LogError(ex, "Update dungeon failed.");
                 throw;
             }
         }
@@ -351,7 +343,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Get dungeon option failed.");
+                _logger.LogError(ex, "Get dungeon option failed.");
                 throw;
             }
         }
@@ -366,7 +358,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Update dungeon failed.");
+                _logger.LogError(ex, "Update dungeon failed.");
                 throw;
             }
         }

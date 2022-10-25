@@ -31,11 +31,11 @@ namespace RDMG.Infrastructure.Repository
                                     .ToListAsync(cancellationToken);
         }
 
-        public async Task<Dungeon> AddDungeonAsync(Dungeon dungeon, CancellationToken cancellationToken)
+        public async Task<Dungeon> AddDungeonAsync(Dungeon savedDungeon, CancellationToken cancellationToken)
         {
-            _context.Dungeons.Add(dungeon);
+            _context.Dungeons.Add(savedDungeon);
             await _context.SaveChangesAsync(cancellationToken);
-            return dungeon;
+            return savedDungeon;
         }
 
         public async Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken)
@@ -48,11 +48,9 @@ namespace RDMG.Infrastructure.Repository
                 await _context.SaveChangesAsync(cancellationToken);
                 return true;
             }
-            else
-            {
-                _logger.LogError($" Entity not found (SavedDungeon# {id})");
-                return false;
-            }
+
+            _logger.LogError(" Entity not found (SavedDungeon# {id})", id);
+            return false;
         }
 
         public async Task<IEnumerable<Dungeon>> GetAllDungeonByOptionNameForUserAsync(string dungeonName, int userId, CancellationToken cancellationToken)
@@ -73,11 +71,10 @@ namespace RDMG.Infrastructure.Repository
         {
             var local = await _context.Dungeons.FirstOrDefaultAsync(d => d.Id == dungeon.Id, cancellationToken);
 
-            if (local != null)
-            {
-                _mapper.Map(dungeon, local);
-                await _context.SaveChangesAsync(cancellationToken);
-            }
+            if (local == null) 
+                return null;
+            _mapper.Map(dungeon, local);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return local;
         }

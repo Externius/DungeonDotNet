@@ -48,12 +48,11 @@ namespace RDMG.Core.Services
 
                 if (filter.HasValue)
                     return cacheEntry.Where(o => o.Key == filter.Value).ToList();
-                else
-                    return cacheEntry;
+                return cacheEntry;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"List options failed.");
+                _logger.LogError(ex, "List options failed.");
                 throw;
             }
         }

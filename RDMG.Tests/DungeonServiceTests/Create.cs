@@ -49,9 +49,9 @@ namespace RDMG.Tests.DungeonServiceTests
             var token = source.Token;
 
             var optionsModel = (await service.GetAllDungeonOptionsForUserAsync(1, token)).First();
-            var saveddungeon = await service.GenerateDungeonAsync(optionsModel);
+            var savedDungeon = await service.GenerateDungeonAsync(optionsModel);
 
-            var result = await service.AddDungeonAsync(saveddungeon, token);
+            var result = await service.AddDungeonAsync(savedDungeon, token);
             result.ShouldBeGreaterThan(1);
         }
 

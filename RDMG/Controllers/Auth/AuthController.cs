@@ -23,7 +23,7 @@ namespace RDMG.Controllers.Auth
         }
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity is { IsAuthenticated: true })
             {
                 return RedirectToAction("Index", "Dungeon");
             }
@@ -44,10 +44,10 @@ namespace RDMG.Controllers.Auth
 
                 var claims = new List<Claim>
                 {
-                    new Claim(JwtClaimTypes.Name, user.Username),
-                    new Claim(JwtClaimTypes.Id, user.Id.ToString()),
-                    new Claim(JwtClaimTypes.Email, user.Email),
-                    new Claim(JwtClaimTypes.Role, user.Role)
+                    new(JwtClaimTypes.Name, user.Username),
+                    new(JwtClaimTypes.Id, user.Id.ToString()),
+                    new(JwtClaimTypes.Email, user.Email),
+                    new(JwtClaimTypes.Role, user.Role)
                 };
 
                 var userIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, JwtClaimTypes.Subject, JwtClaimTypes.Role);
@@ -60,8 +60,7 @@ namespace RDMG.Controllers.Auth
 
                 if (string.IsNullOrWhiteSpace(returnUrl))
                     return RedirectToAction("Index", "Dungeon");
-                else
-                    return Redirect(returnUrl);
+                return Redirect(returnUrl);
             }
             return View();
         }

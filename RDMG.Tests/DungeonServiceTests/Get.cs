@@ -15,9 +15,9 @@ namespace RDMG.Tests.DungeonServiceTests
             var service = env.GetService<IDungeonService>();
             var source = new CancellationTokenSource();
             var token = source.Token;
-            var result = await service.GetAllDungeonOptionsAsync(token);
+            var result = (await service.GetAllDungeonOptionsAsync(token)).ToList();
             result.ShouldNotBeEmpty();
-            result.Count().ShouldBe(2);
+            result.Count.ShouldBe(2);
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace RDMG.Tests.DungeonServiceTests
             var service = env.GetService<IDungeonService>();
             var source = new CancellationTokenSource();
             var token = source.Token;
-            var id = 1;
+            const int id = 1;
             var result = await service.GetDungeonAsync(id, token);
             result.Id.ShouldBe(id);
         }

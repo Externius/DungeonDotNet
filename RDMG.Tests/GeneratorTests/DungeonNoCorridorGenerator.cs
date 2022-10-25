@@ -2,18 +2,23 @@
 using Shouldly;
 using System.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace RDMG.Tests.GeneratorTests
 {
-    public class DungeonNoCorridorGenerator
+    public class DungeonNoCorridorGenerator : DungeonTestBase
     {
+        public DungeonNoCorridorGenerator(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Fact]
         public void CanInit()
         {
             using var env = new TestEnvironment();
-            var dungeonNoCorridor = env.GetNCDungeon();
+            var dungeonNoCorridor = env.GetNcDungeon();
             dungeonNoCorridor.Init();
-            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
+            Draw(dungeonNoCorridor.DungeonTiles);
             dungeonNoCorridor.RoomDescription.Count.ShouldBe(0);
         }
 
@@ -21,12 +26,12 @@ namespace RDMG.Tests.GeneratorTests
         public void TestAddFirstRoom()
         {
             using var env = new TestEnvironment();
-            var dungeonNoCorridor = env.GetNCDungeon();
+            var dungeonNoCorridor = env.GetNcDungeon();
             dungeonNoCorridor.Init();
             dungeonNoCorridor.AddFirstRoom();
-            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
+            Draw(dungeonNoCorridor.DungeonTiles);
             var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
-            var match = list.Where(x => x.Texture == Textures.ROOM);
+            var match = list.Where(x => x.Texture == Textures.Room);
             match.ShouldNotBeNull();
         }
 
@@ -34,11 +39,11 @@ namespace RDMG.Tests.GeneratorTests
         public void TestFillRoomToDoor()
         {
             using var env = new TestEnvironment();
-            var dungeonNoCorridor = env.GetNCDungeon();
+            var dungeonNoCorridor = env.GetNcDungeon();
             dungeonNoCorridor.Init();
             dungeonNoCorridor.AddFirstRoom();
             dungeonNoCorridor.FillRoomToDoor();
-            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
+            Draw(dungeonNoCorridor.DungeonTiles);
             dungeonNoCorridor.OpenDoorList.Count.ShouldBe(0);
         }
 
@@ -46,14 +51,14 @@ namespace RDMG.Tests.GeneratorTests
         public void TestAddEntryPoint()
         {
             using var env = new TestEnvironment();
-            var dungeonNoCorridor = env.GetNCDungeon();
+            var dungeonNoCorridor = env.GetNcDungeon();
             dungeonNoCorridor.Init();
             dungeonNoCorridor.AddFirstRoom();
             dungeonNoCorridor.FillRoomToDoor();
             dungeonNoCorridor.AddEntryPoint();
-            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
+            Draw(dungeonNoCorridor.DungeonTiles);
             var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
-            var match = list.Where(x => x.Texture == Textures.ENTRY);
+            var match = list.Where(x => x.Texture == Textures.Entry);
             match.ShouldNotBeNull();
         }
 
@@ -61,13 +66,13 @@ namespace RDMG.Tests.GeneratorTests
         public void TestAddDescription()
         {
             using var env = new TestEnvironment();
-            var dungeonNoCorridor = env.GetNCDungeon();
+            var dungeonNoCorridor = env.GetNcDungeon();
             dungeonNoCorridor.Init();
             dungeonNoCorridor.AddFirstRoom();
             dungeonNoCorridor.FillRoomToDoor();
             dungeonNoCorridor.AddEntryPoint();
             dungeonNoCorridor.AddDescription();
-            DrawTestDungeon.Draw(dungeonNoCorridor.DungeonTiles);
+            Draw(dungeonNoCorridor.DungeonTiles);
             dungeonNoCorridor.RoomDescription.Count.ShouldBeGreaterThan(1);
         }
     }

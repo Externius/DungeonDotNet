@@ -14,11 +14,11 @@ namespace RDMG.Tests.DungeonServiceTests
             var service = env.GetService<IDungeonService>();
             var source = new CancellationTokenSource();
             var token = source.Token;
-            var dungeonId = 1;
+            const int dungeonId = 1;
             var oldDungeon = await service.GetDungeonAsync(dungeonId, token);
-            var optionmodel = await service.GetDungeonOptionAsync(oldDungeon.DungeonOptionId, token);
-            optionmodel.Corridor = false;
-            var newDungeon = await service.GenerateDungeonAsync(optionmodel);
+            var optionModel = await service.GetDungeonOptionAsync(oldDungeon.DungeonOptionId, token);
+            optionModel.Corridor = false;
+            var newDungeon = await service.GenerateDungeonAsync(optionModel);
             oldDungeon.DungeonTiles = newDungeon.DungeonTiles;
             oldDungeon.TrapDescription = newDungeon.TrapDescription;
             oldDungeon.RoomDescription = newDungeon.RoomDescription;
@@ -36,10 +36,9 @@ namespace RDMG.Tests.DungeonServiceTests
             var service = env.GetService<IDungeonService>();
             var source = new CancellationTokenSource();
             var token = source.Token;
-            var id = 1;
+            const int id = 1;
             var existingOption = await service.GetDungeonOptionAsync(id, token);
-            var oldName = existingOption.DungeonName;
-            var newName = "New Name";
+            const string newName = "New Name";
             await service.RenameDungeonAsync(existingOption.Id, existingOption.UserId, newName, token);
             var renamed = await service.GetDungeonOptionAsync(id, token);
             renamed.DungeonName.ShouldBe(newName);

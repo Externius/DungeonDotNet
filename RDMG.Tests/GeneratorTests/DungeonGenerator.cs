@@ -2,18 +2,23 @@
 using Shouldly;
 using System.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace RDMG.Tests.GeneratorTests
 {
-    public class DungeonGenerator
+    public class DungeonGenerator : DungeonTestBase
     {
+        public DungeonGenerator(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Fact]
         public void CanInit()
         {
             using var env = new TestEnvironment();
             var dungeon = env.GetDungeon();
             dungeon.Init();
-            DrawTestDungeon.Draw(dungeon.DungeonTiles);
+            Draw(dungeon.DungeonTiles);
             dungeon.RoomDescription.Count.ShouldBe(0);
         }
 
@@ -24,7 +29,7 @@ namespace RDMG.Tests.GeneratorTests
             var dungeon = env.GetDungeon();
             dungeon.Init();
             dungeon.GenerateRoom();
-            DrawTestDungeon.Draw(dungeon.DungeonTiles);
+            Draw(dungeon.DungeonTiles);
             dungeon.RoomDescription.Count.ShouldBe(2);
         }
 
@@ -36,9 +41,9 @@ namespace RDMG.Tests.GeneratorTests
             dungeon.Init();
             dungeon.GenerateRoom();
             dungeon.AddEntryPoint();
-            DrawTestDungeon.Draw(dungeon.DungeonTiles);
+            Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
-            var match = list.Where(x => x.Texture == Textures.ENTRY);
+            var match = list.Where(x => x.Texture == Textures.Entry);
             match.ShouldNotBeNull();
         }
         [Fact]
@@ -50,9 +55,9 @@ namespace RDMG.Tests.GeneratorTests
             dungeon.GenerateRoom();
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
-            DrawTestDungeon.Draw(dungeon.DungeonTiles);
+            Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
-            var match = list.Where(x => x.Texture == Textures.CORRIDOR);
+            var match = list.Where(x => x.Texture == Textures.Corridor);
             match.ShouldNotBeNull();
         }
         [Fact]
@@ -65,9 +70,9 @@ namespace RDMG.Tests.GeneratorTests
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
             dungeon.AddDeadEnds();
-            DrawTestDungeon.Draw(dungeon.DungeonTiles);
+            Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
-            var match = list.Where(x => x.Texture == Textures.CORRIDOR);
+            var match = list.Where(x => x.Texture == Textures.Corridor);
             match.ShouldNotBeNull();
         }
         [Fact]
@@ -80,10 +85,10 @@ namespace RDMG.Tests.GeneratorTests
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
             dungeon.AddDeadEnds();
-            dungeon.AddCorridorItem(2, Item.TRAP);
-            DrawTestDungeon.Draw(dungeon.DungeonTiles);
+            dungeon.AddCorridorItem(2, Item.Trap);
+            Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
-            var match = list.Where(x => x.Texture == Textures.TRAP);
+            var match = list.Where(x => x.Texture == Textures.Trap);
             match.ShouldNotBeNull();
         }
         [Fact]
@@ -96,10 +101,10 @@ namespace RDMG.Tests.GeneratorTests
             dungeon.AddEntryPoint();
             dungeon.GenerateCorridors();
             dungeon.AddDeadEnds();
-            dungeon.AddCorridorItem(2, Item.ROAMING_MONSTER);
-            DrawTestDungeon.Draw(dungeon.DungeonTiles);
+            dungeon.AddCorridorItem(2, Item.RoamingMonster);
+            Draw(dungeon.DungeonTiles);
             var list = dungeon.DungeonTiles.SelectMany(T => T).ToList();
-            var match = list.Where(x => x.Texture == Textures.ROAMING_MONSTER);
+            var match = list.Where(x => x.Texture == Textures.RoamingMonster);
             match.ShouldNotBeNull();
         }
     }

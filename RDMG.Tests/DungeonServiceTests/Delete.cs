@@ -13,7 +13,7 @@ namespace RDMG.Tests.DungeonServiceTests
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonService>();
-            var toDeleteId = 1;
+            const int toDeleteId = 1;
             var source = new CancellationTokenSource();
             var token = source.Token;
             var result = await service.DeleteDungeonOptionAsync(toDeleteId, token);
@@ -28,7 +28,7 @@ namespace RDMG.Tests.DungeonServiceTests
         {
             using var env = new TestEnvironment();
             var service = env.GetService<IDungeonService>();
-            var toDeleteId = 1;
+            const int toDeleteId = 1;
             var source = new CancellationTokenSource();
             var token = source.Token;
             var result = await service.DeleteDungeonAsync(toDeleteId, token);

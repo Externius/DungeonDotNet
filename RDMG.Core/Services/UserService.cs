@@ -39,7 +39,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Create User failed.");
+                _logger.LogError(ex, "Create User failed.");
                 throw;
             }
         }
@@ -77,7 +77,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Delete User failed.");
+                _logger.LogError(ex, "Delete User failed.");
                 throw;
             }
         }
@@ -92,7 +92,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Get User failed.");
+                _logger.LogError(ex, "Get User failed.");
                 throw;
             }
         }
@@ -109,7 +109,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"List Users failed.");
+                _logger.LogError(ex, "List Users failed.");
                 throw;
             }
         }
@@ -125,7 +125,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Restore User #{id} failed.");
+                _logger.LogError(ex, "Restore User #{userid} failed.", id);
                 throw;
             }
         }
@@ -145,7 +145,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Update User failed.");
+                _logger.LogError(ex, "Update User failed.");
                 throw;
             }
         }
@@ -184,7 +184,7 @@ namespace RDMG.Core.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Change user password failed.");
+                _logger.LogError(ex, "Change user password failed.");
                 throw;
             }
         }

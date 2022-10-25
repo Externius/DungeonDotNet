@@ -11,11 +11,11 @@ using RDMG.Core.Generator;
 using RDMG.Core.Services;
 using RDMG.Infrastructure;
 using RDMG.Infrastructure.Repository;
-using RDMG.Seed;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using RDMG.Infrastructure.Seed;
 
 namespace RDMG.Tests
 {
@@ -61,29 +61,26 @@ namespace RDMG.Tests
         {
             var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
 
-            if (optionModel is null)
+            optionModel ??= new DungeonOptionModel
             {
-                optionModel = new DungeonOptionModel
-                {
-                    DungeonName = "UT Dungeon",
-                    Created = DateTime.UtcNow,
-                    ItemsRarity = 1,
-                    DeadEnd = true,
-                    DungeonDifficulty = 1,
-                    DungeonSize = 25,
-                    MonsterType = "any",
-                    PartyLevel = 4,
-                    PartySize = 4,
-                    TrapPercent = 20,
-                    RoamingPercent = 0,
-                    TreasureValue = 1,
-                    RoomDensity = 10,
-                    RoomSize = 20,
-                    Corridor = false
-                };
-            }
+                DungeonName = "UT Dungeon",
+                Created = DateTime.UtcNow,
+                ItemsRarity = 1,
+                DeadEnd = true,
+                DungeonDifficulty = 1,
+                DungeonSize = 25,
+                MonsterType = "any",
+                PartyLevel = 4,
+                PartySize = 4,
+                TrapPercent = 20,
+                RoamingPercent = 0,
+                TreasureValue = 1,
+                RoomDensity = 10,
+                RoomSize = 20,
+                Corridor = false
+            };
 
-            helperService.Init(optionModel);
+            helperService?.Init(optionModel);
 
             var model = new DungeonOptionsModel
             {
@@ -98,33 +95,30 @@ namespace RDMG.Tests
             return new Dungeon(model, helperService);
         }
 
-        public DungeonNoCorridor GetNCDungeon(DungeonOptionModel optionModel = null)
+        public DungeonNoCorridor GetNcDungeon(DungeonOptionModel optionModel = null)
         {
             var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
 
-            if (optionModel is null)
+            optionModel ??= new DungeonOptionModel
             {
-                optionModel = new DungeonOptionModel
-                {
-                    DungeonName = "UT Dungeon",
-                    Created = DateTime.UtcNow,
-                    ItemsRarity = 1,
-                    DeadEnd = true,
-                    DungeonDifficulty = 1,
-                    DungeonSize = 25,
-                    MonsterType = "any",
-                    PartyLevel = 4,
-                    PartySize = 4,
-                    TrapPercent = 20,
-                    RoamingPercent = 0,
-                    TreasureValue = 1,
-                    RoomDensity = 10,
-                    RoomSize = 20,
-                    Corridor = false
-                };
-            }
+                DungeonName = "UT Dungeon",
+                Created = DateTime.UtcNow,
+                ItemsRarity = 1,
+                DeadEnd = true,
+                DungeonDifficulty = 1,
+                DungeonSize = 25,
+                MonsterType = "any",
+                PartyLevel = 4,
+                PartySize = 4,
+                TrapPercent = 20,
+                RoamingPercent = 0,
+                TreasureValue = 1,
+                RoomDensity = 10,
+                RoomSize = 20,
+                Corridor = false
+            };
 
-            helperService.Init(optionModel);
+            helperService?.Init(optionModel);
 
             return new DungeonNoCorridor(800, 800, 15, 15, helperService);
         }
@@ -139,7 +133,7 @@ namespace RDMG.Tests
                 {
                     cfg.AllowNullCollections = true;
                 }
-                , new Type[] { typeof(Core.Services.Automapper.DungeonProfile)
+                , new[] { typeof(Core.Services.Automapper.DungeonProfile)
                 , typeof(Core.Services.Automapper.UserProfile)
                 , typeof(Core.Services.Automapper.OptionProfile)
                 , typeof(Infrastructure.Repository.Automapper.DungeonProfile)
@@ -153,7 +147,7 @@ namespace RDMG.Tests
             using var scope = _serviceProvider.CreateScope();
             var services = scope.ServiceProvider;
             var context = services.GetService<SqliteContext>();
-            context.Database.Migrate();
+            context?.Database.Migrate();
         }
 
         public void Dispose()

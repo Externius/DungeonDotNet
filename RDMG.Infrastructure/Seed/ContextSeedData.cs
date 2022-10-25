@@ -1,15 +1,14 @@
-using RDMG.Core.Abstractions.Services;
-using RDMG.Core.Abstractions.Services.Models;
-using RDMG.Core.Domain;
-using RDMG.Core.Helpers;
-using RDMG.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using RDMG.Core.Abstractions.Services;
+using RDMG.Core.Abstractions.Services.Models;
+using RDMG.Core.Domain;
+using RDMG.Core.Helpers;
 
-namespace RDMG.Seed
+namespace RDMG.Infrastructure.Seed
 {
     public class ContextSeedData
     {
@@ -61,19 +60,19 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.Theme,
                     Name = Resources.Dungeon.Dark,
                     Value = "0"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.Theme,
                     Name = Resources.Dungeon.Light,
                     Value = "1"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.Theme,
                     Name = Resources.Dungeon.Minimal,
@@ -88,19 +87,19 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoamingPercent,
                     Name = "None",
                     Value = "0"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoamingPercent,
                     Name = "Few",
                     Value = "10"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoamingPercent,
                     Name = "More",
@@ -115,19 +114,19 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.TrapPercent,
                     Name = "None",
                     Value = "0"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.TrapPercent,
                     Name = "Few",
                     Value = "15"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.TrapPercent,
                     Name = "More",
@@ -142,91 +141,91 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Aberrations",
                     Value = "aberration"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Beasts",
                     Value = "beast"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Celestials",
                     Value = "celestial"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Constructs",
                     Value = "construct"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Dragons",
                     Value = "dragon"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Elementals",
                     Value = "elemental"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Fey",
                     Value = "fey"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Fiends",
                     Value = "fiend"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Giants",
                     Value = "giant"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Humanoids",
                     Value = "humanoid"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Monstrosities",
                     Value = "monstrosity"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Oozes",
                     Value = "ooze"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Plants",
                     Value = "plant"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Swarm of tiny beasts",
                     Value = "swarm of Tiny beasts"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.MonsterType,
                     Name = "Undead",
@@ -241,19 +240,19 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoomSize,
                     Name = "Small",
                     Value = "20"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoomSize,
                     Name = "Medium",
                     Value = "35"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoomSize,
                     Name = "Large",
@@ -268,19 +267,19 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoomDensity,
                     Name = "Low",
                     Value = "20"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoomDensity,
                     Name = "Medium",
                     Value = "30"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.RoomDensity,
                     Name = "High",
@@ -295,31 +294,31 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.ItemsRarity,
                     Name = "Common",
                     Value = "0"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.ItemsRarity,
-                    Name = "Unommon",
+                    Name = "Uncommon",
                     Value = "1"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.ItemsRarity,
                     Name = "Rare",
                     Value = "2"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.ItemsRarity,
                     Name = "Very Rare",
                     Value = "3"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.ItemsRarity,
                     Name = "Legendary",
@@ -334,19 +333,19 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.TreasureValue,
                     Name = "Low",
                     Value = "0.5"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.TreasureValue,
                     Name = "Standard",
                     Value = "1"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.TreasureValue,
                     Name = "High",
@@ -361,25 +360,25 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.Difficulty,
                     Name = "Easy",
                     Value = "0"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.Difficulty,
                     Name = "Medium",
                     Value = "1"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.Difficulty,
                     Name = "Hard",
                     Value = "2"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.Difficulty,
                     Name = "Deadly",
@@ -394,19 +393,19 @@ namespace RDMG.Seed
         {
             var options = new List<Option>
             {
-                new Option()
+                new()
                 {
                     Key = OptionKey.Size,
                     Name = "Small",
                     Value = "20"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.Size,
                     Name = "Medium",
                     Value = "32"
                 },
-                new Option()
+                new()
                 {
                     Key = OptionKey.Size,
                     Name = "Large",

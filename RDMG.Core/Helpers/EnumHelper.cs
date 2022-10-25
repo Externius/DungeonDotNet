@@ -10,20 +10,13 @@ namespace RDMG.Core.Helpers
             var type = enumerationValue.GetType();
             if (!type.IsEnum)
             {
-                throw new ArgumentException("EnumerationValue must be of Enum type", nameof(enumerationValue));
+                throw new ArgumentException(@"EnumerationValue must be of Enum type", nameof(enumerationValue));
             }
 
-            var memberInfo = type.GetMember(enumerationValue.ToString());
-            if (memberInfo != null && memberInfo.Length > 0)
-            {
-                var attrs = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-                if (attrs != null && attrs.Length > 0)
-                {
-                    return ((DescriptionAttribute)attrs[0]).Description;
-                }
-            }
-
-            return enumerationValue.ToString();
+            var memberInfo = type.GetMember(enumerationValue.ToString()!);
+            if (memberInfo.Length <= 0) return enumerationValue.ToString();
+            var attrs = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+            return attrs.Length > 0 ? ((DescriptionAttribute)attrs[0]).Description : enumerationValue.ToString();
         }
     }
 }

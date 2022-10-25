@@ -34,8 +34,8 @@ namespace RDMG.Core.Generator
 
         public override void Init()
         {
-            var ImgSizeX = DungeonWidth / DungeonSize;
-            var ImgSizeY = DungeonHeight / DungeonSize;
+            var imgSizeX = DungeonWidth / DungeonSize;
+            var imgSizeY = DungeonHeight / DungeonSize;
             RoomSize = (int)Math.Round((float)(DungeonSize - Math.Round(DungeonSize * 0.35)) / 100 * RoomSizePercent);
             RoomDescription = new List<RoomDescription>();
             DungeonSize += 2; // because of boundaries
@@ -55,7 +55,7 @@ namespace RDMG.Core.Generator
             {
                 for (var j = 1; j < DungeonSize - 1; j++)
                 {
-                    DungeonTiles[i][j] = new DungeonTile((j - 1) * ImgSizeX, (i - 1) * ImgSizeY, i, j, ImgSizeX, ImgSizeY, Textures.MARBLE);
+                    DungeonTiles[i][j] = new DungeonTile((j - 1) * imgSizeX, (i - 1) * imgSizeY, i, j, imgSizeX, imgSizeY, Textures.Marble);
                 }
             }
         }
@@ -70,18 +70,18 @@ namespace RDMG.Core.Generator
                 x = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
                 y = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
                 RoomPosition.CheckRoomPosition(DungeonTiles, x, y);
-                entryIsOk = DungeonTiles[x][y].Texture == Textures.ROOM_EDGE && CheckPos() && CheckNearbyDoor(DungeonTiles[x][y]) && CheckEdges(DungeonTiles, x, y);
+                entryIsOk = DungeonTiles[x][y].Texture == Textures.RoomEdge && CheckPos() && CheckNearbyDoor(DungeonTiles[x][y]) && CheckEdges(DungeonTiles, x, y);
             }
             while (!entryIsOk);
-            DungeonTiles[x][y].Texture = Textures.ENTRY;
+            DungeonTiles[x][y].Texture = Textures.Entry;
         }
 
         private static bool CheckEdges(DungeonTile[][] dungeonTiles, int x, int y)
         {
-            return dungeonTiles[x][y - 1].Texture == Textures.ROOM ||
-                   dungeonTiles[x][y + 1].Texture == Textures.ROOM ||
-                   dungeonTiles[x + 1][y].Texture == Textures.ROOM ||
-                   dungeonTiles[x - 1][y].Texture == Textures.ROOM;
+            return dungeonTiles[x][y - 1].Texture == Textures.Room ||
+                   dungeonTiles[x][y + 1].Texture == Textures.Room ||
+                   dungeonTiles[x + 1][y].Texture == Textures.Room ||
+                   dungeonTiles[x - 1][y].Texture == Textures.Room;
         }
 
         public void AddDescription()
@@ -102,11 +102,11 @@ namespace RDMG.Core.Generator
                     RemoveFromOpen(openList, start); // remove from open list this node
                     AddToOpen(start, openList, closedList); // add open list the nearby nodes
                 }
-                _dungeonHelper.AddNCRoomDescription(DungeonTiles, room.I, room.J, RoomDescription, _dungeonHelper.GetNCDoorDescription(DungeonTiles, closedList));
+                _dungeonHelper.AddNcRoomDescription(DungeonTiles, room.I, room.J, RoomDescription, _dungeonHelper.GetNcDoorDescription(DungeonTiles, closedList));
             }
         }
 
-        private void AddToOpen(DungeonTile node, List<DungeonTile> openList, List<DungeonTile> closedList)
+        private void AddToOpen(DungeonTile node, ICollection<DungeonTile> openList, ICollection<DungeonTile> closedList)
         {
             AddToOpenList(node.I, node.J - 1, openList, closedList); // left
             AddToOpenList(node.I - 1, node.J, openList, closedList); // top
@@ -114,7 +114,7 @@ namespace RDMG.Core.Generator
             AddToOpenList(node.I, node.J + 1, openList, closedList); // right
         }
 
-        private void AddToOpenList(int x, int y, List<DungeonTile> openList, List<DungeonTile> closedList)
+        private void AddToOpenList(int x, int y, ICollection<DungeonTile> openList, ICollection<DungeonTile> closedList)
         {
             if (CheckTileForOpenList(x, y) && !closedList.Contains(DungeonTiles[x][y]) && !openList.Contains(DungeonTiles[x][y])) // not in openlist/closedlist
                 openList.Add(DungeonTiles[x][y]);
@@ -124,18 +124,13 @@ namespace RDMG.Core.Generator
         {
             foreach (var door in Doors)
             {
-                door.Description = (_dungeonHelper.GetNCDoor(door));
+                door.Description = (_dungeonHelper.GetNcDoor(door));
             }
         }
 
         private void CleanDoorList()
         {
-            var toDelete = new List<DungeonTile>();
-            foreach (var door in Doors)
-            {
-                if (door.Texture == Textures.ROOM_EDGE)
-                    toDelete.Add(door);
-            }
+            var toDelete = Doors.Where(door => door.Texture == Textures.RoomEdge).ToList();
             Doors.RemoveAll(i => toDelete.Contains(i));
         }
 
@@ -192,7 +187,7 @@ namespace RDMG.Core.Generator
 
         private void SetVerticalEdge(int x, int y, int right, int down)
         {
-            var addToEdgeList = !(right == 1 || right == -1);
+            var addToEdgeList = right is not (1 or -1);
             if (down < 0) // up
             {
                 for (var i = down; i < 2; i++)
@@ -287,7 +282,7 @@ namespace RDMG.Core.Generator
             {
                 for (var j = node.J - 1; j < node.J + 2; j++)
                 {
-                    if (_dungeonHelper.CheckNCDoor(DungeonTiles, i, j)) // check nearby doors
+                    if (_dungeonHelper.CheckNcDoor(DungeonTiles, i, j)) // check nearby doors
                         return false;
                 }
             }
@@ -296,26 +291,21 @@ namespace RDMG.Core.Generator
 
         private void CleanEdgeTileList()
         {
-            var toDelete = new List<DungeonTile>();
-            foreach (var tile in EdgeTileList)
-            {
-                if (CheckRooms(tile.I, tile.J)) // if its on the edge
-                    toDelete.Add(tile);
-            }
+            var toDelete = EdgeTileList.Where(tile => CheckRooms(tile.I, tile.J)).ToList();
             EdgeTileList.RemoveAll(i => toDelete.Contains(i));
         }
 
         private bool CheckRooms(int x, int y)
         {
-            return DungeonTiles[x][y - 1].Texture != Textures.ROOM &&
-                DungeonTiles[x][y + 1].Texture != Textures.ROOM &&
-                DungeonTiles[x + 1][y].Texture != Textures.ROOM &&
-                DungeonTiles[x - 1][y].Texture != Textures.ROOM;
+            return DungeonTiles[x][y - 1].Texture != Textures.Room &&
+                DungeonTiles[x][y + 1].Texture != Textures.Room &&
+                DungeonTiles[x + 1][y].Texture != Textures.Room &&
+                DungeonTiles[x - 1][y].Texture != Textures.Room;
         }
 
         private void SetHorizontalEdge(int x, int y, int right, int down)
         {
-            var addToEdgeList = !(down == 1 || down == -1);
+            var addToEdgeList = down is not (1 or -1);
             if (right < 0) // left
             {
                 for (var i = right; i < 2; i++)
@@ -334,12 +324,12 @@ namespace RDMG.Core.Generator
 
         private void SetRoomEdge(int x, int y, bool addToEdgeList)
         {
-            if (!_dungeonHelper.CheckNCDoor(DungeonTiles, x, y) && addToEdgeList) // if its not a corridor_door
+            if (!_dungeonHelper.CheckNcDoor(DungeonTiles, x, y) && addToEdgeList) // if its not a corridor_door
             {
                 SetTextureToRoomEdge(x, y);
                 AddEdgeTileList(x, y);
             }
-            else if (!_dungeonHelper.CheckNCDoor(DungeonTiles, x, y))
+            else if (!_dungeonHelper.CheckNcDoor(DungeonTiles, x, y))
             {
                 SetTextureToRoomEdge(x, y);
             }
@@ -376,24 +366,21 @@ namespace RDMG.Core.Generator
 
         private void SetTextureToRoomEdge(int x, int y)
         {
-            DungeonTiles[x][y].Texture = Textures.ROOM_EDGE;
+            DungeonTiles[x][y].Texture = Textures.RoomEdge;
         }
 
         private int[] CheckArea(int x, int y, DungeonTile door)
         {
             var vertical = CheckVertical(x, y);
             var horizontal = CheckHorizontal(x, y);
-            if (CheckPossible(vertical, horizontal, door))
-            {
-                var result = GetDownRight(vertical, horizontal);
-                var down = result[0];
-                var right = result[1];
-                vertical = CheckVerticalOneWay(x, y + right, down); // check horizontal end vertically
-                horizontal = CheckHorizontalOneWay(x + down, y, right); // check vertical end horizontally
-                if (CheckPossibleEnd(vertical, horizontal, door, down, right))
-                    return new int[] { down, right };
-            }
-            return new int[] { 0, 0 };
+            if (!CheckPossible(vertical, horizontal, door))
+                return new[] { 0, 0 };
+            var result = GetDownRight(vertical, horizontal);
+            var down = result[0];
+            var right = result[1];
+            vertical = CheckVerticalOneWay(x, y + right, down); // check horizontal end vertically
+            horizontal = CheckHorizontalOneWay(x + down, y, right); // check vertical end horizontally
+            return CheckPossibleEnd(vertical, horizontal, door, down, right) ? new[] { down, right } : new[] { 0, 0 };
         }
 
         private bool CheckPossibleEnd(int vertical, int horizontal, DungeonTile door, int down, int right)
@@ -402,7 +389,7 @@ namespace RDMG.Core.Generator
                 Math.Abs(vertical) < Math.Abs(down) ||
                 Math.Abs(horizontal) < Math.Abs(right))
             { // it would overlap with another room
-                DungeonTiles[door.I][door.J].Texture = Textures.ROOM_EDGE; // change the door to a room_edge
+                DungeonTiles[door.I][door.J].Texture = Textures.RoomEdge; // change the door to a room_edge
                 return false;
             }
             return true;
@@ -410,26 +397,14 @@ namespace RDMG.Core.Generator
 
         private int CheckHorizontalOneWay(int x, int y, int right)
         {
-            int count;
-            if (right < 0) // left
-                count = CheckLeft(x, y);
-            else
-                count = CheckRight(x, y);
-            if (Math.Abs(count) > 2)
-                return count;
-            return 0;
+            var count = right < 0 ? CheckLeft(x, y) : CheckRight(x, y);
+            return Math.Abs(count) > 2 ? count : 0;
         }
 
         private int CheckVerticalOneWay(int x, int y, int down)
         {
-            int count;
-            if (down < 0) // up
-                count = CheckUp(x, y);
-            else
-                count = CheckDown(x, y);
-            if (Math.Abs(count) > 2)
-                return count;
-            return 0;
+            var count = down < 0 ? CheckUp(x, y) : CheckDown(x, y);
+            return Math.Abs(count) > 2 ? count : 0;
         }
 
         private int[] GetDownRight(int vertical, int horizontal)
@@ -440,17 +415,15 @@ namespace RDMG.Core.Generator
                 down = -down;
             if (horizontal < 0)
                 right = -right;
-            return new int[] { down, right };
+            return new[] { down, right };
         }
 
         private bool CheckPossible(int vertical, int horizontal, DungeonTile door)
         {
-            if (vertical == 0 || horizontal == 0) // its impossible to add room
-            {
-                DungeonTiles[door.I][door.J].Texture = Textures.ROOM_EDGE; // change the door to a room_edge
-                return false;
-            }
-            return true;
+            if (vertical != 0 && horizontal != 0)
+                return true; // its possible to add room
+            DungeonTiles[door.I][door.J].Texture = Textures.RoomEdge; // impossible to add room, change the door to a room_edge
+            return false;
         }
 
         private int CheckHorizontal(int x, int y)
@@ -550,12 +523,12 @@ namespace RDMG.Core.Generator
 
         private bool CheckDungeonTilesEdge(int x, int y)
         {
-            return DungeonTiles[x][y].Texture == Textures.EDGE;
+            return DungeonTiles[x][y].Texture == Textures.Edge;
         }
 
         private bool CheckTile(int x, int y)
         {
-            return DungeonTiles[x][y].Texture == Textures.ROOM_EDGE || _dungeonHelper.CheckNCDoor(DungeonTiles, x, y);
+            return DungeonTiles[x][y].Texture == Textures.RoomEdge || _dungeonHelper.CheckNcDoor(DungeonTiles, x, y);
         }
 
         private static bool CheckPos()
@@ -577,7 +550,7 @@ namespace RDMG.Core.Generator
 
         private void SetRoomTiles(int x, int y)
         {
-            DungeonTiles[x][y].Texture = Textures.ROOM;
+            DungeonTiles[x][y].Texture = Textures.Room;
             DungeonTiles[x][y].Description = " ";
             DungeonTiles[x][y].Index = RoomStart.Count;
         }
@@ -589,7 +562,7 @@ namespace RDMG.Core.Generator
             {
                 for (var j = 0; j < right + 2; j++)
                 {
-                    DungeonTiles[x + i - 1][y + j - 1].Texture = Textures.ROOM_EDGE;
+                    DungeonTiles[x + i - 1][y + j - 1].Texture = Textures.RoomEdge;
                 }
             }
             for (var i = 0; i < down; i++) // fill room texture
@@ -610,13 +583,12 @@ namespace RDMG.Core.Generator
         {
             if (Math.Abs(down) < 4 || Math.Abs(right) < 4)
                 return 2;
-            else
-                return _dungeonHelper.GetRandomInt(3, 6);
+            return _dungeonHelper.GetRandomInt(3, 6);
         }
 
         internal override bool CheckTileForOpenList(int x, int y)
         {
-            return DungeonTiles[x][y].Texture == Textures.ROOM;
+            return DungeonTiles[x][y].Texture == Textures.Room;
         }
 
         internal override bool CheckDoor(int x, int y)
@@ -625,7 +597,7 @@ namespace RDMG.Core.Generator
             {
                 for (var j = y - 1; j < y + 2; j++)
                 {
-                    if (_dungeonHelper.CheckNCDoor(DungeonTiles, i, j)) // check nearby doors
+                    if (_dungeonHelper.CheckNcDoor(DungeonTiles, i, j)) // check nearby doors
                         return false;
                 }
             }
@@ -635,11 +607,11 @@ namespace RDMG.Core.Generator
         internal override void SetDoor(int x, int y)
         {
             if (_dungeonHelper.GetRandomInt(0, 101) < 40)
-                DungeonTiles[x][y].Texture = Textures.NO_CORRIDOR_DOOR_TRAPPED;
+                DungeonTiles[x][y].Texture = Textures.NoCorridorDoorTrapped;
             else if (_dungeonHelper.GetRandomInt(0, 101) < 50)
-                DungeonTiles[x][y].Texture = Textures.NO_CORRIDOR_DOOR_LOCKED;
+                DungeonTiles[x][y].Texture = Textures.NoCorridorDoorLocked;
             else
-                DungeonTiles[x][y].Texture = Textures.NO_CORRIDOR_DOOR;
+                DungeonTiles[x][y].Texture = Textures.NoCorridorDoor;
             OpenDoorList.Add(DungeonTiles[x][y]);
             Doors.Add(DungeonTiles[x][y]);
         }
