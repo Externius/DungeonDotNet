@@ -1,8 +1,7 @@
-﻿namespace RDMG.Core.Abstractions.Services.Models
+﻿namespace RDMG.Core.Abstractions.Services.Models;
+
+public class EditModel
 {
-    public class EditModel
-    {
-        public int Id { get; set; }
-        public byte[] Timestamp { get; set; }
-    }
+    public int Id { get; set; }
+    public byte[] Timestamp { get; set; }
 }

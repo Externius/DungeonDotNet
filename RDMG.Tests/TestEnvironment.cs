@@ -9,192 +9,191 @@ using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Generator;
 using RDMG.Core.Services;
-using RDMG.Infrastructure;
+using RDMG.Infrastructure.Data;
 using RDMG.Infrastructure.Repository;
+using RDMG.Infrastructure.Seed;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using RDMG.Infrastructure.Seed;
 
-namespace RDMG.Tests
+namespace RDMG.Tests;
+
+public class TestEnvironment : IDisposable
 {
-    public class TestEnvironment : IDisposable
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScope _scope;
+    private SqliteConnection Connection { get; }
+
+    public TestEnvironment()
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IServiceScope _scope;
-        private SqliteConnection Connection { get; }
+        IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        var configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
+        configurationBuilder.AddJsonFile(configFile);
 
-        public TestEnvironment()
+        Connection = new SqliteConnection("DataSource=:memory:");
+        Connection.Open();
+
+        var services = new ServiceCollection();
+        ConfigureServices(services);
+
+        _serviceProvider = services.BuildServiceProvider();
+        _scope = _serviceProvider.CreateScope();
+
+        MigrateDbContext();
+        SeedDataAsync().Wait();
+    }
+
+    private async Task SeedDataAsync()
+    {
+        var context = _scope.ServiceProvider.GetService<SqliteContext>();
+        var service = _scope.ServiceProvider.GetService<IDungeonService>();
+        var seedData = new ContextSeedData(service, context);
+        await seedData.SeedDataAsync();
+    }
+
+    public T GetService<T>()
+    {
+        return _scope.ServiceProvider.GetService<T>();
+    }
+
+    public Dungeon GetDungeon(DungeonOptionModel optionModel = null)
+    {
+        var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
+
+        optionModel ??= new DungeonOptionModel
         {
-            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            var configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
-            configurationBuilder.AddJsonFile(configFile);
+            DungeonName = "UT Dungeon",
+            Created = DateTime.UtcNow,
+            ItemsRarity = 1,
+            DeadEnd = true,
+            DungeonDifficulty = 1,
+            DungeonSize = 25,
+            MonsterType = "any",
+            PartyLevel = 4,
+            PartySize = 4,
+            TrapPercent = 20,
+            RoamingPercent = 0,
+            TreasureValue = 1,
+            RoomDensity = 10,
+            RoomSize = 20,
+            Corridor = false
+        };
 
-            Connection = new SqliteConnection("DataSource=:memory:");
-            Connection.Open();
+        helperService?.Init(optionModel);
 
-            var services = new ServiceCollection();
-            ConfigureServices(services);
-
-            _serviceProvider = services.BuildServiceProvider();
-            _scope = _serviceProvider.CreateScope();
-
-            MigrateDbContext();
-            SeedDataAsync().Wait();
-        }
-
-        private async Task SeedDataAsync()
+        var model = new DungeonOptionsModel
         {
-            var context = _scope.ServiceProvider.GetService<SqliteContext>();
-            var service = _scope.ServiceProvider.GetService<IDungeonService>();
-            var seedData = new ContextSeedData(service, context);
-            await seedData.SeedDataAsync();
-        }
+            Size = optionModel.DungeonSize,
+            RoomDensity = optionModel.RoomDensity,
+            RoomSizePercent = optionModel.RoomSize,
+            TrapPercent = optionModel.TrapPercent,
+            HasDeadEnds = optionModel.DeadEnd,
+            RoamingPercent = optionModel.RoamingPercent
+        };
 
-        public T GetService<T>()
+        return new Dungeon(model, helperService);
+    }
+
+    public DungeonNoCorridor GetNcDungeon(DungeonOptionModel optionModel = null)
+    {
+        var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
+
+        optionModel ??= new DungeonOptionModel
         {
-            return _scope.ServiceProvider.GetService<T>();
-        }
+            DungeonName = "UT Dungeon",
+            Created = DateTime.UtcNow,
+            ItemsRarity = 1,
+            DeadEnd = true,
+            DungeonDifficulty = 1,
+            DungeonSize = 25,
+            MonsterType = "any",
+            PartyLevel = 4,
+            PartySize = 4,
+            TrapPercent = 20,
+            RoamingPercent = 0,
+            TreasureValue = 1,
+            RoomDensity = 10,
+            RoomSize = 20,
+            Corridor = false
+        };
 
-        public Dungeon GetDungeon(DungeonOptionModel optionModel = null)
-        {
-            var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
+        helperService?.Init(optionModel);
 
-            optionModel ??= new DungeonOptionModel
-            {
-                DungeonName = "UT Dungeon",
-                Created = DateTime.UtcNow,
-                ItemsRarity = 1,
-                DeadEnd = true,
-                DungeonDifficulty = 1,
-                DungeonSize = 25,
-                MonsterType = "any",
-                PartyLevel = 4,
-                PartySize = 4,
-                TrapPercent = 20,
-                RoamingPercent = 0,
-                TreasureValue = 1,
-                RoomDensity = 10,
-                RoomSize = 20,
-                Corridor = false
-            };
+        return new DungeonNoCorridor(800, 800, 15, 15, helperService);
+    }
 
-            helperService?.Init(optionModel);
-
-            var model = new DungeonOptionsModel
-            {
-                Size = optionModel.DungeonSize,
-                RoomDensity = optionModel.RoomDensity,
-                RoomSizePercent = optionModel.RoomSize,
-                TrapPercent = optionModel.TrapPercent,
-                HasDeadEnds = optionModel.DeadEnd,
-                RoamingPercent = optionModel.RoamingPercent
-            };
-
-            return new Dungeon(model, helperService);
-        }
-
-        public DungeonNoCorridor GetNcDungeon(DungeonOptionModel optionModel = null)
-        {
-            var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
-
-            optionModel ??= new DungeonOptionModel
-            {
-                DungeonName = "UT Dungeon",
-                Created = DateTime.UtcNow,
-                ItemsRarity = 1,
-                DeadEnd = true,
-                DungeonDifficulty = 1,
-                DungeonSize = 25,
-                MonsterType = "any",
-                PartyLevel = 4,
-                PartySize = 4,
-                TrapPercent = 20,
-                RoamingPercent = 0,
-                TreasureValue = 1,
-                RoomDensity = 10,
-                RoomSize = 20,
-                Corridor = false
-            };
-
-            helperService?.Init(optionModel);
-
-            return new DungeonNoCorridor(800, 800, 15, 15, helperService);
-        }
-
-        private void ConfigureServices(IServiceCollection services)
-        {
-            services.AddOptions()
-                .AddDatabase(Connection)
-                .AddApplicationServices()
-                .AddMemoryCache()
-                .AddAutoMapper(cfg =>
+    private void ConfigureServices(IServiceCollection services)
+    {
+        services.AddOptions()
+            .AddDatabase(Connection)
+            .AddApplicationServices()
+            .AddMemoryCache()
+            .AddAutoMapper(cfg =>
                 {
                     cfg.AllowNullCollections = true;
                 }
                 , new[] { typeof(Core.Services.Automapper.DungeonProfile)
-                , typeof(Core.Services.Automapper.UserProfile)
-                , typeof(Core.Services.Automapper.OptionProfile)
-                , typeof(Infrastructure.Repository.Automapper.DungeonProfile)
-                , typeof(Infrastructure.Repository.Automapper.UserProfile)
+                    , typeof(Core.Services.Automapper.UserProfile)
+                    , typeof(Core.Services.Automapper.OptionProfile)
+                    , typeof(Infrastructure.Repository.Automapper.DungeonProfile)
+                    , typeof(Infrastructure.Repository.Automapper.UserProfile)
                 })
-                .AddLogging();
-        }
-
-        private void MigrateDbContext()
-        {
-            using var scope = _serviceProvider.CreateScope();
-            var services = scope.ServiceProvider;
-            var context = services.GetService<SqliteContext>();
-            context?.Database.Migrate();
-        }
-
-        public void Dispose()
-        {
-            _scope?.Dispose();
-            Connection?.Dispose();
-        }
+            .AddLogging();
     }
 
-    public static class ServiceCollectionExtensions
+    private void MigrateDbContext()
     {
-        public static IServiceCollection AddDatabase(this IServiceCollection services,
-             SqliteConnection connection)
+        using var scope = _serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var context = services.GetService<SqliteContext>();
+        context?.Database.Migrate();
+    }
+
+    public void Dispose()
+    {
+        _scope?.Dispose();
+        Connection?.Dispose();
+    }
+}
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddDatabase(this IServiceCollection services,
+        SqliteConnection connection)
+    {
+        services.AddDbContext<Context>(options =>
         {
-            services.AddDbContext<Context>(options =>
-            {
-                options.UseSqlite(connection);
-                options.ConfigureWarnings(wcb => wcb.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.AmbientTransactionWarning));
-            });
-            services.AddDbContext<SqliteContext>(options =>
-            {
-                options.UseSqlite(connection,
+            options.UseSqlite(connection);
+            options.ConfigureWarnings(wcb => wcb.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.AmbientTransactionWarning));
+        });
+        services.AddDbContext<SqliteContext>(options =>
+        {
+            options.UseSqlite(connection,
                 sqliteOptionsAction: sqlOptions =>
                 {
                     sqlOptions.MigrationsAssembly(typeof(SqliteContext).GetTypeInfo().Assembly.GetName().Name);
                 });
-                options.ConfigureWarnings(wcb => wcb.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.AmbientTransactionWarning));
-            });
+            options.ConfigureWarnings(wcb => wcb.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.AmbientTransactionWarning));
+        });
 
-            return services;
-        }
+        return services;
+    }
 
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-        {
-            services.AddTransient<ContextSeedData>()
-                    .AddScoped<IDungeonRepository, DungeonRepository>()
-                    .AddScoped<IDungeonOptionRepository, DungeonOptionRepository>()
-                    .AddScoped<IOptionRepository, OptionRepository>()
-                    .AddScoped<IUserRepository, UserRepository>();
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    {
+        services.AddTransient<ContextSeedData>()
+            .AddScoped<IDungeonRepository, DungeonRepository>()
+            .AddScoped<IDungeonOptionRepository, DungeonOptionRepository>()
+            .AddScoped<IOptionRepository, OptionRepository>()
+            .AddScoped<IUserRepository, UserRepository>();
 
-            services.AddScoped<IUserService, UserService>()
-                    .AddScoped<IAuthService, AuthService>()
-                    .AddScoped<IDungeonHelper, DungeonHelper>()
-                    .AddScoped<IOptionService, OptionService>()
-                    .AddScoped<IDungeonService, DungeonService>();
+        services.AddScoped<IUserService, UserService>()
+            .AddScoped<IAuthService, AuthService>()
+            .AddScoped<IDungeonHelper, DungeonHelper>()
+            .AddScoped<IOptionService, OptionService>()
+            .AddScoped<IDungeonService, DungeonService>();
 
-            return services;
-        }
+        return services;
     }
 }

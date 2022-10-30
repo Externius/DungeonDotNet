@@ -2,13 +2,12 @@
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 
-namespace RDMG.Core.Services.Automapper
+namespace RDMG.Core.Services.Automapper;
+
+public class UserProfile : Profile
 {
-    public class UserProfile : Profile
+    public UserProfile()
     {
-        public UserProfile()
-        {
-            CreateMap<User, UserModel>().ReverseMap();
-        }
+        CreateMap<User, UserModel>().ReverseMap();
     }
 }

@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RDMG.Core.Abstractions.Services
+namespace RDMG.Core.Abstractions.Services;
+
+public interface IOptionService
 {
-    public interface IOptionService
-    {
-        Task<List<OptionModel>> ListOptionsAsync(CancellationToken cancellationToken, OptionKey? filter = null);
-    }
+    Task<List<OptionModel>> ListOptionsAsync(CancellationToken cancellationToken, OptionKey? filter = null);
 }

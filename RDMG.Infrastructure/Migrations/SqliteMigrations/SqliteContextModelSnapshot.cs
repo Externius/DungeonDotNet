@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RDMG.Infrastructure;
+using RDMG.Infrastructure.Data;
 
 #nullable disable
 
@@ -15,7 +15,7 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
 
             modelBuilder.Entity("RDMG.Core.Domain.Dungeon", b =>
                 {

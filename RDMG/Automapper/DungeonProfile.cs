@@ -2,13 +2,12 @@
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Models.Dungeon;
 
-namespace RDMG.Automapper
+namespace RDMG.Automapper;
+
+public class DungeonProfile : Profile
 {
-    public class DungeonProfile : Profile
+    public DungeonProfile()
     {
-        public DungeonProfile()
-        {
-            CreateMap<DungeonModel, DungeonViewModel>().ReverseMap();
-        }
+        CreateMap<DungeonModel, DungeonViewModel>().ReverseMap();
     }
 }

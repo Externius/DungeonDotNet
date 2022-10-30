@@ -1,8 +1,7 @@
-﻿namespace RDMG.Models
+﻿namespace RDMG.Models;
+
+public class EditViewModel
 {
-    public class EditViewModel
-    {
-        public int Id { get; set; }
-        public byte[] Timestamp { get; set; }
-    }
+    public int Id { get; set; }
+    public byte[] Timestamp { get; set; }
 }

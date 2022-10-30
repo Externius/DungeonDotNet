@@ -115,6 +115,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Common.
+        /// </summary>
+        public static string CommonValue {
+            get {
+                return ResourceManager.GetString("CommonValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 2022 - RDMG.
         /// </summary>
         public static string Copyright {
@@ -133,11 +142,29 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deadly.
+        /// </summary>
+        public static string Deadly {
+            get {
+                return ResourceManager.GetString("Deadly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         public static string Delete {
             get {
                 return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Easy.
+        /// </summary>
+        public static string Easy {
+            get {
+                return ResourceManager.GetString("Easy", resourceCulture);
             }
         }
         
@@ -151,6 +178,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Few.
+        /// </summary>
+        public static string Few {
+            get {
+                return ResourceManager.GetString("Few", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Forbidden.
         /// </summary>
         public static string Forbidden {
@@ -160,11 +196,74 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hard.
+        /// </summary>
+        public static string Hard {
+            get {
+                return ResourceManager.GetString("Hard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to High.
+        /// </summary>
+        public static string High {
+            get {
+                return ResourceManager.GetString("High", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Large.
+        /// </summary>
+        public static string Large {
+            get {
+                return ResourceManager.GetString("Large", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legendary.
+        /// </summary>
+        public static string Legendary {
+            get {
+                return ResourceManager.GetString("Legendary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string Login {
             get {
                 return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Low.
+        /// </summary>
+        public static string Low {
+            get {
+                return ResourceManager.GetString("Low", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Medium.
+        /// </summary>
+        public static string Medium {
+            get {
+                return ResourceManager.GetString("Medium", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More.
+        /// </summary>
+        public static string More {
+            get {
+                return ResourceManager.GetString("More", resourceCulture);
             }
         }
         
@@ -232,6 +331,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string None {
+            get {
+                return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ok.
         /// </summary>
         public static string Ok {
@@ -250,11 +358,56 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rare.
+        /// </summary>
+        public static string Rare {
+            get {
+                return ResourceManager.GetString("Rare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string Save {
             get {
                 return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Small.
+        /// </summary>
+        public static string Small {
+            get {
+                return ResourceManager.GetString("Small", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard.
+        /// </summary>
+        public static string Standard {
+            get {
+                return ResourceManager.GetString("Standard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uncommon.
+        /// </summary>
+        public static string Uncommon {
+            get {
+                return ResourceManager.GetString("Uncommon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Very Rare.
+        /// </summary>
+        public static string VeryRare {
+            get {
+                return ResourceManager.GetString("VeryRare", resourceCulture);
             }
         }
         

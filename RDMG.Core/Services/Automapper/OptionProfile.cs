@@ -2,13 +2,12 @@
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 
-namespace RDMG.Core.Services.Automapper
+namespace RDMG.Core.Services.Automapper;
+
+public class OptionProfile : Profile
 {
-    public class OptionProfile : Profile
+    public OptionProfile()
     {
-        public OptionProfile()
-        {
-            CreateMap<Option, OptionModel>().ReverseMap();
-        }
+        CreateMap<Option, OptionModel>().ReverseMap();
     }
 }

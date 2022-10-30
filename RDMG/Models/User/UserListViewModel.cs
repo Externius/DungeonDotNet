@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace RDMG.Models.User
+namespace RDMG.Models.User;
+
+public class UserListViewModel
 {
-    public class UserListViewModel
+    public IList<UserEditViewModel> Details { get; set; }
+    public UserListViewModel()
     {
-        public IList<UserEditViewModel> Details { get; set; }
-        public UserListViewModel()
-        {
-            Details = new List<UserEditViewModel>();
-        }
+        Details = new List<UserEditViewModel>();
     }
 }

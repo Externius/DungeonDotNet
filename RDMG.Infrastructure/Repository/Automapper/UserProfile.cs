@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using RDMG.Core.Domain;
 
-namespace RDMG.Infrastructure.Repository.Automapper
+namespace RDMG.Infrastructure.Repository.Automapper;
+
+public class UserProfile : Profile
 {
-    public class UserProfile : Profile
+    public UserProfile()
     {
-        public UserProfile()
-        {
-            CreateMap<User, User>()
-                .ForMember(x => x.Id, o => o.Ignore());
-        }
+        CreateMap<User, User>()
+            .ForMember(x => x.Id, o => o.Ignore());
     }
 }

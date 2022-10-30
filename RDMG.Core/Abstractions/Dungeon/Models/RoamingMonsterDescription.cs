@@ -1,13 +1,12 @@
-namespace RDMG.Core.Abstractions.Dungeon.Models
+namespace RDMG.Core.Abstractions.Dungeon.Models;
+
+public class RoamingMonsterDescription
 {
-    public class RoamingMonsterDescription
+    public string Name { get; }
+    public string Description { get; }
+    public RoamingMonsterDescription(string name, string description)
     {
-        public string Name { get; }
-        public string Description { get; }
-        public RoamingMonsterDescription(string name, string description)
-        {
-            Name = name;
-            Description = description;
-        }
+        Name = name;
+        Description = description;
     }
 }

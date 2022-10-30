@@ -7,37 +7,36 @@ using RDMG.Core.Helpers;
 using System;
 using System.Threading.Tasks;
 
-namespace RDMG.Core.Services
+namespace RDMG.Core.Services;
+
+public class AuthService : IAuthService
 {
-    public class AuthService : IAuthService
+    private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public AuthService(IMapper mapper, IUserRepository userRepository, ILogger<AuthService> logger)
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        _userRepository = userRepository;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public AuthService(IMapper mapper, IUserRepository userRepository, ILogger<AuthService> logger)
+    public async Task<UserModel> LoginAsync(UserModel model)
+    {
+        try
         {
-            _userRepository = userRepository;
-            _mapper = mapper;
-            _logger = logger;
+            var user = await _userRepository.GetByUsernameAsync(model.Username);
+
+            if (user == null)
+                return null;
+
+            return PasswordHelper.CheckPassword(user.Password, model.Password) ? _mapper.Map<UserModel>(user) : null;
         }
-
-        public async Task<UserModel> LoginAsync(UserModel model)
+        catch (Exception ex)
         {
-            try
-            {
-                var user = await _userRepository.GetByUsernameAsync(model.Username);
-
-                if (user == null)
-                    return null;
-
-                return PasswordHelper.CheckPassword(user.Password, model.Password) ? _mapper.Map<UserModel>(user) : null;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Login User failed.");
-                throw;
-            }
+            _logger.LogError(ex, "Login User failed.");
+            throw;
         }
     }
 }

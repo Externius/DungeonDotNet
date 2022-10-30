@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RDMG.Core.Abstractions.Repository
+namespace RDMG.Core.Abstractions.Repository;
+
+public interface IOptionRepository
 {
-    public interface IOptionRepository
-    {
-        Task<IEnumerable<Option>> ListAsync(CancellationToken cancellationToken, OptionKey? filter = null);
-    }
+    Task<IEnumerable<Option>> ListAsync(CancellationToken cancellationToken, OptionKey? filter = null);
 }

@@ -2,14 +2,13 @@
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Models.User;
 
-namespace RDMG.Automapper
+namespace RDMG.Automapper;
+
+public class UserProfile : Profile
 {
-    public class UserProfile : Profile
+    public UserProfile()
     {
-        public UserProfile()
-        {
-            CreateMap<UserModel, UserEditViewModel>().ReverseMap();
-            CreateMap<UserModel, UserCreateViewModel>().ReverseMap();
-        }
+        CreateMap<UserModel, UserEditViewModel>().ReverseMap();
+        CreateMap<UserModel, UserCreateViewModel>().ReverseMap();
     }
 }

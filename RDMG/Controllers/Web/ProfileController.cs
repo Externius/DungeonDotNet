@@ -9,53 +9,52 @@ using RDMG.Models.Profile;
 using System;
 using System.Threading.Tasks;
 
-namespace RDMG.Controllers.Web
+namespace RDMG.Controllers.Web;
+
+[Authorize]
+public class ProfileController : Controller
 {
-    [Authorize]
-    public class ProfileController : Controller
+    private readonly IUserService _userService;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public ProfileController(IUserService userService, IMapper mapper, ILogger<ProfileController> logger)
     {
-        private readonly IUserService _userService;
-        private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        _userService = userService;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public ProfileController(IUserService userService, IMapper mapper, ILogger<ProfileController> logger)
+    public async Task<IActionResult> Index()
+    {
+        var model = await _userService.GetAsync(UserHelper.GetUserId(User.Claims));
+        return View(_mapper.Map<ProfileViewModel>(model));
+    }
+
+
+    [HttpGet]
+    public IActionResult ChangePassword()
+    {
+        return View(new ProfileChangePasswordModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(ProfileChangePasswordModel model)
+    {
+        if (ModelState.IsValid)
         {
-            _userService = userService;
-            _mapper = mapper;
-            _logger = logger;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var model = await _userService.GetAsync(UserHelper.GetUserId(User.Claims));
-            return View(_mapper.Map<ProfileViewModel>(model));
-        }
-
-
-        [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            return View(new ProfileChangePasswordModel());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ProfileChangePasswordModel model)
-        {
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    await _userService.ChangePasswordAsync(_mapper.Map<ChangePasswordModel>(model));
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error changing password.");
-                    ModelState.AddModelError("", ex.Message);
-                }
+                await _userService.ChangePasswordAsync(_mapper.Map<ChangePasswordModel>(model));
+                return RedirectToAction("Index");
             }
-            return View(model);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing password.");
+                ModelState.AddModelError("", ex.Message);
+            }
         }
+        return View(model);
     }
 }

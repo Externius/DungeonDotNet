@@ -4,20 +4,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RDMG.Infrastructure;
+using RDMG.Infrastructure.Data;
 
 #nullable disable
 
 namespace RDMG.Infrastructure.Migrations.SqliteMigrations
 {
     [DbContext(typeof(SqliteContext))]
-    [Migration("20220115080929_Init")]
+    [Migration("20221030140835_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
 
             modelBuilder.Entity("RDMG.Core.Domain.Dungeon", b =>
                 {

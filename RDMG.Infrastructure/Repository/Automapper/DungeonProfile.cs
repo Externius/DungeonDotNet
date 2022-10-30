@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using RDMG.Core.Domain;
 
-namespace RDMG.Infrastructure.Repository.Automapper
+namespace RDMG.Infrastructure.Repository.Automapper;
+
+public class DungeonProfile : Profile
 {
-    public class DungeonProfile : Profile
+    public DungeonProfile()
     {
-        public DungeonProfile()
-        {
-            CreateMap<DungeonOption, DungeonOption>().ForMember(x => x.Id, o => o.Ignore());
-            CreateMap<Dungeon, Dungeon>().ForMember(x => x.Id, o => o.Ignore());
-        }
+        CreateMap<DungeonOption, DungeonOption>().ForMember(x => x.Id, o => o.Ignore());
+        CreateMap<Dungeon, Dungeon>().ForMember(x => x.Id, o => o.Ignore());
     }
 }

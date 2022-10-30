@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace RDMG.Models.Dungeon
+namespace RDMG.Models.Dungeon;
+
+public class DungeonListViewModel
 {
-    public class DungeonListViewModel
+    public IList<DungeonOptionViewModel> List { get; set; }
+    public DungeonListViewModel()
     {
-        public IList<DungeonOptionViewModel> List { get; set; }
-        public DungeonListViewModel()
-        {
-            List = new List<DungeonOptionViewModel>();
-        }
+        List = new List<DungeonOptionViewModel>();
     }
 }

@@ -10,115 +10,114 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RDMG.Controllers.Web
+namespace RDMG.Controllers.Web;
+
+[Authorize(Roles = Roles.Admin)]
+public class UserController : Controller
 {
-    [Authorize(Roles = Roles.Admin)]
-    public class UserController : Controller
+    private readonly IUserService _userService;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger)
     {
-        private readonly IUserService _userService;
-        private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        _userService = userService;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger)
+    public async Task<IActionResult> Index()
+    {
+        var list = await _userService.ListAsync(null);
+
+        return View(new UserListViewModel
         {
-            _userService = userService;
-            _mapper = mapper;
-            _logger = logger;
-        }
+            Details = list.Select(um => _mapper.Map<UserEditViewModel>(um)).ToList()
+        });
+    }
 
-        public async Task<IActionResult> Index()
-        {
-            var list = await _userService.ListAsync(null);
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View(new UserCreateViewModel());
+    }
 
-            return View(new UserListViewModel
-            {
-                Details = list.Select(um => _mapper.Map<UserEditViewModel>(um)).ToList()
-            });
-        }
-
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View(new UserCreateViewModel());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserCreateViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _userService.CreateAsync(_mapper.Map<UserModel>(model));
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error creating user.");
-                    ModelState.AddModelError("", ex.Message);
-                }
-            }
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            var model = _mapper.Map<UserEditViewModel>(await _userService.GetAsync(id));
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UserEditViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var user = new UserModel();
-                    _mapper.Map(model, user);
-                    await _userService.UpdateAsync(user);
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error editing user.");
-                    ModelState.AddModelError("", ex.Message);
-                }
-            }
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(UserCreateViewModel model)
+    {
+        if (ModelState.IsValid)
         {
             try
             {
-                await _userService.DeleteAsync(id);
+                await _userService.CreateAsync(_mapper.Map<UserModel>(model));
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting user.");
+                _logger.LogError(ex, "Error creating user.");
+                ModelState.AddModelError("", ex.Message);
             }
-            return RedirectToAction("Index");
         }
+        return View(model);
+    }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Restore(int id)
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var model = _mapper.Map<UserEditViewModel>(await _userService.GetAsync(id));
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(UserEditViewModel model)
+    {
+        if (ModelState.IsValid)
         {
             try
             {
-                await _userService.RestoreAsync(id);
+                var user = new UserModel();
+                _mapper.Map(model, user);
+                await _userService.UpdateAsync(user);
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error restoring user.");
+                _logger.LogError(ex, "Error editing user.");
+                ModelState.AddModelError("", ex.Message);
             }
-            return RedirectToAction("Index");
         }
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _userService.DeleteAsync(id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting user.");
+        }
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Restore(int id)
+    {
+        try
+        {
+            await _userService.RestoreAsync(id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error restoring user.");
+        }
+        return RedirectToAction("Index");
     }
 }

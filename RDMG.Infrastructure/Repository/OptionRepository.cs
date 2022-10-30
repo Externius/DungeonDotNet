@@ -3,34 +3,34 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Domain;
+using RDMG.Infrastructure.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RDMG.Infrastructure.Repository
+namespace RDMG.Infrastructure.Repository;
+
+public class OptionRepository : IOptionRepository
 {
-    public class OptionRepository : IOptionRepository
+    private readonly Context _context;
+    private readonly ILogger<OptionRepository> _logger;
+    private readonly IMapper _mapper;
+
+    public OptionRepository(Context context, IMapper mapper, ILogger<OptionRepository> logger)
     {
-        private readonly Context _context;
-        private readonly ILogger<OptionRepository> _logger;
-        private readonly IMapper _mapper;
+        _context = context;
+        _logger = logger;
+        _mapper = mapper;
+    }
 
-        public OptionRepository(Context context, IMapper mapper, ILogger<OptionRepository> logger)
-        {
-            _context = context;
-            _logger = logger;
-            _mapper = mapper;
-        }
+    public async Task<IEnumerable<Option>> ListAsync(CancellationToken cancellationToken, OptionKey? filter = null)
+    {
+        var query = _context.Options.AsNoTracking();
 
-        public async Task<IEnumerable<Option>> ListAsync(CancellationToken cancellationToken, OptionKey? filter = null)
-        {
-            var query = _context.Options.AsNoTracking();
+        if (filter.HasValue)
+            query = query.Where(o => o.Key == filter.Value);
 
-            if (filter.HasValue)
-                query = query.Where(o => o.Key == filter.Value);
-
-            return await query.ToListAsync(cancellationToken);
-        }
+        return await query.ToListAsync(cancellationToken);
     }
 }

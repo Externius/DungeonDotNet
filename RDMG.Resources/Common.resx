@@ -135,23 +135,56 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="CommonValue" xml:space="preserve">
+    <value>Common</value>
+  </data>
   <data name="Copyright" xml:space="preserve">
     <value>2022 - RDMG</value>
   </data>
   <data name="Create" xml:space="preserve">
     <value>Create</value>
   </data>
+  <data name="Deadly" xml:space="preserve">
+    <value>Deadly</value>
+  </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="Easy" xml:space="preserve">
+    <value>Easy</value>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Edit</value>
   </data>
+  <data name="Few" xml:space="preserve">
+    <value>Few</value>
+  </data>
   <data name="Forbidden" xml:space="preserve">
     <value>Forbidden</value>
   </data>
+  <data name="Hard" xml:space="preserve">
+    <value>Hard</value>
+  </data>
+  <data name="High" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>Large</value>
+  </data>
+  <data name="Legendary" xml:space="preserve">
+    <value>Legendary</value>
+  </data>
   <data name="Login" xml:space="preserve">
     <value>Login</value>
+  </data>
+  <data name="Low" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="Medium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>More</value>
   </data>
   <data name="NavAbout" xml:space="preserve">
     <value>About</value>
@@ -174,14 +207,32 @@
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
   <data name="Ok" xml:space="preserve">
     <value>Ok</value>
   </data>
   <data name="Privacy" xml:space="preserve">
     <value>Privacy</value>
   </data>
+  <data name="Rare" xml:space="preserve">
+    <value>Rare</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>Small</value>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Uncommon" xml:space="preserve">
+    <value>Uncommon</value>
+  </data>
+  <data name="VeryRare" xml:space="preserve">
+    <value>Very Rare</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
