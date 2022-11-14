@@ -134,9 +134,9 @@ public class Dungeon
             Array.Copy(DungeonTiles[i], 2, croppedDungeonTiles[i - 2], 0, DungeonTiles[i].Length - 4);
         }
         var dungeonList = croppedDungeonTiles.SelectMany(T => T).ToList();
-        dungeonList.RemoveAll(i => Rooms.Contains(i));
-        dungeonList.RemoveAll(i => Doors.Contains(i));
-        dungeonList.RemoveAll(i => Corridors.Contains(i));
+        dungeonList.RemoveAll(Rooms.Contains);
+        dungeonList.RemoveAll(Doors.Contains);
+        dungeonList.RemoveAll(Corridors.Contains);
         var maxAttempt = dungeonList.Count * 2;
         do
         {

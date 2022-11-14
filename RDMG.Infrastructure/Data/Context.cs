@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Domain;
 using RDMG.Infrastructure.Extensions;
 
 namespace RDMG.Infrastructure.Data;
 
-public class Context : DbContext
+public class Context : DbContext, IAppDbContext
 {
+    public const string DbProvider = "DbProvider";
+    public const string Rdmg = "RDMG";
     public const string SqliteContext = "sqlite";
     public const string SqlServerContext = "sqlserver";
 

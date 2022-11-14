@@ -1,8 +1,8 @@
+using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Core.Helpers;
-using RDMG.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +13,10 @@ namespace RDMG.Infrastructure.Seed;
 
 public class ContextSeedData
 {
-    private readonly Context _context;
+    private readonly IAppDbContext _context;
     private readonly IDungeonService _dungeonService;
 
-    public ContextSeedData(IDungeonService dungeonService, Context context)
+    public ContextSeedData(IDungeonService dungeonService, IAppDbContext context)
     {
         _context = context;
         _dungeonService = dungeonService;
@@ -517,7 +517,7 @@ public class ContextSeedData
 
     private async Task SeedUsers(CancellationToken token)
     {
-        _context.Add(new User
+        _context.Users.Add(new User
         {
             Username = "TestAdmin",
             Password = PasswordHelper.EncryptPassword("adminPassword123"),
@@ -527,7 +527,7 @@ public class ContextSeedData
             Role = Role.Admin
         });
 
-        _context.Add(new User
+        _context.Users.Add(new User
         {
             Username = "TestUser",
             Password = PasswordHelper.EncryptPassword("simplePassword123"),

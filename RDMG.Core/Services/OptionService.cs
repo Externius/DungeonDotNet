@@ -38,7 +38,7 @@ public class OptionService : IOptionService
             if (!_memoryCache.TryGetValue(nameof(ListOptionsAsync), out List<OptionModel> cacheEntry))
             {
                 var options = await _optionRepository.ListAsync(cancellationToken);
-                cacheEntry = options.Select(o => _mapper.Map<OptionModel>(o)).ToList();
+                cacheEntry = options.Select(_mapper.Map<OptionModel>).ToList();
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromMinutes(1));

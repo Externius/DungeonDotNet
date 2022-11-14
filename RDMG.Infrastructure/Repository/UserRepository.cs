@@ -1,21 +1,22 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Domain;
-using RDMG.Infrastructure.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RDMG.Infrastructure.Repository;
 
 public class UserRepository : IUserRepository
 {
-    private readonly Context _context;
+    private readonly IAppDbContext _context;
     private readonly ILogger<UserRepository> _logger;
     private readonly IMapper _mapper;
-    public UserRepository(Context context, IMapper mapper, ILogger<UserRepository> logger)
+    public UserRepository(IAppDbContext context, IMapper mapper, ILogger<UserRepository> logger)
     {
         _context = context;
         _logger = logger;
@@ -24,7 +25,7 @@ public class UserRepository : IUserRepository
     public async Task<User> CreateAsync(User user)
     {
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(CancellationToken.None);
         return user;
     }
 
@@ -40,7 +41,7 @@ public class UserRepository : IUserRepository
         if (local == null)
             return null;
         _mapper.Map(user, local);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(CancellationToken.None);
 
         return local;
     }
@@ -51,7 +52,7 @@ public class UserRepository : IUserRepository
         if (local != null)
         {
             local.Deleted = true;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(CancellationToken.None);
             return true;
         }
 

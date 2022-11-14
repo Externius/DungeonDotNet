@@ -242,7 +242,7 @@ var Utils = (function () {
         var canvasPlain = document.getElementById(canvasPlainId);
         var contextPlain = canvasPlain.getContext("2d");
         contextPlain.clearRect(0, 0, canvasPlain.width, canvasPlain.height); // clear canvas
-        drawPlainMap(tiles, contextPlain, hasCorridor);
+        drawPlainMap(tiles, contextPlain, hasCorridor === "True");
     };
     var drawDungeonOneCanvas = function (tiles, roomDescription, trapDescription, canvasID, dungeonSize, hasCorridor, themeID, roamingDescription, descId) {
         var canvas = document.getElementById(canvasID);

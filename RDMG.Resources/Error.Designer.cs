@@ -70,6 +70,15 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DbProvider not recognized: {0}.
+        /// </summary>
+        public static string DbProviderError {
+            get {
+                return ResourceManager.GetString("DbProviderError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The dungeon {0} is already exists in the system!.
         /// </summary>
         public static string DungeonExist {

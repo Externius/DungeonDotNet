@@ -131,7 +131,7 @@ public class DungeonNoCorridor : Dungeon
     private void CleanDoorList()
     {
         var toDelete = Doors.Where(door => door.Texture == Textures.RoomEdge).ToList();
-        Doors.RemoveAll(i => toDelete.Contains(i));
+        Doors.RemoveAll(toDelete.Contains);
     }
 
     public void FillRoomToDoor()
@@ -292,7 +292,7 @@ public class DungeonNoCorridor : Dungeon
     private void CleanEdgeTileList()
     {
         var toDelete = EdgeTileList.Where(tile => CheckRooms(tile.I, tile.J)).ToList();
-        EdgeTileList.RemoveAll(i => toDelete.Contains(i));
+        EdgeTileList.RemoveAll(toDelete.Contains);
     }
 
     private bool CheckRooms(int x, int y)

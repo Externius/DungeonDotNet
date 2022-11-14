@@ -120,6 +120,9 @@
   <data name="ConfirmPassword" xml:space="preserve">
     <value>The {0} and the {1} does not match.</value>
   </data>
+  <data name="DbProviderError" xml:space="preserve">
+    <value>DbProvider not recognized: {0}</value>
+  </data>
   <data name="DungeonExist" xml:space="preserve">
     <value>The dungeon {0} is already exists in the system!</value>
   </data>

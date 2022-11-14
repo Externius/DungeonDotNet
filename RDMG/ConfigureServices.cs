@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Dungeon;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
@@ -23,16 +24,12 @@ public static class ConfigureServices
         IConfiguration configuration
     )
     {
-        switch (configuration.GetConnectionString("DbProvider").ToLower())
+        switch (configuration.GetConnectionString(Context.DbProvider)?.ToLower())
         {
             case Context.SqlServerContext:
-                services.AddDbContext<Context>(options =>
-                {
-                    options.UseSqlServer(configuration.GetConnectionString("RDMG"));
-                });
                 services.AddDbContext<SqlServerContext>(options =>
                 {
-                    options.UseSqlServer(configuration.GetConnectionString("RDMG"),
+                    options.UseSqlServer(configuration.GetConnectionString(Context.Rdmg),
                         sqlServerOptionsAction: sqlOptions =>
                         {
                             sqlOptions.MigrationsAssembly(typeof(SqlServerContext).GetTypeInfo().Assembly.GetName().Name);
@@ -40,13 +37,9 @@ public static class ConfigureServices
                 });
                 break;
             case Context.SqliteContext:
-                services.AddDbContext<Context>(options =>
-                {
-                    options.UseSqlite(configuration.GetConnectionString("RDMG"));
-                });
                 services.AddDbContext<SqliteContext>(options =>
                 {
-                    options.UseSqlite(configuration.GetConnectionString("RDMG"),
+                    options.UseSqlite(configuration.GetConnectionString(Context.Rdmg),
                         sqliteOptionsAction: sqlOptions =>
                         {
                             sqlOptions.MigrationsAssembly(typeof(SqliteContext).GetTypeInfo().Assembly.GetName().Name);
@@ -54,13 +47,16 @@ public static class ConfigureServices
                 });
                 break;
             default:
-                throw new Exception($"DbProvider not recognized: {configuration.GetConnectionString("DbProvider")}");
-
+                throw new Exception(
+                    string.Format(Resources.Error.DbProviderError, configuration.GetConnectionString(Context.DbProvider)));
         }
+
         return services;
     }
 
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddApplicationServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddTransient<ContextSeedData>()
             .AddScoped<IDungeonRepository, DungeonRepository>()
@@ -73,6 +69,19 @@ public static class ConfigureServices
             .AddScoped<IDungeonHelper, DungeonHelper>()
             .AddScoped<IOptionService, OptionService>()
             .AddScoped<IDungeonService, DungeonService>();
+
+        switch (configuration.GetConnectionString(Context.DbProvider)?.ToLower())
+        {
+            case Context.SqlServerContext:
+                services.AddScoped<IAppDbContext, SqlServerContext>(sp => sp.GetRequiredService<SqlServerContext>());
+                break;
+            case Context.SqliteContext:
+                services.AddScoped<IAppDbContext, SqliteContext>(sp => sp.GetRequiredService<SqliteContext>());
+                break;
+            default:
+                throw new Exception(
+                    string.Format(Resources.Error.DbProviderError, configuration.GetConnectionString(Context.DbProvider)));
+        }
 
         return services;
     }

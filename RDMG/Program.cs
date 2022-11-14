@@ -22,7 +22,7 @@ public class Program
         builder.Services.AddCookiePolicy()
             .AddDatabase(builder.Configuration)
             .AddHttpContextAccessor()
-            .AddApplicationServices()
+            .AddApplicationServices(builder.Configuration)
             .AddAutoMapper(cfg =>
                 {
                     cfg.AllowNullCollections = true;
@@ -69,20 +69,18 @@ public class Program
         app.UseCookiePolicy();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-            endpoints.MapHealthChecks("/health");
-        });
+
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+        app.MapHealthChecks("/health");
 
         app.Run();
     }
 
     private static void AddSerilog(WebApplicationBuilder builder)
     {
-        switch (builder.Configuration.GetConnectionString("DbProvider").ToLower())
+        switch (builder.Configuration.GetConnectionString(Context.DbProvider)?.ToLower())
         {
             case Context.SqlServerContext:
                 builder.Host.UseSerilog((ctx, lc) => lc
@@ -95,7 +93,8 @@ public class Program
                 break;
             default:
                 throw new Exception(
-                    $"DbProvider not recognized: {builder.Configuration.GetConnectionString("DbProvider")}");
+                    string.Format(Resources.Error.DbProviderError,
+                    builder.Configuration.GetConnectionString(Context.DbProvider)));
         }
     }
 }

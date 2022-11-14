@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Domain;
-using RDMG.Infrastructure.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,10 +13,10 @@ namespace RDMG.Infrastructure.Repository;
 
 public class DungeonRepository : IDungeonRepository
 {
-    private readonly Context _context;
+    private readonly IAppDbContext _context;
     private readonly ILogger<DungeonRepository> _logger;
     private readonly IMapper _mapper;
-    public DungeonRepository(Context context, IMapper mapper, ILogger<DungeonRepository> logger)
+    public DungeonRepository(IAppDbContext context, IMapper mapper, ILogger<DungeonRepository> logger)
     {
         _context = context;
         _logger = logger;
@@ -26,6 +26,7 @@ public class DungeonRepository : IDungeonRepository
     public async Task<IEnumerable<Dungeon>> GetAllDungeonsForUserAsync(int userId, CancellationToken cancellationToken)
     {
         return await _context.Dungeons
+            .AsNoTracking()
             .Include(d => d.DungeonOption)
             .Where(d => d.DungeonOption.UserId == userId)
             .OrderBy(d => d.DungeonOption.Created)
@@ -57,6 +58,7 @@ public class DungeonRepository : IDungeonRepository
     public async Task<IEnumerable<Dungeon>> GetAllDungeonByOptionNameForUserAsync(string dungeonName, int userId, CancellationToken cancellationToken)
     {
         return await _context.Dungeons
+            .AsNoTracking()
             .Include(d => d.DungeonOption)
             .Where(d => d.DungeonOption.DungeonName == dungeonName && d.DungeonOption.UserId == userId)
             .OrderBy(d => d.DungeonOption.Created)
@@ -65,7 +67,8 @@ public class DungeonRepository : IDungeonRepository
 
     public async Task<Dungeon> GetDungeonAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.Dungeons.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
+        return await _context.Dungeons.AsNoTracking()
+                                      .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
     }
 
     public async Task<Dungeon> UpdateDungeonAsync(Dungeon dungeon, CancellationToken cancellationToken)

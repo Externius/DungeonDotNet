@@ -42,13 +42,13 @@ public class DungeonController : Controller
         var list = await _dungeonService.GetAllDungeonOptionsForUserAsync(userId, cancellationToken);
         var model = new DungeonListViewModel
         {
-            List = list.Select(om => _mapper.Map<DungeonOptionViewModel>(om)).ToList()
+            List = list.Select(_mapper.Map<DungeonOptionViewModel>).ToList()
         };
 
         var dungeons = await _dungeonService.ListUserDungeonsAsync(userId, cancellationToken);
         foreach (var option in model.List)
         {
-            option.Dungeons = dungeons.Where(dm => dm.DungeonOptionId == option.Id).Select(dm => _mapper.Map<DungeonViewModel>(dm)).ToList();
+            option.Dungeons = dungeons.Where(dm => dm.DungeonOptionId == option.Id).Select(_mapper.Map<DungeonViewModel>).ToList();
         }
 
         return View(model);
@@ -68,7 +68,7 @@ public class DungeonController : Controller
         if (level != 0)
             dungeons = dungeons.Where(dm => dm.Level == level).ToList();
 
-        model.Option.Dungeons = dungeons.Select(dm => _mapper.Map<DungeonViewModel>(dm)).ToList();
+        model.Option.Dungeons = dungeons.Select(_mapper.Map<DungeonViewModel>).ToList();
         ViewData["ReturnUrl"] = Url.Action("Index", "Dungeon");
         return View(model);
     }

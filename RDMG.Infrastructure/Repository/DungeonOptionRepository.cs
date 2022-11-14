@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Domain;
-using RDMG.Infrastructure.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,10 +13,10 @@ namespace RDMG.Infrastructure.Repository;
 
 public class DungeonOptionRepository : IDungeonOptionRepository
 {
-    private readonly Context _context;
+    private readonly IAppDbContext _context;
     private readonly ILogger<DungeonOptionRepository> _logger;
     private readonly IMapper _mapper;
-    public DungeonOptionRepository(Context context, IMapper mapper, ILogger<DungeonOptionRepository> logger)
+    public DungeonOptionRepository(IAppDbContext context, IMapper mapper, ILogger<DungeonOptionRepository> logger)
     {
         _context = context;
         _logger = logger;
@@ -42,7 +42,7 @@ public class DungeonOptionRepository : IDungeonOptionRepository
 
     public async Task<DungeonOption> AddDungeonOptionAsync(DungeonOption dungeonOption, CancellationToken cancellationToken)
     {
-        _context.Add(dungeonOption);
+        _context.DungeonOptions.Add(dungeonOption);
         await _context.SaveChangesAsync(cancellationToken);
         return dungeonOption;
 

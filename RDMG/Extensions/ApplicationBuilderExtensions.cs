@@ -15,7 +15,7 @@ public static class ApplicationBuilderExtensions
     {
         using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-        switch (configuration.GetConnectionString("DbProvider").ToLower())
+        switch (configuration.GetConnectionString(Context.DbProvider)?.ToLower())
         {
             case Context.SqlServerContext:
                 MigrateAndSeedDb<SqlServerContext>(serviceScope);
@@ -24,7 +24,8 @@ public static class ApplicationBuilderExtensions
                 MigrateAndSeedDb<SqliteContext>(serviceScope);
                 break;
             default:
-                throw new Exception($"DbProvider not recognized: {configuration.GetConnectionString("DbProvider")}");
+                throw new Exception(
+                    string.Format(Resources.Error.DbProviderError, configuration.GetConnectionString(Context.DbProvider)));
         }
 
         return app;

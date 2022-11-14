@@ -103,7 +103,7 @@ public class UserService : IUserService
         {
             var result = await _userRepository.ListAsync(deleted);
 
-            return result.Select(p => _mapper.Map<UserModel>(p))
+            return result.Select(_mapper.Map<UserModel>)
                 .OrderBy(um => um.Username)
                 .ToList();
         }

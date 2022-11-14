@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Dungeon;
 using RDMG.Core.Abstractions.Dungeon.Models;
 using RDMG.Core.Abstractions.Repository;
@@ -21,10 +22,9 @@ namespace RDMG.Tests;
 
 public class TestEnvironment : IDisposable
 {
-    private readonly IServiceProvider _serviceProvider;
     private readonly IServiceScope _scope;
     private SqliteConnection Connection { get; }
-
+    private bool _disposedValue;
     public TestEnvironment()
     {
         IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
@@ -36,20 +36,9 @@ public class TestEnvironment : IDisposable
 
         var services = new ServiceCollection();
         ConfigureServices(services);
+        MigrateAndSeedDbAsync(services).Wait();
 
-        _serviceProvider = services.BuildServiceProvider();
-        _scope = _serviceProvider.CreateScope();
-
-        MigrateDbContext();
-        SeedDataAsync().Wait();
-    }
-
-    private async Task SeedDataAsync()
-    {
-        var context = _scope.ServiceProvider.GetService<SqliteContext>();
-        var service = _scope.ServiceProvider.GetService<IDungeonService>();
-        var seedData = new ContextSeedData(service, context);
-        await seedData.SeedDataAsync();
+        _scope = services.BuildServiceProvider().CreateScope();
     }
 
     public T GetService<T>()
@@ -132,28 +121,37 @@ public class TestEnvironment : IDisposable
             .AddAutoMapper(cfg =>
                 {
                     cfg.AllowNullCollections = true;
-                }
-                , new[] { typeof(Core.Services.Automapper.DungeonProfile)
-                    , typeof(Core.Services.Automapper.UserProfile)
-                    , typeof(Core.Services.Automapper.OptionProfile)
-                    , typeof(Infrastructure.Repository.Automapper.DungeonProfile)
-                    , typeof(Infrastructure.Repository.Automapper.UserProfile)
-                })
+                }, typeof(Core.Services.Automapper.DungeonProfile),
+                typeof(Core.Services.Automapper.UserProfile),
+                typeof(Core.Services.Automapper.OptionProfile),
+                typeof(Infrastructure.Repository.Automapper.DungeonProfile),
+                typeof(Infrastructure.Repository.Automapper.UserProfile))
             .AddLogging();
     }
 
-    private void MigrateDbContext()
+    private static async Task MigrateAndSeedDbAsync(IServiceCollection serviceCollection)
     {
-        using var scope = _serviceProvider.CreateScope();
-        var services = scope.ServiceProvider;
-        var context = services.GetService<SqliteContext>();
-        context?.Database.Migrate();
+        using var scope = serviceCollection.BuildServiceProvider().CreateScope();
+        await using var context = scope.ServiceProvider.GetService<SqliteContext>();
+        await context?.Database.MigrateAsync()!;
+        var service = scope.ServiceProvider.GetService<IDungeonService>();
+        var seedData = new ContextSeedData(service, context);
+        await seedData.SeedDataAsync();
     }
 
-    public void Dispose()
+    public void Dispose() => Dispose(true);
+    protected virtual void Dispose(bool disposing)
     {
-        _scope?.Dispose();
-        Connection?.Dispose();
+        if (_disposedValue)
+            return;
+
+        if (disposing)
+        {
+            Connection?.Dispose();
+            _scope?.Dispose();
+        }
+
+        _disposedValue = true;
     }
 }
 
@@ -162,11 +160,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDatabase(this IServiceCollection services,
         SqliteConnection connection)
     {
-        services.AddDbContext<Context>(options =>
-        {
-            options.UseSqlite(connection);
-            options.ConfigureWarnings(wcb => wcb.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.AmbientTransactionWarning));
-        });
         services.AddDbContext<SqliteContext>(options =>
         {
             options.UseSqlite(connection,
@@ -174,7 +167,6 @@ public static class ServiceCollectionExtensions
                 {
                     sqlOptions.MigrationsAssembly(typeof(SqliteContext).GetTypeInfo().Assembly.GetName().Name);
                 });
-            options.ConfigureWarnings(wcb => wcb.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.AmbientTransactionWarning));
         });
 
         return services;
@@ -193,6 +185,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IDungeonHelper, DungeonHelper>()
             .AddScoped<IOptionService, OptionService>()
             .AddScoped<IDungeonService, DungeonService>();
+
+        services.AddScoped<IAppDbContext, SqliteContext>();
 
         return services;
     }

@@ -32,7 +32,7 @@ public class UserController : Controller
 
         return View(new UserListViewModel
         {
-            Details = list.Select(um => _mapper.Map<UserEditViewModel>(um)).ToList()
+            Details = list.Select(_mapper.Map<UserEditViewModel>).ToList()
         });
     }
 

@@ -8,6 +8,7 @@ using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Core.Generator;
+using RDMG.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,9 +57,9 @@ public class DungeonService : IDungeonService
     private static void ValidateModel(DungeonOptionModel model)
     {
         if (string.IsNullOrWhiteSpace(model.DungeonName))
-            throw new ServiceException(Resources.Error.Required);
+            throw new ServiceException(Error.Required);
         if (model.UserId == 0)
-            throw new ServiceException(Resources.Error.Required);
+            throw new ServiceException(Error.Required);
     }
 
     public async Task<int> AddDungeonAsync(DungeonModel savedDungeon, CancellationToken cancellationToken)
@@ -211,7 +212,7 @@ public class DungeonService : IDungeonService
         {
             var options = await _dungeonOptionRepository.GetAllDungeonOptionsAsync(cancellationToken);
 
-            return options.Select(o => _mapper.Map<DungeonOptionModel>(o)).ToList();
+            return options.Select(_mapper.Map<DungeonOptionModel>).ToList();
         }
         catch (Exception ex)
         {
@@ -226,7 +227,7 @@ public class DungeonService : IDungeonService
         {
             var options = await _dungeonOptionRepository.GetAllDungeonOptionsForUserAsync(userId, cancellationToken);
 
-            return options.Select(o => _mapper.Map<DungeonOptionModel>(o)).ToList();
+            return options.Select(_mapper.Map<DungeonOptionModel>).ToList();
         }
         catch (Exception ex)
         {
@@ -279,7 +280,7 @@ public class DungeonService : IDungeonService
         try
         {
             var result = await _dungeonRepository.GetAllDungeonsForUserAsync(userId, cancellationToken);
-            return result.Select(d => _mapper.Map<DungeonModel>(d)).ToList();
+            return result.Select(_mapper.Map<DungeonModel>).ToList();
         }
         catch (Exception ex)
         {
@@ -293,7 +294,7 @@ public class DungeonService : IDungeonService
         try
         {
             var result = await _dungeonRepository.GetAllDungeonByOptionNameForUserAsync(dungeonName, userId, cancellationToken);
-            return result.Select(d => _mapper.Map<DungeonModel>(d)).ToList();
+            return result.Select(_mapper.Map<DungeonModel>).ToList();
         }
         catch (Exception ex)
         {
@@ -320,12 +321,7 @@ public class DungeonService : IDungeonService
         try
         {
             var entity = await _dungeonRepository.GetDungeonAsync(model.Id, cancellationToken);
-            // TODO use mapper?
-            entity.TrapDescription = model.TrapDescription;
-            entity.DungeonTiles = model.DungeonTiles;
-            entity.RoomDescription = model.RoomDescription;
-            entity.RoamingMonsterDescription = model.RoamingMonsterDescription;
-            entity.Level = model.Level;
+            _mapper.Map(model, entity);
             await _dungeonRepository.UpdateDungeonAsync(entity, cancellationToken);
         }
         catch (Exception ex)
