@@ -17,7 +17,6 @@ public class DungeonNoCorridorGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.Init();
         Draw(dungeonNoCorridor.DungeonTiles);
         dungeonNoCorridor.RoomDescription.Count.ShouldBe(0);
     }
@@ -27,7 +26,6 @@ public class DungeonNoCorridorGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.Init();
         dungeonNoCorridor.AddFirstRoom();
         Draw(dungeonNoCorridor.DungeonTiles);
         var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
@@ -40,7 +38,6 @@ public class DungeonNoCorridorGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.Init();
         dungeonNoCorridor.AddFirstRoom();
         dungeonNoCorridor.FillRoomToDoor();
         Draw(dungeonNoCorridor.DungeonTiles);
@@ -52,7 +49,6 @@ public class DungeonNoCorridorGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.Init();
         dungeonNoCorridor.AddFirstRoom();
         dungeonNoCorridor.FillRoomToDoor();
         dungeonNoCorridor.AddEntryPoint();
@@ -67,7 +63,6 @@ public class DungeonNoCorridorGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.Init();
         dungeonNoCorridor.AddFirstRoom();
         dungeonNoCorridor.FillRoomToDoor();
         dungeonNoCorridor.AddEntryPoint();

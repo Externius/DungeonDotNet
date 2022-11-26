@@ -242,7 +242,7 @@ var Utils = (function () {
         var canvasPlain = document.getElementById(canvasPlainId);
         var contextPlain = canvasPlain.getContext("2d");
         contextPlain.clearRect(0, 0, canvasPlain.width, canvasPlain.height); // clear canvas
-        drawPlainMap(tiles, contextPlain, hasCorridor === "True");
+        drawPlainMap(tiles, contextPlain, hasCorridor.toLowerCase() === "true");
     };
     var drawDungeonOneCanvas = function (tiles, roomDescription, trapDescription, canvasID, dungeonSize, hasCorridor, themeID, roamingDescription, descId) {
         var canvas = document.getElementById(canvasID);
@@ -251,7 +251,7 @@ var Utils = (function () {
         context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
         addDescription(roomDescription, trapDescription, roamingDescription, descId);
         getTheme(themeID);
-        drawMap(tiles, context, contextFont, hasCorridor === "True");
+        drawMap(tiles, context, contextFont, hasCorridor.toLowerCase() === "true");
     };
     var downloadHTML = function (linkID) {
         var link = document.getElementById(linkID);

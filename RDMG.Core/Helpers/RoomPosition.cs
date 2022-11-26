@@ -1,4 +1,4 @@
-using RDMG.Core.Abstractions.Dungeon.Models;
+using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Domain;
 
 namespace RDMG.Core.Helpers;

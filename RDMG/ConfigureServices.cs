@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RDMG.Core.Abstractions.Data;
-using RDMG.Core.Abstractions.Dungeon;
+using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Generator;
@@ -68,6 +68,8 @@ public static class ConfigureServices
             .AddScoped<IAuthService, AuthService>()
             .AddScoped<IDungeonHelper, DungeonHelper>()
             .AddScoped<IOptionService, OptionService>()
+            .AddScoped<IDungeon, Dungeon>()
+            .AddScoped<IDungeonNoCorridor, DungeonNoCorridor>()
             .AddScoped<IDungeonService, DungeonService>();
 
         switch (configuration.GetConnectionString(Context.DbProvider)?.ToLower())

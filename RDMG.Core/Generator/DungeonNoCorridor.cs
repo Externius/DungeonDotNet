@@ -1,63 +1,56 @@
-using RDMG.Core.Abstractions.Dungeon;
-using RDMG.Core.Abstractions.Dungeon.Models;
+using RDMG.Core.Abstractions.Generator;
+using RDMG.Core.Abstractions.Generator.Models;
+using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Core.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace RDMG.Core.Generator;
 
-public class DungeonNoCorridor : Dungeon
+public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 {
     private readonly IDungeonHelper _dungeonHelper;
     public List<DungeonTile> OpenDoorList { get; set; }
     private List<DungeonTile> EdgeTileList;
     private List<DungeonTile> RoomStart;
-    public DungeonNoCorridor(int dungeonWidth, int dungeonHeight, int dungeonSize, int roomSizePercent, IDungeonHelper dungeonHelper) : base(dungeonHelper)
+    public DungeonNoCorridor(IDungeonHelper dungeonHelper) : base(dungeonHelper)
     {
-        DungeonWidth = dungeonWidth;
-        DungeonHeight = dungeonHeight;
-        DungeonSize = dungeonSize;
-        RoomSizePercent = roomSizePercent;
         _dungeonHelper = dungeonHelper;
     }
 
-    public override void Generate()
+    public override DungeonModel Generate(DungeonOptionModel optionModel)
     {
-        Init();
+        Init(optionModel);
         AddFirstRoom();
         FillRoomToDoor();
         AddEntryPoint();
         AddDescription();
+        return new DungeonModel
+        {
+            DungeonTiles = JsonSerializer.Serialize(DungeonTiles),
+            RoomDescription = JsonSerializer.Serialize(RoomDescription),
+            DungeonOptionId = optionModel.Id,
+            TrapDescription = "[]",
+            RoamingMonsterDescription = "[]"
+        };
     }
 
-    public override void Init()
+    public override void Init(DungeonOptionModel optionModel)
     {
+        _dungeonHelper.Init(optionModel);
+        DungeonWidth = optionModel.Width;
+        DungeonHeight = optionModel.Height;
+        DungeonSize = optionModel.DungeonSize;
+        RoomSizePercent = optionModel.RoomSize;
         var imgSizeX = DungeonWidth / DungeonSize;
         var imgSizeY = DungeonHeight / DungeonSize;
         RoomSize = (int)Math.Round((float)(DungeonSize - Math.Round(DungeonSize * 0.35)) / 100 * RoomSizePercent);
         RoomDescription = new List<RoomDescription>();
         DungeonSize += 2; // because of boundaries
-        DungeonTiles = new DungeonTile[DungeonSize][];
-        for (var i = 0; i < DungeonSize; i++)
-        {
-            DungeonTiles[i] = new DungeonTile[DungeonSize];
-        }
-        for (var i = 0; i < DungeonSize; i++)
-        {
-            for (var j = 0; j < DungeonSize; j++)
-            {
-                DungeonTiles[i][j] = new DungeonTile(i, j);
-            }
-        }
-        for (var i = 1; i < DungeonSize - 1; i++) // set drawing area
-        {
-            for (var j = 1; j < DungeonSize - 1; j++)
-            {
-                DungeonTiles[i][j] = new DungeonTile((j - 1) * imgSizeX, (i - 1) * imgSizeY, i, j, imgSizeX, imgSizeY, Textures.Marble);
-            }
-        }
+        DungeonTiles = _dungeonHelper.GenerateDungeonTiles(DungeonSize, imgSizeX, imgSizeY);
     }
 
     public override void AddEntryPoint()
@@ -76,7 +69,7 @@ public class DungeonNoCorridor : Dungeon
         DungeonTiles[x][y].Texture = Textures.Entry;
     }
 
-    private static bool CheckEdges(DungeonTile[][] dungeonTiles, int x, int y)
+    private static bool CheckEdges(IReadOnlyList<DungeonTile[]> dungeonTiles, int x, int y)
     {
         return dungeonTiles[x][y - 1].Texture == Textures.Room ||
                dungeonTiles[x][y + 1].Texture == Textures.Room ||
@@ -102,7 +95,7 @@ public class DungeonNoCorridor : Dungeon
                 RemoveFromOpen(openList, start); // remove from open list this node
                 AddToOpen(start, openList, closedList); // add open list the nearby nodes
             }
-            _dungeonHelper.AddNcRoomDescription(DungeonTiles, room.I, room.J, RoomDescription, _dungeonHelper.GetNcDoorDescription(DungeonTiles, closedList));
+            _dungeonHelper.AddNcRoomDescription(DungeonTiles[room.I][room.J], RoomDescription, _dungeonHelper.GetNcDoorDescription(DungeonTiles, closedList));
         }
     }
 
@@ -282,7 +275,7 @@ public class DungeonNoCorridor : Dungeon
         {
             for (var j = node.J - 1; j < node.J + 2; j++)
             {
-                if (_dungeonHelper.CheckNcDoor(DungeonTiles, i, j)) // check nearby doors
+                if (_dungeonHelper.CheckNcDoor(DungeonTiles[i][j])) // check nearby doors
                     return false;
             }
         }
@@ -324,12 +317,12 @@ public class DungeonNoCorridor : Dungeon
 
     private void SetRoomEdge(int x, int y, bool addToEdgeList)
     {
-        if (!_dungeonHelper.CheckNcDoor(DungeonTiles, x, y) && addToEdgeList) // if its not a corridor_door
+        if (!_dungeonHelper.CheckNcDoor(DungeonTiles[x][y]) && addToEdgeList) // if its not a corridor_door
         {
             SetTextureToRoomEdge(x, y);
             AddEdgeTileList(x, y);
         }
-        else if (!_dungeonHelper.CheckNcDoor(DungeonTiles, x, y))
+        else if (!_dungeonHelper.CheckNcDoor(DungeonTiles[x][y]))
         {
             SetTextureToRoomEdge(x, y);
         }
@@ -528,7 +521,7 @@ public class DungeonNoCorridor : Dungeon
 
     private bool CheckTile(int x, int y)
     {
-        return DungeonTiles[x][y].Texture == Textures.RoomEdge || _dungeonHelper.CheckNcDoor(DungeonTiles, x, y);
+        return DungeonTiles[x][y].Texture == Textures.RoomEdge || _dungeonHelper.CheckNcDoor(DungeonTiles[x][y]);
     }
 
     private static bool CheckPos()
@@ -597,7 +590,7 @@ public class DungeonNoCorridor : Dungeon
         {
             for (var j = y - 1; j < y + 2; j++)
             {
-                if (_dungeonHelper.CheckNcDoor(DungeonTiles, i, j)) // check nearby doors
+                if (_dungeonHelper.CheckNcDoor(DungeonTiles[i][j])) // check nearby doors
                     return false;
             }
         }

@@ -1,18 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using RDMG.Core.Abstractions.Dungeon;
-using RDMG.Core.Abstractions.Dungeon.Models;
+using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
-using RDMG.Core.Generator;
 using RDMG.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,19 +19,22 @@ public class DungeonService : IDungeonService
 {
     private readonly IDungeonRepository _dungeonRepository;
     private readonly IDungeonOptionRepository _dungeonOptionRepository;
-    private readonly IDungeonHelper _dungeonHelper;
+    private readonly IDungeon _dungeon;
+    private readonly IDungeonNoCorridor _dungeonNcDungeon;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
     public DungeonService(IMapper mapper,
         IDungeonRepository dungeonRepository,
         IDungeonOptionRepository dungeonOptionRepository,
-        IDungeonHelper dungeonHelper,
+        IDungeon dungeon,
+        IDungeonNoCorridor dungeonNcDungeon,
         ILogger<DungeonService> logger)
     {
         _dungeonRepository = dungeonRepository;
         _dungeonOptionRepository = dungeonOptionRepository;
-        _dungeonHelper = dungeonHelper;
+        _dungeon = dungeon;
+        _dungeonNcDungeon = dungeonNcDungeon;
         _mapper = mapper;
         _logger = logger;
     }
@@ -160,44 +160,9 @@ public class DungeonService : IDungeonService
         try
         {
             ValidateModel(model);
-            _dungeonHelper.Init(model);
-            var dungeonOptions = new DungeonOptionsModel
-            {
-                Size = model.DungeonSize,
-                RoomDensity = model.RoomDensity,
-                RoomSizePercent = model.RoomSize,
-                TrapPercent = model.TrapPercent,
-                HasDeadEnds = model.DeadEnd,
-                RoamingPercent = model.RoamingPercent
-            };
             if (model.Corridor)
-            {
-                var dungeon = new Generator.Dungeon(dungeonOptions, _dungeonHelper);
-                dungeon.Generate();
-                return await Task.FromResult(
-                    new DungeonModel
-                    {
-                        DungeonTiles = JsonSerializer.Serialize(dungeon.DungeonTiles),
-                        RoomDescription = JsonSerializer.Serialize(dungeon.RoomDescription),
-                        TrapDescription = JsonSerializer.Serialize(dungeon.TrapDescription),
-                        RoamingMonsterDescription = JsonSerializer.Serialize(dungeon.RoamingMonsterDescription),
-                        DungeonOptionId = model.Id
-                    }
-                );
-            }
-
-            var dungeonNoCorridor = new DungeonNoCorridor(dungeonOptions.Width, dungeonOptions.Height, model.DungeonSize, model.RoomSize, _dungeonHelper);
-            dungeonNoCorridor.Generate();
-            return await Task.FromResult(
-                new DungeonModel
-                {
-                    DungeonTiles = JsonSerializer.Serialize(dungeonNoCorridor.DungeonTiles),
-                    RoomDescription = JsonSerializer.Serialize(dungeonNoCorridor.RoomDescription),
-                    DungeonOptionId = model.Id,
-                    TrapDescription = "[]",
-                    RoamingMonsterDescription = "[]"
-                }
-            );
+                return await Task.FromResult(_dungeon.Generate(model));
+            return await Task.FromResult(_dungeonNcDungeon.Generate(model));
         }
         catch (Exception ex)
         {

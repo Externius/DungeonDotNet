@@ -1,13 +1,15 @@
-using RDMG.Core.Abstractions.Dungeon;
-using RDMG.Core.Abstractions.Dungeon.Models;
+using RDMG.Core.Abstractions.Generator;
+using RDMG.Core.Abstractions.Generator.Models;
+using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace RDMG.Core.Generator;
 
-public class Dungeon
+public class Dungeon : IDungeon
 {
     private readonly IDungeonHelper _dungeonHelper;
     private const int Movement = 10;
@@ -19,13 +21,13 @@ public class Dungeon
     public DungeonTile[][] DungeonTiles { get; set; }
     private List<DungeonTile> Result;
     private List<DungeonTile> Corridors;
-    private readonly int RoomDensity;
-    private readonly int TrapPercent;
-    private readonly int RoamingPercent;
+    private int RoomDensity;
+    private int TrapPercent;
+    private int RoamingPercent;
     private int TrapCount;
     private int RoamingCount;
     private int RoomCount;
-    private readonly bool HasDeadEnds;
+    private bool HasDeadEnds;
     public int DungeonWidth { get; set; }
     public int DungeonHeight { get; set; }
     public int DungeonSize { get; set; }
@@ -37,22 +39,9 @@ public class Dungeon
         _dungeonHelper = dungeonHelper;
     }
 
-    public Dungeon(DungeonOptionsModel optionsModel, IDungeonHelper dungeonHelper)
+    public virtual DungeonModel Generate(DungeonOptionModel optionModel)
     {
-        DungeonWidth = optionsModel.Width;
-        DungeonHeight = optionsModel.Height;
-        DungeonSize = optionsModel.Size;
-        RoomDensity = optionsModel.RoomDensity;
-        RoomSizePercent = optionsModel.RoomSizePercent;
-        TrapPercent = optionsModel.TrapPercent;
-        HasDeadEnds = optionsModel.HasDeadEnds;
-        RoamingPercent = optionsModel.RoamingPercent;
-        _dungeonHelper = dungeonHelper;
-    }
-
-    public virtual void Generate()
-    {
-        Init();
+        Init(optionModel);
         GenerateRoom();
         AddEntryPoint();
         GenerateCorridors();
@@ -60,6 +49,14 @@ public class Dungeon
             AddDeadEnds();
         AddCorridorItem(TrapCount, Item.Trap);
         AddCorridorItem(RoamingCount, Item.RoamingMonster);
+        return new DungeonModel
+        {
+            DungeonTiles = JsonSerializer.Serialize(DungeonTiles),
+            RoomDescription = JsonSerializer.Serialize(RoomDescription),
+            TrapDescription = JsonSerializer.Serialize(TrapDescription),
+            RoamingMonsterDescription = JsonSerializer.Serialize(RoamingMonsterDescription),
+            DungeonOptionId = optionModel.Id
+        };
     }
 
     public void AddCorridorItem(int inCount, Item item)
@@ -95,13 +92,13 @@ public class Dungeon
     private void AddTrap(int x, int y)
     {
         DungeonTiles[x][y].Texture = Textures.Trap;
-        _dungeonHelper.AddTrapDescription(DungeonTiles, x, y, TrapDescription);
+        _dungeonHelper.AddTrapDescription(DungeonTiles[x][y], TrapDescription);
     }
 
     private void AddRoamingMonster(int x, int y)
     {
         DungeonTiles[x][y].Texture = Textures.RoamingMonster;
-        _dungeonHelper.AddRoamingMonsterDescription(DungeonTiles, x, y, RoamingMonsterDescription);
+        _dungeonHelper.AddRoamingMonsterDescription(DungeonTiles[x][y], RoamingMonsterDescription);
     }
 
     public void AddDeadEnds()
@@ -226,9 +223,7 @@ public class Dungeon
     private static void CalcFValue(List<DungeonTile> openList)
     {
         openList.ForEach(tile => tile.F = tile.G + tile.H);
-        // sort it
         openList.Sort((dt1, dt2) => dt1.F - dt2.F);
-        //openList.Sort((x, y) => x.F.CompareTo(y.F));
     }
 
     private static void CalcGValue(List<DungeonTile> openList)
@@ -362,9 +357,7 @@ public class Dungeon
         {
             for (var j = y - 1; j < y + 2; j++)
             {
-                if (DungeonTiles[i][j].Texture == Textures.Door ||
-                    DungeonTiles[i][j].Texture == Textures.DoorLocked ||
-                    DungeonTiles[i][j].Texture == Textures.DoorTrapped) // check nearby doors
+                if (DungeonTiles[i][j].Texture is Textures.Door or Textures.DoorLocked or Textures.DoorTrapped) // check nearby doors
                     return false;
             }
         }
@@ -454,11 +447,20 @@ public class Dungeon
 
     private bool CheckIsRoom(int x, int y)
     {
-        return DungeonTiles[x][y].Texture == Textures.Room || DungeonTiles[x][y].Texture == Textures.RoomEdge;
+        return DungeonTiles[x][y].Texture is Textures.Room or Textures.RoomEdge;
     }
 
-    public virtual void Init()
+    public virtual void Init(DungeonOptionModel optionModel)
     {
+        _dungeonHelper.Init(optionModel);
+        DungeonWidth = optionModel.Width;
+        DungeonHeight = optionModel.Height;
+        DungeonSize = optionModel.DungeonSize;
+        RoomDensity = optionModel.RoomDensity;
+        RoomSizePercent = optionModel.RoomSize;
+        TrapPercent = optionModel.TrapPercent;
+        HasDeadEnds = optionModel.DeadEnd;
+        RoamingPercent = optionModel.RoamingPercent;
         Corridors = new List<DungeonTile>();
         var imgSizeX = DungeonWidth / DungeonSize;
         var imgSizeY = DungeonHeight / DungeonSize;
@@ -470,24 +472,6 @@ public class Dungeon
         TrapCount = DungeonSize * TrapPercent / 100;
         RoamingCount = DungeonSize * RoamingPercent / 100;
         DungeonSize += 2; // because of boundaries
-        DungeonTiles = new DungeonTile[DungeonSize][];
-        for (var i = 0; i < DungeonSize; i++)
-        {
-            DungeonTiles[i] = new DungeonTile[DungeonSize];
-        }
-        for (var i = 0; i < DungeonSize; i++)
-        {
-            for (var j = 0; j < DungeonSize; j++)
-            {
-                DungeonTiles[i][j] = new DungeonTile(i, j);
-            }
-        }
-        for (var i = 1; i < DungeonSize - 1; i++) // set drawing area
-        {
-            for (var j = 1; j < DungeonSize - 1; j++)
-            {
-                DungeonTiles[i][j] = new DungeonTile((j - 1) * imgSizeX, (i - 1) * imgSizeY, i, j, imgSizeX, imgSizeY, Textures.Marble);
-            }
-        }
+        DungeonTiles = _dungeonHelper.GenerateDungeonTiles(DungeonSize, imgSizeX, imgSizeY);
     }
 }

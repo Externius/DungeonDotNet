@@ -1,6 +1,6 @@
 using RDMG.Core.Domain;
 
-namespace RDMG.Core.Abstractions.Dungeon.Models;
+namespace RDMG.Core.Abstractions.Generator.Models;
 
 public class DungeonTile
 {

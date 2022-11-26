@@ -1,5 +1,5 @@
-﻿using RDMG.Core.Abstractions.Dungeon;
-using RDMG.Core.Abstractions.Dungeon.Models;
+﻿using RDMG.Core.Abstractions.Generator;
+using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Domain;
 using Shouldly;
 using System.Collections.Generic;
@@ -49,7 +49,6 @@ public class Get
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonHelper>();
         var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.Init();
         dungeonNoCorridor.AddFirstRoom();
         var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
         var match = list.Where(x => x.Texture == Textures.Room);

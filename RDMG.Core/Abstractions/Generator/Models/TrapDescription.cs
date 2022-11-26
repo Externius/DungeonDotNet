@@ -1,4 +1,4 @@
-namespace RDMG.Core.Abstractions.Dungeon.Models;
+namespace RDMG.Core.Abstractions.Generator.Models;
 
 public class TrapDescription
 {

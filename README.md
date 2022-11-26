@@ -2,7 +2,7 @@
 
 I just wanted to see how is .NET under Linux so i ported my app to ASP.NET Core + Entity Framework Core.
 
-You will need the .NET 6.0 SDK to build/run this project (simply run dotnet build/run in the terminal).
+You will need the .NET 7.0 SDK to build/run this project (simply run dotnet build/run in the terminal).
 
 ## Usage
 

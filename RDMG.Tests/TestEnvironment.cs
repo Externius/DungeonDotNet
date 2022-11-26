@@ -3,8 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RDMG.Core.Abstractions.Data;
-using RDMG.Core.Abstractions.Dungeon;
-using RDMG.Core.Abstractions.Dungeon.Models;
+using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
@@ -46,9 +45,9 @@ public class TestEnvironment : IDisposable
         return _scope.ServiceProvider.GetService<T>();
     }
 
-    public Dungeon GetDungeon(DungeonOptionModel optionModel = null)
+    public IDungeon GetDungeon(DungeonOptionModel optionModel = null)
     {
-        var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
+        var service = _scope.ServiceProvider.GetService<IDungeon>();
 
         optionModel ??= new DungeonOptionModel
         {
@@ -69,24 +68,13 @@ public class TestEnvironment : IDisposable
             Corridor = false
         };
 
-        helperService?.Init(optionModel);
-
-        var model = new DungeonOptionsModel
-        {
-            Size = optionModel.DungeonSize,
-            RoomDensity = optionModel.RoomDensity,
-            RoomSizePercent = optionModel.RoomSize,
-            TrapPercent = optionModel.TrapPercent,
-            HasDeadEnds = optionModel.DeadEnd,
-            RoamingPercent = optionModel.RoamingPercent
-        };
-
-        return new Dungeon(model, helperService);
+        service?.Init(optionModel);
+        return service;
     }
 
-    public DungeonNoCorridor GetNcDungeon(DungeonOptionModel optionModel = null)
+    public IDungeonNoCorridor GetNcDungeon(DungeonOptionModel optionModel = null)
     {
-        var helperService = _scope.ServiceProvider.GetService<IDungeonHelper>();
+        var service = _scope.ServiceProvider.GetService<IDungeonNoCorridor>();
 
         optionModel ??= new DungeonOptionModel
         {
@@ -95,7 +83,7 @@ public class TestEnvironment : IDisposable
             ItemsRarity = 1,
             DeadEnd = true,
             DungeonDifficulty = 1,
-            DungeonSize = 25,
+            DungeonSize = 15,
             MonsterType = "any",
             PartyLevel = 4,
             PartySize = 4,
@@ -103,13 +91,12 @@ public class TestEnvironment : IDisposable
             RoamingPercent = 0,
             TreasureValue = 1,
             RoomDensity = 10,
-            RoomSize = 20,
+            RoomSize = 15,
             Corridor = false
         };
 
-        helperService?.Init(optionModel);
-
-        return new DungeonNoCorridor(800, 800, 15, 15, helperService);
+        service?.Init(optionModel);
+        return service;
     }
 
     private void ConfigureServices(IServiceCollection services)
@@ -139,7 +126,14 @@ public class TestEnvironment : IDisposable
         await seedData.SeedDataAsync();
     }
 
-    public void Dispose() => Dispose(true);
+    ~TestEnvironment() => Dispose(false);
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     protected virtual void Dispose(bool disposing)
     {
         if (_disposedValue)
@@ -184,6 +178,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAuthService, AuthService>()
             .AddScoped<IDungeonHelper, DungeonHelper>()
             .AddScoped<IOptionService, OptionService>()
+            .AddScoped<IDungeon, Dungeon>()
+            .AddScoped<IDungeonNoCorridor, DungeonNoCorridor>()
             .AddScoped<IDungeonService, DungeonService>();
 
         services.AddScoped<IAppDbContext, SqliteContext>();

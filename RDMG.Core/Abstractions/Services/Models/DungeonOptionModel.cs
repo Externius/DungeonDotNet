@@ -20,4 +20,6 @@ public class DungeonOptionModel : EditModel
     public bool Corridor { get; set; }
     public int RoamingPercent { get; set; }
     public DateTime Created { get; set; }
+    public int Width { get; set; } = 800;
+    public int Height { get; set; } = 800;
 }

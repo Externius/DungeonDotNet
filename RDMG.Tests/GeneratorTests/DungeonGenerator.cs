@@ -17,7 +17,6 @@ public class DungeonGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeon = env.GetDungeon();
-        dungeon.Init();
         Draw(dungeon.DungeonTiles);
         dungeon.RoomDescription.Count.ShouldBe(0);
     }
@@ -27,7 +26,6 @@ public class DungeonGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeon = env.GetDungeon();
-        dungeon.Init();
         dungeon.GenerateRoom();
         Draw(dungeon.DungeonTiles);
         dungeon.RoomDescription.Count.ShouldBe(2);
@@ -38,7 +36,6 @@ public class DungeonGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeon = env.GetDungeon();
-        dungeon.Init();
         dungeon.GenerateRoom();
         dungeon.AddEntryPoint();
         Draw(dungeon.DungeonTiles);
@@ -51,7 +48,6 @@ public class DungeonGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeon = env.GetDungeon();
-        dungeon.Init();
         dungeon.GenerateRoom();
         dungeon.AddEntryPoint();
         dungeon.GenerateCorridors();
@@ -65,7 +61,6 @@ public class DungeonGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeon = env.GetDungeon();
-        dungeon.Init();
         dungeon.GenerateRoom();
         dungeon.AddEntryPoint();
         dungeon.GenerateCorridors();
@@ -80,7 +75,6 @@ public class DungeonGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeon = env.GetDungeon();
-        dungeon.Init();
         dungeon.GenerateRoom();
         dungeon.AddEntryPoint();
         dungeon.GenerateCorridors();
@@ -96,7 +90,6 @@ public class DungeonGenerator : DungeonTestBase
     {
         using var env = new TestEnvironment();
         var dungeon = env.GetDungeon();
-        dungeon.Init();
         dungeon.GenerateRoom();
         dungeon.AddEntryPoint();
         dungeon.GenerateCorridors();
