@@ -1,0 +1,184 @@
+﻿@model RDMG.Web.Models.Dungeon.DungeonOptionCreateViewModel
+
+@{
+    ViewData["Title"] = Resources.Dungeon.CreateTitle;
+    var isReadonly = @Model.AddDungeon;
+}
+
+<div class="row">
+    <div class="col-md-4 mx-auto">
+        <form id="createForm" asp-action="Create" asp-controller="Dungeon" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="Timestamp" type="hidden" />
+            <input asp-for="UserId" type="hidden" />
+            <input asp-for="AddDungeon" type="hidden" />
+            <div class="mb-3 row">
+                <label asp-for="DungeonName" class="col-md-4 col-form-label"></label>
+                <div class="col-md-8">
+                    <input asp-for="DungeonName" type="text" class="form-control" tabindex="1" readonly=@isReadonly />
+                    <span asp-validation-for="DungeonName" class="text-danger"></span>
+                </div>
+            </div>
+            <table class="table table-sm table-striped">
+                @if (isReadonly)
+                {
+                    <tr>
+                        <td>
+                            <label asp-for="Level" class="col-form-label"></label>
+                            <i class="far fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Dungeon.LevelTooltip"></i>
+                        </td>
+                        <td>
+                            <input asp-for="Level" type="number" class="form-control" min="1" />
+                            <span asp-validation-for="Level" class="text-danger"></span>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <input asp-for="Level" type="hidden" />
+                }
+                <tr>
+                    <td><label asp-for="DungeonSizes" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="DungeonSize" asp-items="@Model.DungeonSizes" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="DungeonDifficulties" class="col-md-8 col-form-label"></label></td>
+                    <td>
+                        <select asp-for="DungeonDifficulty" asp-items="@Model.DungeonDifficulties" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="PartyLevels" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="PartyLevel" asp-items="@Model.PartyLevels" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="PartySizes" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="PartySize" asp-items="@Model.PartySizes" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="TreasureValues" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="TreasureValue" asp-items="@Model.TreasureValues" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="ItemsRarities" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="ItemsRarity" asp-items="@Model.ItemsRarities" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="RoomDensities" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="RoomDensity" asp-items="@Model.RoomDensities" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="RoomSizes" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="RoomSize" asp-items="@Model.RoomSizes" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="MonsterTypes" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="MonsterType" asp-items="@Model.MonsterTypes" class="form-select" multiple onchange="Utils.monsterTypeOnChange(this)"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="TrapPercents" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="TrapPercent" asp-items="@Model.TrapPercents" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="DeadEnds" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="DeadEnd" asp-items="@Model.DeadEnds" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="Corridors" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="Corridor" asp-items="@Model.Corridors" class="form-select" onchange="Utils.corridorOnchange(this)"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="RoamingPercents" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="RoamingPercent" asp-items="@Model.RoamingPercents" class="form-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label asp-for="Themes" class="col-form-label"></label></td>
+                    <td>
+                        <select asp-for="Theme" asp-items="@Model.Themes" class="form-select"></select>
+                    </td>
+                </tr>
+            </table>
+            <div class="mb-3">
+                @if (Model.AddDungeon)
+                {
+                    <input type="submit" value="@Resources.Dungeon.AddDungeon" class="btn btn-sm btn-success btn-block" />
+                    <i class="fas fa-question-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="@Resources.Dungeon.AddDungeonTooltip"></i>
+                }
+                else
+                {
+                    <input type="submit" value="@Resources.Dungeon.GenerateDungeon" class="btn btn-sm btn-success btn-block" />
+                }
+            </div>
+        </form>
+    </div>
+    <div class="col-md-8">
+        <div id="dungeonDiv" class="col-lg-8">
+            <canvas id="mapArea" width="800" height="800" style="border:0 #000000;"> </canvas>
+        </div>
+    </div>
+    <div id="desc_dungeon" class="row" hidden>
+        <table id="table_description" class="table table-borderless" style="white-space: pre-wrap;"> </table>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_AjaxScriptsPartial" />
+<partial name="_ValidationScriptsPartial" />
+<script>
+    Utils.preloadImages();
+    $(document).ready(function () {
+        const postDataForm = document.getElementById('createForm');
+        postDataForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const postUrl = this.action;
+            const formData = new FormData(this);
+            if ($(e.target).valid()){
+                fetch(postUrl, {
+                    method: 'post',
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    var dungeon = JSON.parse(data);
+                    Utils.drawDungeonOneCanvas(JSON.parse(dungeon.DungeonTiles),
+                        JSON.parse(dungeon.RoomDescription),
+                        JSON.parse(dungeon.TrapDescription),
+                        "mapArea",
+                        $("#DungeonSize").val(),
+                        $("#Corridor").val(),
+                        $("#Theme").val(),
+                        JSON.parse(dungeon.RoamingMonsterDescription),
+                        "table_description");
+                    if ($("#desc_dungeon")[0].hasAttribute('hidden')) {
+                      $("#desc_dungeon").removeAttr('hidden');
+                    }
+                });
+            }
+        });
+    });
+</script>
+}

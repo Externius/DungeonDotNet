@@ -1,0 +1,121 @@
+@model RDMG.Web.Models.Dungeon.DungeonListViewModel
+
+@{
+    ViewData["Title"] = Resources.Dungeon.Title;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <a asp-action="Create" class="btn btn-sm btn-success"> @Resources.Dungeon.CreateTitle </a>
+    </div>
+    <div class="col-md-6">
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>@Resources.Dungeon.Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dungeonOption in Model.List.OrderBy(dovm => dovm.DungeonName))
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Rename" asp-route-id="@dungeonOption.Id"
+                            asp-route-dungeonName="@dungeonOption.DungeonName" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="@Resources.Dungeon.Rename" class="lead links">
+                                @dungeonOption.DungeonName </a>
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Create" asp-route-optionId="@dungeonOption.Id" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="@Resources.Dungeon.AddDungeon"
+                            class="btn btn-sm btn-success"> <i class="fas fa-plus"></i> </a>
+                            <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="@Resources.Dungeon.ShowDungeons"
+                            class="btn btn-sm btn-primary"> <i class="fas fa-list"></i> </a>
+                            <form method="post" asp-action="DeleteOption" asp-controller="Dungeon"
+                            asp-route-id="@dungeonOption.Id" class="list-inline-item">
+                                <button id="deleteOptnBtn" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i
+                                    class="fas fa-minus-circle"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>@Resources.Dungeon.SubDungeons</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dungeonOption in Model.List.OrderBy(dovm => dovm.DungeonName))
+                {
+                    @foreach (var dungeon in dungeonOption.Dungeons.OrderBy(dvm => dvm.Level))
+                    {
+                        <tr>
+                            <td>
+                                <p>
+                                    @dungeonOption.DungeonName (@Resources.Dungeon.Level - @dungeon.Level)
+                                </p>
+                            </td>
+                            <td class="text-end">
+                                <a asp-action="Load" asp-route-name="@dungeonOption.DungeonName"
+                            asp-route-level="@dungeon.Level" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            title="@Resources.Dungeon.ShowDungeon" class="btn btn-sm btn-primary"> <i
+                                class="far fa-file"></i> </a>
+                                <form method="post" asp-action="Delete" asp-controller="Dungeon" asp-route-id="@dungeon.Id"
+                            class="list-inline-item">
+                                    <button id="deleteBtn" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                title="@Resources.Common.Delete" class="btn btn-sm btn-danger"><i
+                                    class="fas fa-minus-circle"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+    var confirm = function (msg, form, confirmLabel, cancelLabel) {
+        bootbox.confirm({
+            message: msg,
+            buttons: {
+                confirm: {
+                    label: confirmLabel,
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: cancelLabel,
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result === true) {
+                    form.submit();
+                }
+            }
+        });
+    };
+    $(document).ready(function () {
+        $(document).on('click', '#deleteOptnBtn', function (e) {
+            e.preventDefault();
+            confirm('@Resources.Common.Alert', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
+        });
+        $(document).on('click', '#deleteBtn', function (e) {
+            e.preventDefault();
+            confirm('@Resources.Common.Alert', this.closest("form"), '@Resources.Common.Yes', '@Resources.Common.Cancel');
+        });
+    });
+</script>
+}

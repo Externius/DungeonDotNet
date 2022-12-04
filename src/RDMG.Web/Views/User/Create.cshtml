@@ -1,0 +1,77 @@
+﻿@model RDMG.Web.Models.User.UserCreateViewModel
+@{
+    ViewData["Title"] = @Resources.User.CreateTitle;
+}
+<div class="col-md-12">
+    <form asp-action="Create" asp-controller="User" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="Timestamp" type="hidden" />
+        <div class="mb-3 row">
+            <label asp-for="Username" class="col-md-3 form-label"></label>
+            <div class="col-md-4">
+                <input asp-for="Username" type="text" class="form-control" tabindex="1" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label asp-for="FirstName" class="col-md-3 form-label"></label>
+            <div class="col-md-4">
+                <input asp-for="FirstName" type="text" class="form-control" tabindex="2" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label asp-for="LastName" class="col-md-3 form-label"></label>
+            <div class="col-md-4">
+                <input asp-for="LastName" type="text" class="form-control" tabindex="3" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label asp-for="Email" class="col-md-3 form-label"></label>
+            <div class="col-md-4">
+                <input asp-for="Email" class="form-control" tabindex="4" type="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label asp-for="Password" class="col-md-3 form-label"></label>
+            <div class="col-md-4">
+                <div class="input-group input-group-password">
+                    <input type="password" class="form-control" asp-for="Password" tabindex="4" autocomplete="off">
+                    <a class="btn btn-outline-secondary" href="#"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label asp-for="ConfirmPassword" class="col-md-3 form-label"></label>
+            <div class="col-md-4">
+                <div class="input-group input-group-password">
+                    <input type="password" class="form-control" asp-for="ConfirmPassword" tabindex="6" autocomplete="off">
+                    <a class="btn btn-outline-secondary" href="#"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label asp-for="Role" class="col-md-3 form-label"></label>
+            <div class="col-md-4">
+                <select asp-for="Role" class="form-select" tabindex="7" asp-items="@Html.GetEnumSelectList<RDMG.Core.Domain.Role>()">
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-secondary" tabindex="7">@Resources.Common.Cancel</a>
+            <button type="submit" class="btn btn-primary" tabindex="8">
+                @Resources.Common.Create
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

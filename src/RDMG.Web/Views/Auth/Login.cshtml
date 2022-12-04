@@ -1,0 +1,35 @@
+@model RDMG.Web.Models.Auth.LoginViewModel
+@{
+    ViewData["Title"] = @Resources.Common.Login;
+}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h2> @Resources.Common.Login </h2>
+        <form method="POST">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="Username"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="Password"></label>
+                <input type="password" asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3 mt-2">
+                <input type="submit" value="@Resources.Common.Login" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+    $(document).ready(function () {
+      
+    });
+    </script>
+}
+
