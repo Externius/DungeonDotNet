@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Repository;
@@ -16,7 +17,6 @@ using Serilog;
 using System;
 using System.IO;
 using System.Reflection;
-using Microsoft.Extensions.Hosting;
 
 namespace RDMG.Web;
 

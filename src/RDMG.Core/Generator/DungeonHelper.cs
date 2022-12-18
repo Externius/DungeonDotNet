@@ -1,5 +1,6 @@
 using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Generator.Models;
+using RDMG.Core.Abstractions.Generator.Models.Json;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Core.Helpers;
@@ -15,22 +16,22 @@ namespace RDMG.Core.Generator;
 public class DungeonHelper : IDungeonHelper
 {
     // encounter
-    private List<Monster> FilteredMonsters;
-    private int SumXp;
-    private readonly int[] Difficulty = {
+    private List<Monster> _filteredMonsters;
+    private int _sumXp;
+    private readonly int[] _difficulty = {
         0, 0, 0, 0
     };
     // trap
     private static Trap _currentTrap;
     // treasure
-    private int SumValue;
+    private int _sumValue;
     // door
     private DungeonTile[][] DungeonTiles { get; set; }
     private List<DungeonTile> DoorList { get; set; }
-    private int WestCount;
-    private int SouthCount;
-    private int EastCount;
-    private int NorthCount;
+    private int _westCount;
+    private int _southCount;
+    private int _eastCount;
+    private int _northCount;
     private static readonly Random Random = new();
 
     public List<TreasureDescription> TreasureList { get; set; }
@@ -135,13 +136,13 @@ public class DungeonHelper : IDungeonHelper
     {
         if (MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
         {
-            return monsters.Where(monster => Parse(monster.Challenge_Rating) <= PartyLevel + 2 &&
-                                             Parse(monster.Challenge_Rating) >= PartyLevel / 4.0)
+            return monsters.Where(monster => Parse(monster.ChallengeRating) <= PartyLevel + 2 &&
+                                             Parse(monster.ChallengeRating) >= PartyLevel / 4.0)
                 .ToList();
         }
 
-        return monsters.Where(monster => Parse(monster.Challenge_Rating) <= PartyLevel + 2 &&
-                                         Parse(monster.Challenge_Rating) >= PartyLevel / 4.0 &&
+        return monsters.Where(monster => Parse(monster.ChallengeRating) <= PartyLevel + 2 &&
+                                         Parse(monster.ChallengeRating) >= PartyLevel / 4.0 &&
                                          MonsterType.Contains(monster.Type))
             .ToList();
     }
@@ -203,16 +204,16 @@ public class DungeonHelper : IDungeonHelper
 
     private void EncounterInit()
     {
-        Difficulty[0] = Constants.Thresholds[PartyLevel, 0] * PartySize;
-        Difficulty[1] = Constants.Thresholds[PartyLevel, 1] * PartySize;
-        Difficulty[2] = Constants.Thresholds[PartyLevel, 2] * PartySize;
-        Difficulty[3] = Constants.Thresholds[PartyLevel, 3] * PartySize;
-        FilteredMonsters = MonsterList;
-        SumXp = Difficulty[DungeonDifficulty];
+        _difficulty[0] = Constants.Thresholds[PartyLevel, 0] * PartySize;
+        _difficulty[1] = Constants.Thresholds[PartyLevel, 1] * PartySize;
+        _difficulty[2] = Constants.Thresholds[PartyLevel, 2] * PartySize;
+        _difficulty[3] = Constants.Thresholds[PartyLevel, 3] * PartySize;
+        _filteredMonsters = MonsterList;
+        _sumXp = _difficulty[DungeonDifficulty];
     }
     private bool CheckPossible()
     {
-        return FilteredMonsters.Any(monster => SumXp > GetMonsterXp(monster));
+        return _filteredMonsters.Any(monster => _sumXp > GetMonsterXp(monster));
     }
 
     private string CalcEncounter()
@@ -221,14 +222,14 @@ public class DungeonHelper : IDungeonHelper
         result.Append("Monster: ");
         if (GetRandomInt(0, 101) > 50)
         {
-            result.Append(AddMonster(SumXp));
+            result.Append(AddMonster(_sumXp));
         }
         else
         {
             var x = GetRandomInt(2, DungeonDifficulty + 3);
             for (var i = 0; i < x; i++)
             {
-                result.Append(AddMonster(SumXp / x));
+                result.Append(AddMonster(_sumXp / x));
                 result.Append(", ");
             }
             result.Length -= 2;
@@ -238,21 +239,21 @@ public class DungeonHelper : IDungeonHelper
 
     private string AddMonster(int currentXp)
     {
-        var monsterCount = FilteredMonsters.Count;
+        var monsterCount = _filteredMonsters.Count;
         var monster = 0;
         while (monster < monsterCount)
         {
-            var currentMonster = FilteredMonsters[GetRandomInt(0, FilteredMonsters.Count)]; // get random monster
-            FilteredMonsters.Remove(currentMonster);
+            var currentMonster = _filteredMonsters[GetRandomInt(0, _filteredMonsters.Count)]; // get random monster
+            _filteredMonsters.Remove(currentMonster);
             var monsterXp = GetMonsterXp(currentMonster);
             for (var i = Constants.Multipliers.GetLength(0) - 1; i > -1; i--)
             {
                 var count = (int)Constants.Multipliers[i, 0];
                 var allXp = monsterXp * count * Constants.Multipliers[i, 1];
                 if (allXp <= currentXp && count > 1)
-                    return count + "x " + currentMonster.Name + " (CR: " + currentMonster.Challenge_Rating + ") " + monsterXp * count + " XP";
+                    return count + "x " + currentMonster.Name + " (CR: " + currentMonster.ChallengeRating + ") " + monsterXp * count + " XP";
                 if (allXp <= currentXp)
-                    return currentMonster.Name + " (CR: " + currentMonster.Challenge_Rating + ") " + monsterXp + " XP";
+                    return currentMonster.Name + " (CR: " + currentMonster.ChallengeRating + ") " + monsterXp + " XP";
             }
             monster++;
         }
@@ -260,7 +261,7 @@ public class DungeonHelper : IDungeonHelper
     }
     private static int GetMonsterXp(Monster monster)
     {
-        return Constants.ChallengeRatingXp[Constants.ChallengeRating.IndexOf(monster.Challenge_Rating)]; // get monster xp
+        return Constants.ChallengeRatingXp[Constants.ChallengeRating.IndexOf(monster.ChallengeRating)]; // get monster xp
     }
 
     public string GetCurrentTrap(bool door)
@@ -336,7 +337,7 @@ public class DungeonHelper : IDungeonHelper
         while (currentCount < itemCount && maxAttempt > 0)
         {
             var currentTreasure = filteredTreasures[GetRandomInt(0, filteredTreasures.Count)];
-            if (currentValue + currentTreasure.Cost < SumValue)
+            if (currentValue + currentTreasure.Cost < _sumValue)
             { // if it's still affordable add to list
                 currentValue += currentTreasure.Cost;
                 finalList.Add(currentTreasure);
@@ -357,7 +358,7 @@ public class DungeonHelper : IDungeonHelper
             sb.Append(item.Key.Name);
             sb.Append(", ");
         }
-        sb.Append(GetRandomInt(1, SumValue - currentValue)); // get the remaining value randomly
+        sb.Append(GetRandomInt(1, _sumValue - currentValue)); // get the remaining value randomly
         sb.Append(" gp");
         return sb.ToString();
     }
@@ -379,27 +380,27 @@ public class DungeonHelper : IDungeonHelper
         if (MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
         {
             return TreasureList
-                .Where(item => item.Rarity <= ItemsRarity && item.Cost < SumValue)
+                .Where(item => item.Rarity <= ItemsRarity && item.Cost < _sumValue)
                 .ToList();
         }
 
         return TreasureList
-            .Where(item => item.Rarity <= ItemsRarity && item.Cost < SumValue && item.Types.Contains(MonsterType))
+            .Where(item => item.Rarity <= ItemsRarity && item.Cost < _sumValue && item.Types.Contains(MonsterType))
             .ToList();
     }
 
     private void GetAllCost()
     {
-        SumValue = (int)(Constants.TreasureGp[PartyLevel] * TreasureValue);
+        _sumValue = (int)(Constants.TreasureGp[PartyLevel] * TreasureValue);
     }
 
     private string GetDoorDescription()
     {
         var sb = new StringBuilder();
-        WestCount = 1;
-        SouthCount = 1;
-        EastCount = 1;
-        NorthCount = 1;
+        _westCount = 1;
+        _southCount = 1;
+        _eastCount = 1;
+        _northCount = 1;
         foreach (var door in DoorList)
         {
             var start = sb.Length;
@@ -415,12 +416,12 @@ public class DungeonHelper : IDungeonHelper
     private string GetDoorText(Textures texture, int x)
     {
         if (RoomPosition.Up)
-            return "South Entry #" + SouthCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
+            return "South Entry #" + _southCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
         if (RoomPosition.Down)
-            return "North Entry #" + NorthCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
+            return "North Entry #" + _northCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
         if (RoomPosition.Right)
-            return "West Entry #" + WestCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
-        return "East Entry #" + EastCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
+            return "West Entry #" + _westCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
+        return "East Entry #" + _eastCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
     }
 
     private string GetState(Textures texture, int x)
@@ -452,35 +453,35 @@ public class DungeonHelper : IDungeonHelper
 
     public string GetNcDoorDescription(DungeonTile[][] dungeonTiles, List<DungeonTile> closedList)
     {
-        WestCount = 1;
-        SouthCount = 1;
-        EastCount = 1;
-        NorthCount = 1;
+        _westCount = 1;
+        _southCount = 1;
+        _eastCount = 1;
+        _northCount = 1;
         var sb = new StringBuilder();
         foreach (var tile in closedList)
         {
             if (CheckNcDoor(dungeonTiles[tile.I][tile.J - 1]))
             {
                 sb.Append("West Entry #");
-                sb.Append(WestCount++);
+                sb.Append(_westCount++);
                 sb.Append(dungeonTiles[tile.I][tile.J - 1].Description);
             }
             else if (CheckNcDoor(dungeonTiles[tile.I][tile.J + 1]))
             {
                 sb.Append("East Entry #");
-                sb.Append(EastCount++);
+                sb.Append(_eastCount++);
                 sb.Append(dungeonTiles[tile.I][tile.J + 1].Description);
             }
             else if (CheckNcDoor(dungeonTiles[tile.I + 1][tile.J]))
             {
                 sb.Append("South Entry #");
-                sb.Append(SouthCount++);
+                sb.Append(_southCount++);
                 sb.Append(dungeonTiles[tile.I + 1][tile.J].Description);
             }
             else if (CheckNcDoor(dungeonTiles[tile.I - 1][tile.J]))
             {
                 sb.Append("North Entry #");
-                sb.Append(NorthCount++);
+                sb.Append(_northCount++);
                 sb.Append(dungeonTiles[tile.I - 1][tile.J].Description);
             }
         }

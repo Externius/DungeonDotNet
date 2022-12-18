@@ -32,10 +32,6 @@ public class Program
             });
         builder.Services.AddMemoryCache();
         builder.Services.AddMvc()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            })
 #if DEBUG
             .AddRazorRuntimeCompilation()
 #endif

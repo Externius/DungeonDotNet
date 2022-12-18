@@ -14,8 +14,8 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 {
     private readonly IDungeonHelper _dungeonHelper;
     public List<DungeonTile> OpenDoorList { get; set; }
-    private List<DungeonTile> EdgeTileList;
-    private List<DungeonTile> RoomStart;
+    private List<DungeonTile> _edgeTileList;
+    private List<DungeonTile> _roomStart;
     public DungeonNoCorridor(IDungeonHelper dungeonHelper) : base(dungeonHelper)
     {
         _dungeonHelper = dungeonHelper;
@@ -81,7 +81,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
     {
         CleanDoorList();
         SetDoorsDescriptions();
-        foreach (var room in RoomStart)
+        foreach (var room in _roomStart)
         {
             var openList = new List<DungeonTile>();
             var closedList = new List<DungeonTile>();
@@ -157,7 +157,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 
     private void FillLeftRight(int x, int y, int down, int right)
     {
-        EdgeTileList = new List<DungeonTile>();
+        _edgeTileList = new List<DungeonTile>();
         if (right < 0)
         {
             for (var i = right + 1; i < 1; i++)
@@ -175,7 +175,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
         SetVerticalEdge(x, y, right, down);
         SetVerticalEdge(x, y, right < 0 ? 1 : -1, down);
         FillDoor(down, right);
-        RoomStart.Add(DungeonTiles[x][y]);
+        _roomStart.Add(DungeonTiles[x][y]);
     }
 
     private void SetVerticalEdge(int x, int y, int right, int down)
@@ -230,7 +230,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 
     private void FillUpDown(int x, int y, int down, int right)
     {
-        EdgeTileList = new List<DungeonTile>();
+        _edgeTileList = new List<DungeonTile>();
         if (down < 0)
         {
             for (var i = down + 1; i < 1; i++)
@@ -248,20 +248,20 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
         SetHorizontalEdge(x, y, right, down);
         SetHorizontalEdge(x, y, right, down < 0 ? 1 : -1);
         FillDoor(down, right);
-        RoomStart.Add(DungeonTiles[x][y]);
+        _roomStart.Add(DungeonTiles[x][y]);
     }
 
     private void FillDoor(int down, int right)
     {
         var doorCount = GetDoorCount(down, right);
         CleanEdgeTileList();
-        var maxTryNumber = EdgeTileList.Count;
+        var maxTryNumber = _edgeTileList.Count;
         do
         {
-            var random = _dungeonHelper.GetRandomInt(0, EdgeTileList.Count);
-            if (CheckNearbyDoor(EdgeTileList[random]))
+            var random = _dungeonHelper.GetRandomInt(0, _edgeTileList.Count);
+            if (CheckNearbyDoor(_edgeTileList[random]))
             {
-                SetDoor(EdgeTileList[random].I, EdgeTileList[random].J);
+                SetDoor(_edgeTileList[random].I, _edgeTileList[random].J);
                 doorCount--;
             }
             maxTryNumber--;
@@ -284,8 +284,8 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 
     private void CleanEdgeTileList()
     {
-        var toDelete = EdgeTileList.Where(tile => CheckRooms(tile.I, tile.J)).ToList();
-        EdgeTileList.RemoveAll(toDelete.Contains);
+        var toDelete = _edgeTileList.Where(tile => CheckRooms(tile.I, tile.J)).ToList();
+        _edgeTileList.RemoveAll(toDelete.Contains);
     }
 
     private bool CheckRooms(int x, int y)
@@ -354,7 +354,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 
     private void AddEdgeTileList(int x, int y)
     {
-        EdgeTileList.Add(DungeonTiles[x][y]);
+        _edgeTileList.Add(DungeonTiles[x][y]);
     }
 
     private void SetTextureToRoomEdge(int x, int y)
@@ -531,21 +531,21 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 
     public void AddFirstRoom()
     {
-        RoomStart = new List<DungeonTile>();
+        _roomStart = new List<DungeonTile>();
         OpenDoorList = new List<DungeonTile>();
         var x = _dungeonHelper.GetRandomInt(5, DungeonTiles.Length - (RoomSize + 4));
         var y = _dungeonHelper.GetRandomInt(5, DungeonTiles.Length - (RoomSize + 4));
         var right = _dungeonHelper.GetRandomInt(2, RoomSize + 1);
         var down = _dungeonHelper.GetRandomInt(2, RoomSize + 1);
         FillRoom(x, y, down, right);
-        RoomStart.Add(DungeonTiles[x][y]);
+        _roomStart.Add(DungeonTiles[x][y]);
     }
 
     private void SetRoomTiles(int x, int y)
     {
         DungeonTiles[x][y].Texture = Textures.Room;
         DungeonTiles[x][y].Description = " ";
-        DungeonTiles[x][y].Index = RoomStart.Count;
+        DungeonTiles[x][y].Index = _roomStart.Count;
     }
 
     internal override void FillRoom(int x, int y, int right, int down)
