@@ -46,9 +46,7 @@ public class OptionService : IOptionService
                 _memoryCache.Set(nameof(ListOptionsAsync), cacheEntry, cacheEntryOptions);
             }
 
-            if (filter.HasValue)
-                return cacheEntry.Where(o => o.Key == filter.Value).ToList();
-            return cacheEntry;
+            return filter.HasValue ? cacheEntry.Where(o => o.Key == filter.Value).ToList() : cacheEntry;
         }
         catch (Exception ex)
         {

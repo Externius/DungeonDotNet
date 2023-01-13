@@ -43,6 +43,7 @@ public class DungeonGenerator : DungeonTestBase
         var match = list.Where(x => x.Texture == Textures.Entry);
         match.ShouldNotBeNull();
     }
+
     [Fact]
     public void TestGenerateCorridors()
     {
@@ -56,6 +57,7 @@ public class DungeonGenerator : DungeonTestBase
         var match = list.Where(x => x.Texture == Textures.Corridor);
         match.ShouldNotBeNull();
     }
+
     [Fact]
     public void TestAddDeadEnds()
     {
@@ -70,6 +72,7 @@ public class DungeonGenerator : DungeonTestBase
         var match = list.Where(x => x.Texture == Textures.Corridor);
         match.ShouldNotBeNull();
     }
+
     [Fact]
     public void TestAddTrap()
     {
@@ -85,6 +88,7 @@ public class DungeonGenerator : DungeonTestBase
         var match = list.Where(x => x.Texture == Textures.Trap);
         match.ShouldNotBeNull();
     }
+
     [Fact]
     public void TestAddRoamingMonster()
     {
