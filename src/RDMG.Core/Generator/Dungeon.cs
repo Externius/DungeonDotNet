@@ -13,35 +13,32 @@ public class Dungeon : IDungeon
 {
     private readonly IDungeonHelper _dungeonHelper;
     private const int Movement = 10;
-    internal List<DungeonTile> Rooms = new();
+    internal readonly List<DungeonTile> Rooms = new();
     internal List<DungeonTile> Doors = new();
-    public List<RoomDescription> RoomDescription { get; set; }
-    public List<TrapDescription> TrapDescription { get; set; }
-    public List<RoamingMonsterDescription> RoamingMonsterDescription { get; set; }
+    public ICollection<RoomDescription> RoomDescription { get; set; }
+    private ICollection<TrapDescription> TrapDescription { get; set; }
+    private ICollection<RoamingMonsterDescription> RoamingMonsterDescription { get; set; }
     public DungeonTile[][] DungeonTiles { get; set; }
-    private List<DungeonTile> _result;
-    private List<DungeonTile> _corridors;
-    private int _roomDensity;
-    private int _trapPercent;
-    private int _roamingPercent;
+    private IList<DungeonTile> _result;
+    private IList<DungeonTile> _corridors;
     private int _trapCount;
     private int _roamingCount;
     private int _roomCount;
     private bool _hasDeadEnds;
-    public int DungeonWidth { get; set; }
-    public int DungeonHeight { get; set; }
-    public int DungeonSize { get; set; }
-    public int RoomSizePercent { get; set; }
-    public int RoomSize { get; set; }
+    protected int DungeonWidth { get; set; }
+    protected int DungeonHeight { get; set; }
+    protected int DungeonSize { get; set; }
+    protected int RoomSizePercent { get; set; }
+    protected int RoomSize { get; set; }
 
     public Dungeon(IDungeonHelper dungeonHelper)
     {
         _dungeonHelper = dungeonHelper;
     }
 
-    public virtual DungeonModel Generate(DungeonOptionModel optionModel)
+    public virtual DungeonModel Generate(DungeonOptionModel model)
     {
-        Init(optionModel);
+        Init(model);
         GenerateRoom();
         AddEntryPoint();
         GenerateCorridors();
@@ -55,7 +52,7 @@ public class Dungeon : IDungeon
             RoomDescription = JsonSerializer.Serialize(RoomDescription),
             TrapDescription = JsonSerializer.Serialize(TrapDescription),
             RoamingMonsterDescription = JsonSerializer.Serialize(RoamingMonsterDescription),
-            DungeonOptionId = optionModel.Id
+            DungeonOptionId = model.Id
         };
     }
 
@@ -247,7 +244,7 @@ public class Dungeon : IDungeon
         DungeonTiles[x][y].Parent = node;
     }
 
-    internal virtual bool CheckTileForOpenList(int x, int y)
+    protected virtual bool CheckTileForOpenList(int x, int y)
     {
         return DungeonTiles[x][y].H != 0 && DungeonTiles[x][y].Texture != Textures.Room && DungeonTiles[x][y].Texture != Textures.RoomEdge; // check its not edge/room/room_edge
     }
@@ -309,7 +306,7 @@ public class Dungeon : IDungeon
         }
     }
 
-    internal virtual void FillRoom(int x, int y, int right, int down)
+    protected virtual void FillRoom(int x, int y, int right, int down)
     {
         var doorCount = GetDoorCount(down, right);
         for (var i = 0; i < down + 2; i++) // fill with room_edge texture the bigger boundaries
@@ -351,7 +348,7 @@ public class Dungeon : IDungeon
         while (!doorIsOk);
     }
 
-    internal virtual bool CheckDoor(int x, int y)
+    protected virtual bool CheckDoor(int x, int y)
     {
         for (var i = x - 1; i < x + 2; i++)
         {
@@ -390,7 +387,7 @@ public class Dungeon : IDungeon
         return false;
     }
 
-    internal virtual void SetDoor(int x, int y)
+    protected virtual void SetDoor(int x, int y)
     {
         if (_dungeonHelper.GetRandomInt(0, 101) < 40)
             DungeonTiles[x][y].Texture = Textures.DoorTrapped;
@@ -401,7 +398,7 @@ public class Dungeon : IDungeon
         Doors.Add(DungeonTiles[x][y]);
     }
 
-    internal virtual int GetDoorCount(int down, int right)
+    protected virtual int GetDoorCount(int down, int right)
     {
         if (down < 4 || right < 4)
             return _dungeonHelper.GetRandomInt(1, 3);
@@ -456,21 +453,18 @@ public class Dungeon : IDungeon
         DungeonWidth = optionModel.Width;
         DungeonHeight = optionModel.Height;
         DungeonSize = optionModel.DungeonSize;
-        _roomDensity = optionModel.RoomDensity;
         RoomSizePercent = optionModel.RoomSize;
-        _trapPercent = optionModel.TrapPercent;
         _hasDeadEnds = optionModel.DeadEnd;
-        _roamingPercent = optionModel.RoamingPercent;
         _corridors = new List<DungeonTile>();
         var imgSizeX = DungeonWidth / DungeonSize;
         var imgSizeY = DungeonHeight / DungeonSize;
-        _roomCount = (int)Math.Round((float)DungeonSize / 100 * _roomDensity);
+        _roomCount = (int)Math.Round((float)DungeonSize / 100 * optionModel.RoomDensity);
         RoomSize = (int)Math.Round((float)(DungeonSize - Math.Round(DungeonSize * 0.35)) / 100 * RoomSizePercent);
         RoomDescription = new List<RoomDescription>();
         TrapDescription = new List<TrapDescription>();
         RoamingMonsterDescription = new List<RoamingMonsterDescription>();
-        _trapCount = DungeonSize * _trapPercent / 100;
-        _roamingCount = DungeonSize * _roamingPercent / 100;
+        _trapCount = DungeonSize * optionModel.TrapPercent / 100;
+        _roamingCount = DungeonSize * optionModel.RoamingPercent / 100;
         DungeonSize += 2; // because of boundaries
         DungeonTiles = _dungeonHelper.GenerateDungeonTiles(DungeonSize, imgSizeX, imgSizeY);
     }

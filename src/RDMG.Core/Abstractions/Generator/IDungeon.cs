@@ -7,7 +7,7 @@ namespace RDMG.Core.Abstractions.Generator;
 public interface IDungeon
 {
     DungeonTile[][] DungeonTiles { get; set; }
-    List<RoomDescription> RoomDescription { get; set; }
+    ICollection<RoomDescription> RoomDescription { get; set; }
     DungeonModel Generate(DungeonOptionModel model);
     void AddEntryPoint();
     void Init(DungeonOptionModel optionModel);

@@ -4,6 +4,7 @@ using Shouldly;
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
@@ -11,7 +12,7 @@ namespace RDMG.Core.Tests.DungeonServiceTests;
 public class Create
 {
     [Fact]
-    public async void CanCreateDungeonOption()
+    public async Task CanCreateDungeonOption()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();
@@ -41,7 +42,7 @@ public class Create
     }
 
     [Fact]
-    public async void CanAddDungeon()
+    public async Task CanAddDungeon()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();
@@ -56,7 +57,7 @@ public class Create
     }
 
     [Fact]
-    public async void CanCreateOrUpdateDungeon()
+    public async Task CanCreateOrUpdateDungeon()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();

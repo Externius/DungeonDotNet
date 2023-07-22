@@ -2,6 +2,7 @@
 using RDMG.Core.Abstractions.Services.Models;
 using Shouldly;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
@@ -9,7 +10,7 @@ namespace RDMG.Core.Tests.DungeonServiceTests;
 public class Generate
 {
     [Fact]
-    public async void CanGenerate()
+    public async Task CanGenerate()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();

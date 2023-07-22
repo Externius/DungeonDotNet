@@ -2,6 +2,7 @@
 using Shouldly;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
@@ -9,7 +10,7 @@ namespace RDMG.Core.Tests.DungeonServiceTests;
 public class List
 {
     [Fact]
-    public async void CanListUserDungeons()
+    public async Task CanListUserDungeons()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();
@@ -20,7 +21,7 @@ public class List
     }
 
     [Fact]
-    public async void CanListDungeonsByName()
+    public async Task CanListDungeonsByName()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();

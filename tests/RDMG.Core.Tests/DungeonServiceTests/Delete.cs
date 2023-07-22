@@ -2,6 +2,7 @@
 using Shouldly;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
@@ -9,7 +10,7 @@ namespace RDMG.Core.Tests.DungeonServiceTests;
 public class Delete
 {
     [Fact]
-    public async void CanDeleteDungeonOption()
+    public async Task CanDeleteDungeonOption()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();
@@ -24,7 +25,7 @@ public class Delete
     }
 
     [Fact]
-    public async void CanDeleteDungeon()
+    public async Task CanDeleteDungeon()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();

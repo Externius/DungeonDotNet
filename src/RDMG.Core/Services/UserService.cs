@@ -46,20 +46,23 @@ public class UserService : IUserService
 
     private static void ValidateModel(UserModel model)
     {
-        if (model == null)
+        var errors = new List<ServiceException>();
+        if (model is null)
             throw new ArgumentNullException(nameof(model));
         if (model.Password.Length < 8)
-            throw new ServiceException(Resources.Error.PasswordLength);
+            errors.Add(new ServiceException(Resources.Error.PasswordLength));
         if (string.IsNullOrEmpty(model.Username))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Username));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Username)));
         if (string.IsNullOrEmpty(model.FirstName))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.FirstName));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.FirstName)));
         if (string.IsNullOrEmpty(model.LastName))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.LastName));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.LastName)));
         if (string.IsNullOrEmpty(model.Email))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Email));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Email)));
         if (string.IsNullOrEmpty(model.Role))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Role));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Role)));
+        if (errors.Any())
+            throw new ServiceAggregateException(errors);
     }
 
     private async Task CheckUserExist(UserModel model)
@@ -152,16 +155,19 @@ public class UserService : IUserService
 
     private static void ValidateModelForEdit(UserModel model)
     {
+        var errors = new List<ServiceException>();
         if (model == null)
             throw new ArgumentNullException(nameof(model));
         if (string.IsNullOrEmpty(model.FirstName))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.FirstName));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.FirstName)));
         if (string.IsNullOrEmpty(model.LastName))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.LastName));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.LastName)));
         if (string.IsNullOrEmpty(model.Email))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Email));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Email)));
         if (string.IsNullOrEmpty(model.Role))
-            throw new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Role));
+            errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Role)));
+        if (errors.Any())
+            throw new ServiceAggregateException(errors);
     }
 
     public async Task ChangePasswordAsync(ChangePasswordModel model)
@@ -171,10 +177,8 @@ public class UserService : IUserService
             if (model.NewPassword.Length < 8)
                 throw new ServiceException(Resources.Error.PasswordLength);
 
-            var user = await _userRepository.GetAsync(model.Id);
+            var user = await _userRepository.GetAsync(model.Id) ?? throw new ServiceException(Resources.Error.NotFound);
 
-            if (user is null)
-                throw new ServiceException(Resources.Error.NotFound);
             if (!PasswordHelper.CheckPassword(user.Password, model.CurrentPassword))
                 throw new ServiceException(Resources.Error.PasswordMissMatch);
 

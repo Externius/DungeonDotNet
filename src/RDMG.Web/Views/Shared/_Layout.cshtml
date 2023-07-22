@@ -17,7 +17,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex ">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity!.IsAuthenticated)
                         {
                             if (User.Claims.Any(c => c.Value == RDMG.Core.Domain.Roles.Admin))
                             {
@@ -42,7 +42,7 @@
 
     <footer class="border-top footer text-muted text-center">
         <div class="container">
-            &copy; @Resources.Common.Copyright - @System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString() - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Resources.Common.Privacy</a>
+            &copy; @Resources.Common.Copyright - @System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version?.ToString() - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Resources.Common.Privacy</a>
         </div>
     </footer>
 

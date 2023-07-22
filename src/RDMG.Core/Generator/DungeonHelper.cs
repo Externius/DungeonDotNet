@@ -15,39 +15,48 @@ namespace RDMG.Core.Generator;
 
 public class DungeonHelper : IDungeonHelper
 {
+    private readonly JsonSerializerOptions _options;
+    public DungeonHelper()
+    {
+        _options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+        };
+    }
     // encounter
-    private List<Monster> _filteredMonsters;
+    private IList<Monster> _filteredMonsters;
     private int _sumXp;
     private readonly int[] _difficulty = {
         0, 0, 0, 0
     };
-    // trap
-    private static Trap _currentTrap;
     // treasure
     private int _sumValue;
     // door
     private DungeonTile[][] DungeonTiles { get; set; }
-    private List<DungeonTile> DoorList { get; set; }
+    private ICollection<DungeonTile> DoorList { get; set; }
     private int _westCount;
     private int _southCount;
     private int _eastCount;
     private int _northCount;
     private static readonly Random Random = new();
 
-    public List<TreasureDescription> TreasureList { get; set; }
-    private List<Monster> _monsterList;
-    public List<Monster> MonsterList
+    private IList<TreasureDescription> TreasureList { get; set; }
+    private IList<Monster> _monsterList;
+
+    private IList<Monster> MonsterList
     {
         get => _monsterList;
         set => _monsterList = GetMonsters(value); // get monsters for party level
     }
-    public int PartyLevel { get; set; }
-    public int PartySize { get; set; }
-    public int DungeonDifficulty { get; set; }
-    public string MonsterType { get; set; }
-    public double TreasureValue { get; set; }
-    public int ItemsRarity { get; set; }
-    internal int GetTreasurePercentage()
+
+    private int PartyLevel { get; set; }
+    private int PartySize { get; set; }
+    private int DungeonDifficulty { get; set; }
+    private string MonsterType { get; set; }
+    private double TreasureValue { get; set; }
+    private int ItemsRarity { get; set; }
+
+    private int GetTreasurePercentage()
     {
         return DungeonDifficulty switch
         {
@@ -59,7 +68,7 @@ public class DungeonHelper : IDungeonHelper
         };
     }
 
-    internal int GetMonsterPercentage()
+    private int GetMonsterPercentage()
     {
         return DungeonDifficulty switch
         {
@@ -78,7 +87,7 @@ public class DungeonHelper : IDungeonHelper
         return max;
     }
 
-    public void AddRoomDescription(DungeonTile[][] dungeonTiles, int x, int y, List<RoomDescription> roomDescription, List<DungeonTile> currentDoors)
+    public void AddRoomDescription(DungeonTile[][] dungeonTiles, int x, int y, ICollection<RoomDescription> roomDescription, ICollection<DungeonTile> currentDoors)
     {
         dungeonTiles[x][y].Index = roomDescription.Count;
         DungeonTiles = dungeonTiles;
@@ -91,16 +100,16 @@ public class DungeonHelper : IDungeonHelper
         dungeonTiles[x][y].Description = Convert.ToString(roomDescription.Count);
     }
 
-    public void AddTrapDescription(DungeonTile dungeonTile, List<TrapDescription> trapDescription)
+    public void AddTrapDescription(DungeonTile dungeonTile, ICollection<TrapDescription> trapDescription)
     {
         dungeonTile.Index = trapDescription.Count;
         trapDescription.Add(new TrapDescription(
             GetTrapName(trapDescription.Count + 1),
-            GetCurrentTrap(false)));
+            GetRandomTrapDescription(false)));
         dungeonTile.Description = trapDescription.Count.ToString();
     }
 
-    public void AddRoamingMonsterDescription(DungeonTile dungeonTile, List<RoamingMonsterDescription> roamingMonsterDescription)
+    public void AddRoamingMonsterDescription(DungeonTile dungeonTile, ICollection<RoamingMonsterDescription> roamingMonsterDescription)
     {
 
         dungeonTile.Index = roamingMonsterDescription.Count;
@@ -120,9 +129,8 @@ public class DungeonHelper : IDungeonHelper
         return "#ROOM" + x + "#";
     }
 
-    public void AddNcRoomDescription(DungeonTile dungeonTile, List<RoomDescription> roomDescription, string doors)
+    public void AddNcRoomDescription(DungeonTile dungeonTile, ICollection<RoomDescription> roomDescription, string doors)
     {
-
         dungeonTile.Index = roomDescription.Count;
         roomDescription.Add(new RoomDescription(
             GetRoomName(roomDescription.Count + 1),
@@ -149,14 +157,14 @@ public class DungeonHelper : IDungeonHelper
 
     public string GetMonster()
     {
-        if (MonsterType.Equals("none", StringComparison.OrdinalIgnoreCase))
-            return "Monster: None";
+        if (MonsterType.Equals(Constants.None, StringComparison.OrdinalIgnoreCase))
+            return Constants.MonsterNone;
         var checkResult = CheckPossible();
         return checkResult switch
         {
             true when GetRandomInt(0, 101) <= GetMonsterPercentage() => CalcEncounter(),
-            false => "Monster: No suitable monsters with this settings",
-            _ => "Monster: None"
+            false => Constants.MonsterError,
+            _ => Constants.MonsterNone
         };
     }
 
@@ -182,13 +190,10 @@ public class DungeonHelper : IDungeonHelper
         EncounterInit();
     }
 
-    public static List<T> DeserializeJson<T>(string fileName)
+    private IList<T> DeserializeJson<T>(string fileName)
     {
         var json = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/Data/" + fileName);
-        return JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-        });
+        return JsonSerializer.Deserialize<IList<T>>(json, _options);
     }
 
     private static string GetRoamingName(int count)
@@ -234,7 +239,7 @@ public class DungeonHelper : IDungeonHelper
             }
             result.Length -= 2;
         }
-        return result.Replace(", None", "").ToString();
+        return result.Replace($", {Constants.None}", "").ToString();
     }
 
     private string AddMonster(int currentXp)
@@ -257,29 +262,31 @@ public class DungeonHelper : IDungeonHelper
             }
             monster++;
         }
-        return "None";
+        return Constants.None;
     }
     private static int GetMonsterXp(Monster monster)
     {
         return Constants.ChallengeRatingXp[Constants.ChallengeRating.IndexOf(monster.ChallengeRating)]; // get monster xp
     }
 
-    public string GetCurrentTrap(bool door)
+    public string GetRandomTrapDescription(bool door)
     {
         var trapSeverity = GetTrapSeverity();
-        _currentTrap = door ? Constants.DoorTraps[GetRandomInt(0, Constants.DoorTraps.Count)] : Constants.SimpleTraps[GetRandomInt(0, Constants.SimpleTraps.Count)]; // get random trap
-        if (_currentTrap.DmgType.HasValue)
-            return _currentTrap.Name + " [" + GetTrapSeverity() + "]: DC " + _currentTrap.Spot + " to spot, DC " + _currentTrap.Disable + " to disable (" + _currentTrap.DisableCheck.GetDescription() + "), DC " + GetTrapSaveDc((int)trapSeverity) + " " + _currentTrap.Save + " save or take " + GetTrapDamage((int)trapSeverity) + "D10 (" + _currentTrap.DmgType + ") damage" + GetTrapAttackBonus((int)trapSeverity);
-        return _currentTrap.Name + " [" + GetTrapSeverity() + "]: DC " + _currentTrap.Spot + " to spot, DC " + _currentTrap.Disable + " to disable (" + _currentTrap.DisableCheck.GetDescription() + "), DC " + GetTrapSaveDc((int)trapSeverity) + " " + _currentTrap.Save + " save or " + _currentTrap.Special;
+        var trap = door ? Constants.DoorTraps[GetRandomInt(0, Constants.DoorTraps.Length)] : Constants.SimpleTraps[GetRandomInt(0, Constants.SimpleTraps.Length)]; // get random trap
+        var trapBase = $"{trap.Name} [{trapSeverity}]: {Constants.Dc} {trap.Spot} to spot, {Constants.Dc} {trap.Disable} to disable ({trap.DisableCheck.GetDescription()})" +
+                       $", {Constants.Dc} {GetTrapSaveDc((int)trapSeverity)} {trap.Save} save or";
+        if (trap.DmgType.HasValue)
+            return $"{trapBase} take {GetTrapDamage((int)trapSeverity)}D10 ({trap.DmgType}) damage{GetTrapAttackBonus((int)trapSeverity, trap)}";
+        return trapBase + trap.Special;
     }
 
-    private string GetTrapAttackBonus(int trapDanger)
+    private string GetTrapAttackBonus(int trapDanger, Trap trap)
     {
-        if (!_currentTrap.AttackMod)
+        if (!trap.AttackMod)
             return ".";
         var min = Constants.TrapAttackBonus[trapDanger];
         var max = Constants.TrapAttackBonus[trapDanger + 1];
-        return ",\n (attack bonus +" + GetRandomInt(min, max) + ").";
+        return $",{Constants.LineBreak} (attack bonus +{GetRandomInt(min, max)}).";
     }
 
     private int GetTrapDamage(int trapDanger)
@@ -416,21 +423,23 @@ public class DungeonHelper : IDungeonHelper
     private string GetDoorText(Textures texture, int x)
     {
         if (RoomPosition.Up)
-            return "South Entry #" + _southCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
+            return Constants.SouthEntry + _southCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + GetState(texture, x) + Constants.LineBreak;
         if (RoomPosition.Down)
-            return "North Entry #" + _northCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
+            return Constants.NorthEntry + _northCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + GetState(texture, x) + Constants.LineBreak;
         if (RoomPosition.Right)
-            return "West Entry #" + _westCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
-        return "East Entry #" + _eastCount++ + ": " + Constants.DoorTypes[x] + GetState(texture, x) + "\n";
+            return Constants.WestEntry + _westCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + GetState(texture, x) + Constants.LineBreak;
+        return Constants.EastEntry + _eastCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + GetState(texture, x) + Constants.LineBreak;
     }
 
     private string GetState(Textures texture, int x)
     {
         return texture switch
         {
-            Textures.NoCorridorDoorLocked or Textures.DoorLocked => " Locked Door (AC " + Constants.DoorAc[x] + ", HP " + Constants.DoorHp[x] + ", DC " + Constants.LockDifficulty[x] + " to unlock)",
-            Textures.NoCorridorDoorTrapped or Textures.DoorTrapped => " Trapped Door (AC " + Constants.DoorAc[x] + ", HP " + Constants.DoorHp[x] + ") " + GetCurrentTrap(true),
-            _ => " Open Door (AC " + Constants.DoorAc[x] + ", HP " + Constants.DoorHp[x] + ")",
+            Textures.NoCorridorDoorLocked or Textures.DoorLocked =>
+                $" Locked Door ({Constants.Ac} {Constants.DoorAc[x]}, {Constants.Hp}{Constants.DoorHp[x]}, {Constants.Dc}{Constants.LockDifficulty[x]} to unlock)",
+            Textures.NoCorridorDoorTrapped or Textures.DoorTrapped
+                => $" Trapped Door ({Constants.Ac} {Constants.DoorAc[x]}, {Constants.Hp}{Constants.DoorHp[x]}) {GetRandomTrapDescription(true)}",
+            _ => $" Open Door ({Constants.Ac} {Constants.DoorAc[x]}, {Constants.Hp}{Constants.DoorHp[x]})"
         };
     }
 
@@ -451,7 +460,7 @@ public class DungeonHelper : IDungeonHelper
         return dungeonTile.Texture is Textures.NoCorridorDoor or Textures.NoCorridorDoorLocked or Textures.NoCorridorDoorTrapped;
     }
 
-    public string GetNcDoorDescription(DungeonTile[][] dungeonTiles, List<DungeonTile> closedList)
+    public string GetNcDoorDescription(DungeonTile[][] dungeonTiles, IEnumerable<DungeonTile> closedList)
     {
         _westCount = 1;
         _southCount = 1;
@@ -462,25 +471,25 @@ public class DungeonHelper : IDungeonHelper
         {
             if (CheckNcDoor(dungeonTiles[tile.I][tile.J - 1]))
             {
-                sb.Append("West Entry #");
+                sb.Append(Constants.WestEntry);
                 sb.Append(_westCount++);
                 sb.Append(dungeonTiles[tile.I][tile.J - 1].Description);
             }
             else if (CheckNcDoor(dungeonTiles[tile.I][tile.J + 1]))
             {
-                sb.Append("East Entry #");
+                sb.Append(Constants.EastEntry);
                 sb.Append(_eastCount++);
                 sb.Append(dungeonTiles[tile.I][tile.J + 1].Description);
             }
             else if (CheckNcDoor(dungeonTiles[tile.I + 1][tile.J]))
             {
-                sb.Append("South Entry #");
+                sb.Append(Constants.SouthEntry);
                 sb.Append(_southCount++);
                 sb.Append(dungeonTiles[tile.I + 1][tile.J].Description);
             }
             else if (CheckNcDoor(dungeonTiles[tile.I - 1][tile.J]))
             {
-                sb.Append("North Entry #");
+                sb.Append(Constants.NorthEntry);
                 sb.Append(_northCount++);
                 sb.Append(dungeonTiles[tile.I - 1][tile.J].Description);
             }
@@ -492,7 +501,7 @@ public class DungeonHelper : IDungeonHelper
     public string GetNcDoor(DungeonTile door)
     {
         var doorDc = GetDoorDc();
-        return ": " + Constants.DoorTypes[doorDc] + GetState(door.Texture, doorDc) + "\n";
+        return Constants.ColonWithSpace + Constants.DoorTypes[doorDc] + GetState(door.Texture, doorDc) + Constants.LineBreak;
     }
 
     public DungeonTile[][] GenerateDungeonTiles(int dungeonSize, int imgSizeX, int imgSizeY)

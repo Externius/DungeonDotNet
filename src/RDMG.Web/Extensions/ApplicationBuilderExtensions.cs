@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RDMG.Core.Abstractions.Services;
+using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Infrastructure.Data;
 using RDMG.Infrastructure.Seed;
-using System;
 
 namespace RDMG.Web.Extensions;
 
@@ -24,14 +24,14 @@ public static class ApplicationBuilderExtensions
                 MigrateAndSeedDb<SqliteContext>(serviceScope);
                 break;
             default:
-                throw new Exception(
+                throw new ServiceException(
                     string.Format(Resources.Error.DbProviderError, configuration.GetConnectionString(Context.DbProvider)));
         }
 
         return app;
     }
 
-    public static void MigrateAndSeedDb<T>(IServiceScope serviceScope) where T : Context
+    private static void MigrateAndSeedDb<T>(IServiceScope serviceScope) where T : Context
     {
         using var context = serviceScope.ServiceProvider.GetService<T>();
         context?.Database.Migrate();

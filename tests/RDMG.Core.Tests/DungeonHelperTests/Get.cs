@@ -85,7 +85,7 @@ public class Get
     }
 
     [Fact]
-    public void CanGetCurrentTrap()
+    public void CanGetRandomTrapDescription()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonHelper>();
@@ -93,7 +93,7 @@ public class Get
         var result = new string[20];
         for (var i = 0; i < 20; i++)
         {
-            result[i] = service.GetCurrentTrap(false);
+            result[i] = service.GetRandomTrapDescription(i % 2 == 0);
         }
         result.Any(s => !string.IsNullOrWhiteSpace(s)).ShouldBeTrue();
     }

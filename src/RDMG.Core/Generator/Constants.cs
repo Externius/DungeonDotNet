@@ -1,11 +1,25 @@
 ﻿using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Domain;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace RDMG.Core.Generator;
 
-public class Constants
+public static class Constants
 {
+    public const string None = "None";
+    public const string Hp = "HP";
+    public const string Ac = "AC";
+    public const string Dc = "DC";
+    public const string Empty = "[]";
+    public const string WestEntry = "West Entry #";
+    public const string EastEntry = "East Entry #";
+    public const string SouthEntry = "South Entry #";
+    public const string NorthEntry = "North Entry #";
+    public const string LineBreak = "\n";
+    public const string ColonWithSpace = ": ";
+    public const string MonsterNone = "Monster: None";
+    public const string MonsterError = "Monster: No suitable monsters with this settings";
+
     // door
     public static readonly string[] DoorTypes = {
         "Crystal",
@@ -47,8 +61,7 @@ public class Constants
         {4, 10, 18},
         {10, 18, 24}
     };
-    public static readonly List<Trap> SimpleTraps = new()
-    {
+    public static readonly ImmutableArray<Trap> SimpleTraps = ImmutableArray.Create(
         new Trap("Collapsing Roof", Save.Dexterity, 10, 15, DisableCheck.Dexterity, false, DamageType.Bludgeoning, ""),
         new Trap("Falling Net", Save.Strength, 10, 15, DisableCheck.Dexterity, false, null, "restrained."),
         new Trap("Fire-Breathing Statue", Save.Dexterity, 15, 13, DisableCheck.DispelMagic, false, DamageType.Fire, ""),
@@ -57,18 +70,19 @@ public class Constants
         new Trap("Poison Darts", Save.Constitution, 15, 15, DisableCheck.Intelligence, true, DamageType.Poison, ""),
         new Trap("Poison Needle", Save.Constitution, 15, 15, DisableCheck.Dexterity, false, DamageType.Poison, ""),
         new Trap("Rolling Sphere", Save.Dexterity, 15, 15, DisableCheck.Intelligence, false, DamageType.Bludgeoning, "")
-    };
-    public static readonly List<Trap> DoorTraps = new()
-    {
+    );
+
+    public static readonly ImmutableArray<Trap> DoorTraps = ImmutableArray.Create(
         new Trap("Fire trap", Save.Dexterity, 10, 15, DisableCheck.Intelligence, false, DamageType.Fire, ""),
         new Trap("Lock Covered in Dragon Bile", Save.Constitution, 10, 15, DisableCheck.Intelligence, false, DamageType.Poison, ""),
         new Trap("Hail of Needles", Save.Dexterity, 15, 13, DisableCheck.Dexterity, false, DamageType.Piercing, ""),
-        new Trap("Stone Blocks from Ceiling", Save.Dexterity, 15, 15, DisableCheck.Intelligence, true, DamageType.Bludgeoning, ""),
+        new Trap("Stone Blocks from Ceiling", Save.Dexterity, 15, 15, DisableCheck.Intelligence, false, DamageType.Bludgeoning, ""),
         new Trap("Doorknob Smeared with Contact Poison", Save.Constitution, 15, 10, DisableCheck.Intelligence, false, DamageType.Poison, ""),
         new Trap("Poison Darts", Save.Constitution, 15, 15, DisableCheck.Intelligence, true, DamageType.Poison, ""),
         new Trap("Poison Needle", Save.Constitution, 15, 15, DisableCheck.Dexterity, false, DamageType.Poison, ""),
         new Trap("Energy Drain", Save.Constitution, 15, 15, DisableCheck.DispelMagic, false, DamageType.Necrotic, "")
-    };
+    );
+
     // encounter
     public static readonly int[] ChallengeRatingXp = {
         10,
@@ -114,10 +128,14 @@ public class Constants
         {11, 3},
         {15, 4}
     };
-    public static readonly List<string> ChallengeRating = new(new[] {"0", "1/8", "1/4", "1/2", "1", "2", "3", "4", "5",
+
+    public static readonly ImmutableArray<string> ChallengeRating = ImmutableArray.Create(
+        "0", "1/8", "1/4", "1/2", "1", "2", "3", "4", "5",
         "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
         "16", "17", "18", "19", "20", "21", "22", "23", "24", "25",
-        "26", "27", "28", "29", "30"});
+        "26", "27", "28", "29", "30"
+        );
+
     public static readonly int[,] Thresholds = {
         {0, 0, 0, 0},
         {25, 50, 75, 100},

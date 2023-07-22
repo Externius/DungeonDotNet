@@ -56,10 +56,13 @@ public class DungeonService : IDungeonService
 
     private static void ValidateModel(DungeonOptionModel model)
     {
+        var errors = new List<ServiceException>();
         if (string.IsNullOrWhiteSpace(model.DungeonName))
-            throw new ServiceException(Error.Required);
+            errors.Add(new ServiceException(Error.Required));
         if (model.UserId == 0)
-            throw new ServiceException(Error.Required);
+            errors.Add(new ServiceException(Error.Required));
+        if (errors.Any())
+            throw new ServiceAggregateException(errors);
     }
 
     public async Task<int> AddDungeonAsync(DungeonModel savedDungeon, CancellationToken cancellationToken)

@@ -1,6 +1,8 @@
 ﻿using RDMG.Core.Abstractions.Services;
+using RDMG.Core.Generator;
 using Shouldly;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
@@ -8,7 +10,7 @@ namespace RDMG.Core.Tests.DungeonServiceTests;
 public class Update
 {
     [Fact]
-    public async void CanUpdateDungeon()
+    public async Task CanUpdateDungeon()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();
@@ -16,21 +18,21 @@ public class Update
         var token = source.Token;
         const int dungeonId = 1;
         var oldDungeon = await service.GetDungeonAsync(dungeonId, token);
-        var optionModel = await service.GetDungeonOptionAsync(oldDungeon.DungeonOptionId, token);
-        optionModel.Corridor = false;
-        var newDungeon = await service.GenerateDungeonAsync(optionModel);
-        oldDungeon.DungeonTiles = newDungeon.DungeonTiles;
-        oldDungeon.TrapDescription = newDungeon.TrapDescription;
-        oldDungeon.RoomDescription = newDungeon.RoomDescription;
-        oldDungeon.RoamingMonsterDescription = newDungeon.RoamingMonsterDescription;
+        var newDungeon = env.GetNcDungeon();
+        oldDungeon.DungeonTiles = newDungeon.DungeonTiles.ToString();
+        oldDungeon.TrapDescription = Constants.Empty;
+        oldDungeon.RoomDescription = newDungeon.RoomDescription.ToString();
+        oldDungeon.RoamingMonsterDescription = Constants.Empty;
         await service.UpdateDungeonAsync(oldDungeon, token);
-
         var result = await service.GetDungeonAsync(dungeonId, token);
-        result.RoamingMonsterDescription.ShouldBe("[]");
+        result.RoamingMonsterDescription.ShouldBe(Constants.Empty);
+        result.TrapDescription.ShouldBe(Constants.Empty);
+        result.DungeonTiles.ShouldBe(newDungeon.DungeonTiles.ToString());
+        result.RoomDescription.ShouldBe(newDungeon.RoomDescription.ToString());
     }
 
     [Fact]
-    public async void CanRenameDungeon()
+    public async Task CanRenameDungeon()
     {
         using var env = new TestEnvironment();
         var service = env.GetService<IDungeonService>();

@@ -13,17 +13,17 @@ namespace RDMG.Core.Generator;
 public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 {
     private readonly IDungeonHelper _dungeonHelper;
-    public List<DungeonTile> OpenDoorList { get; set; }
+    public IList<DungeonTile> OpenDoorList { get; set; }
     private List<DungeonTile> _edgeTileList;
-    private List<DungeonTile> _roomStart;
+    private IList<DungeonTile> _roomStart;
     public DungeonNoCorridor(IDungeonHelper dungeonHelper) : base(dungeonHelper)
     {
         _dungeonHelper = dungeonHelper;
     }
 
-    public override DungeonModel Generate(DungeonOptionModel optionModel)
+    public override DungeonModel Generate(DungeonOptionModel model)
     {
-        Init(optionModel);
+        Init(model);
         AddFirstRoom();
         FillRoomToDoor();
         AddEntryPoint();
@@ -32,9 +32,9 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
         {
             DungeonTiles = JsonSerializer.Serialize(DungeonTiles),
             RoomDescription = JsonSerializer.Serialize(RoomDescription),
-            DungeonOptionId = optionModel.Id,
-            TrapDescription = "[]",
-            RoamingMonsterDescription = "[]"
+            DungeonOptionId = model.Id,
+            TrapDescription = Constants.Empty,
+            RoamingMonsterDescription = Constants.Empty
         };
     }
 
@@ -537,7 +537,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
         var y = _dungeonHelper.GetRandomInt(5, DungeonTiles.Length - (RoomSize + 4));
         var right = _dungeonHelper.GetRandomInt(2, RoomSize + 1);
         var down = _dungeonHelper.GetRandomInt(2, RoomSize + 1);
-        FillRoom(x, y, down, right);
+        FillRoom(x, y, right, down);
         _roomStart.Add(DungeonTiles[x][y]);
     }
 
@@ -548,7 +548,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
         DungeonTiles[x][y].Index = _roomStart.Count;
     }
 
-    internal override void FillRoom(int x, int y, int right, int down)
+    protected override void FillRoom(int x, int y, int right, int down)
     {
         var doorCount = GetDoorCount(down, right);
         for (var i = 0; i < down + 2; i++) // fill with room_edge texture the bigger boundaries
@@ -572,19 +572,19 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
         }
     }
 
-    internal override int GetDoorCount(int down, int right)
+    protected override int GetDoorCount(int down, int right)
     {
         if (Math.Abs(down) < 4 || Math.Abs(right) < 4)
             return 2;
         return _dungeonHelper.GetRandomInt(3, 6);
     }
 
-    internal override bool CheckTileForOpenList(int x, int y)
+    protected override bool CheckTileForOpenList(int x, int y)
     {
         return DungeonTiles[x][y].Texture == Textures.Room;
     }
 
-    internal override bool CheckDoor(int x, int y)
+    protected override bool CheckDoor(int x, int y)
     {
         for (var i = x - 1; i < x + 2; i++)
         {
@@ -597,7 +597,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
         return CheckEnvironment(x, y);
     }
 
-    internal override void SetDoor(int x, int y)
+    protected override void SetDoor(int x, int y)
     {
         if (_dungeonHelper.GetRandomInt(0, 101) < 40)
             DungeonTiles[x][y].Texture = Textures.NoCorridorDoorTrapped;

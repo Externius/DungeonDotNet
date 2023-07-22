@@ -124,7 +124,7 @@ namespace RDMG.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 2022 - RDMG.
+        ///   Looks up a localized string similar to 2023 - RDMG.
         /// </summary>
         public static string Copyright {
             get {

@@ -8,13 +8,13 @@ using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
+using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Core.Generator;
 using RDMG.Core.Services;
 using RDMG.Infrastructure.Data;
 using RDMG.Infrastructure.Repository;
 using RDMG.Infrastructure.Seed;
 using Serilog;
-using System;
 using System.IO;
 using System.Reflection;
 
@@ -50,7 +50,7 @@ public static class ConfigureServices
                 });
                 break;
             default:
-                throw new Exception(
+                throw new ServiceException(
                     string.Format(Resources.Error.DbProviderError, configuration.GetConnectionString(Context.DbProvider)));
         }
 
@@ -84,7 +84,7 @@ public static class ConfigureServices
                 services.AddScoped<IAppDbContext, SqliteContext>(sp => sp.GetRequiredService<SqliteContext>());
                 break;
             default:
-                throw new Exception(
+                throw new ServiceException(
                     string.Format(Resources.Error.DbProviderError, configuration.GetConnectionString(Context.DbProvider)));
         }
 
@@ -118,7 +118,7 @@ public static class ConfigureServices
                     .CreateLogger());
                 break;
             default:
-                throw new Exception(
+                throw new ServiceException(
                     string.Format(Resources.Error.DbProviderError,
                     configuration.GetConnectionString(Context.DbProvider)));
         }
