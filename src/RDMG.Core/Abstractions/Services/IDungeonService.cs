@@ -15,8 +15,8 @@ public interface IDungeonService
     Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon, int level, CancellationToken cancellationToken);
     Task UpdateDungeonAsync(DungeonModel model, CancellationToken cancellationToken);
     Task<int> CreateDungeonOptionAsync(DungeonOptionModel dungeonOption, CancellationToken cancellationToken);
-    Task<List<DungeonModel>> ListUserDungeonsAsync(int userId, CancellationToken cancellationToken);
-    Task<List<DungeonModel>> ListUserDungeonsByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
+    Task<IEnumerable<DungeonModel>> ListUserDungeonsAsync(int userId, CancellationToken cancellationToken);
+    Task<IEnumerable<DungeonModel>> ListUserDungeonsByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
     Task<int> AddDungeonAsync(DungeonModel savedDungeon, CancellationToken cancellationToken);
     Task<bool> DeleteDungeonOptionAsync(int id, CancellationToken cancellationToken);
     Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken);

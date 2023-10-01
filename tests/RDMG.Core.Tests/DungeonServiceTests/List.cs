@@ -17,7 +17,7 @@ public class List : DungeonServiceTestBase
         var token = source.Token;
         const int expectedCount = 2;
         var result = await DungeonService.ListUserDungeonsAsync(UserId, token);
-        result.Count.ShouldBe(expectedCount);
+        result.Count().ShouldBe(expectedCount);
     }
 
     [Fact]
@@ -28,6 +28,6 @@ public class List : DungeonServiceTestBase
         const int expectedCount = 1;
         var dungeonName = (await DungeonService.GetAllDungeonOptionsAsync(token)).First().DungeonName;
         var result = await DungeonService.ListUserDungeonsByNameAsync(dungeonName, UserId, token);
-        result.Count.ShouldBe(expectedCount);
+        result.Count().ShouldBe(expectedCount);
     }
 }

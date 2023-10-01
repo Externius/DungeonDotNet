@@ -32,7 +32,7 @@ public class Get
         result.ShouldBeLessThan(max);
     }
 
-    public static IEnumerable<object[]> GetNCTestDoorTiles()
+    public static IEnumerable<object[]> GetNcTestDoorTiles()
     {
         return new List<object[]>
         {
@@ -43,7 +43,7 @@ public class Get
     }
 
     [Theory]
-    [MemberData(nameof(GetNCTestDoorTiles))]
+    [MemberData(nameof(GetNcTestDoorTiles))]
     public void GetNcDoor_WithValidNCCorridorDoorDungeonTile_ReturnsDoorDescription(DungeonTile dungeonTile)
     {
         var result = _dungeonHelper.GetNcDoor(dungeonTile);

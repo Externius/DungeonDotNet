@@ -13,5 +13,4 @@ public abstract class DungeonServiceTestBase
         DungeonService = env.GetService<IDungeonService>();
         DungeonNoCorridor = env.GetNcDungeon();
     }
-
 }

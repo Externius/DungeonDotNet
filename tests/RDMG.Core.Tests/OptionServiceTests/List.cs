@@ -4,6 +4,7 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RDMG.Core.Tests.OptionServiceTests;
@@ -20,7 +21,7 @@ public class List
     }
 
     [Fact]
-    public async void ListOptionsAsync_WithNoFilter_ReturnsAllOptions()
+    public async Task ListOptionsAsync_WithNoFilter_ReturnsAllOptions()
     {
         var expectedCount = (await _optionRepository.ListAsync()).Count();
         var result = await _optionService.ListOptionsAsync();
@@ -34,7 +35,7 @@ public class List
 
     [Theory]
     [MemberData(nameof(GetOptionKeys))]
-    public async void ListOptionsAsync_WithFilter_ReturnsFilteredOptions(Domain.OptionKey filter)
+    public async Task ListOptionsAsync_WithFilter_ReturnsFilteredOptions(Domain.OptionKey filter)
     {
         var expectedCount = (await _optionRepository.ListAsync(filter)).Count();
         var result = await _optionService.ListOptionsAsync(filter);

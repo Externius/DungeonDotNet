@@ -58,9 +58,9 @@ public class DungeonService : IDungeonService
     {
         var errors = new List<ServiceException>();
         if (string.IsNullOrWhiteSpace(model.DungeonName))
-            errors.Add(new ServiceException(string.Format(Error.RequiredValidation, model.DungeonName)));
+            errors.Add(new ServiceException(string.Format(Error.RequiredValidation, nameof(model.DungeonName))));
         if (model.UserId == 0)
-            errors.Add(new ServiceException(string.Format(Error.RequiredValidation, model.UserId)));
+            errors.Add(new ServiceException(string.Format(Error.RequiredValidation, nameof(model.UserId))));
         if (errors.Any())
             throw new ServiceAggregateException(errors);
     }
@@ -136,10 +136,10 @@ public class DungeonService : IDungeonService
 
     private async Task<DungeonModel> AddDungeonToExistingOptionAsync(DungeonOptionModel optionModel, int level, CancellationToken cancellationToken)
     {
-        var existingDungeons = await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
+        var existingDungeons = (await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken)).ToList();
         var dungeon = await GenerateDungeonAsync(optionModel, optionModel.Id);
         dungeon.Level = level;
-        if (existingDungeons.Any(d => d.Level == level))
+        if (existingDungeons.Exists(d => d.Level == level))
         {
             dungeon.Id = existingDungeons.First(dm => dm.Level == level).Id;
             await UpdateDungeonAsync(dungeon, cancellationToken);
@@ -180,7 +180,7 @@ public class DungeonService : IDungeonService
         {
             var options = await _dungeonOptionRepository.GetAllDungeonOptionsAsync(cancellationToken);
 
-            return options.Select(_mapper.Map<DungeonOptionModel>).ToList();
+            return options.Select(_mapper.Map<DungeonOptionModel>);
         }
         catch (Exception ex)
         {
@@ -195,7 +195,7 @@ public class DungeonService : IDungeonService
         {
             var options = await _dungeonOptionRepository.GetAllDungeonOptionsForUserAsync(userId, cancellationToken);
 
-            return options.Select(_mapper.Map<DungeonOptionModel>).ToList();
+            return options.Select(_mapper.Map<DungeonOptionModel>);
         }
         catch (Exception ex)
         {
@@ -243,12 +243,12 @@ public class DungeonService : IDungeonService
         }
     }
 
-    public async Task<List<DungeonModel>> ListUserDungeonsAsync(int userId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<DungeonModel>> ListUserDungeonsAsync(int userId, CancellationToken cancellationToken)
     {
         try
         {
             var result = await _dungeonRepository.GetAllDungeonsForUserAsync(userId, cancellationToken);
-            return result.Select(_mapper.Map<DungeonModel>).ToList();
+            return result.Select(_mapper.Map<DungeonModel>);
         }
         catch (Exception ex)
         {
@@ -257,12 +257,12 @@ public class DungeonService : IDungeonService
         }
     }
 
-    public async Task<List<DungeonModel>> ListUserDungeonsByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<DungeonModel>> ListUserDungeonsByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
     {
         try
         {
             var result = await _dungeonRepository.GetAllDungeonByOptionNameForUserAsync(dungeonName, userId, cancellationToken);
-            return result.Select(_mapper.Map<DungeonModel>).ToList();
+            return result.Select(_mapper.Map<DungeonModel>);
         }
         catch (Exception ex)
         {

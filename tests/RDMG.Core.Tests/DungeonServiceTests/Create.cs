@@ -79,7 +79,8 @@ public class Create : DungeonServiceTestBase
         result.GetInnerExceptions()
                     .Select(se => se.Message)
                     .OrderBy(s => s)
-                    .SequenceEqual(expectedErrors.OrderBy(s => s));
+                    .SequenceEqual(expectedErrors.OrderBy(s => s))
+                    .ShouldBeTrue();
     }
 
     [Fact]
@@ -120,9 +121,9 @@ public class Create : DungeonServiceTestBase
         const int levelNumber = 2;
         var token = source.Token;
         var existingDungeonOption = (await DungeonService.GetAllDungeonOptionsForUserAsync(userId, token)).First();
-        var currentDungeonCount = (await DungeonService.ListUserDungeonsByNameAsync(existingDungeonOption.DungeonName, userId, token)).Count;
+        var currentDungeonCount = (await DungeonService.ListUserDungeonsByNameAsync(existingDungeonOption.DungeonName, userId, token)).Count();
         var result = await DungeonService.CreateOrUpdateDungeonAsync(existingDungeonOption, true, levelNumber, token);
-        var newDungeonCount = (await DungeonService.ListUserDungeonsByNameAsync(existingDungeonOption.DungeonName, userId, token)).Count;
+        var newDungeonCount = (await DungeonService.ListUserDungeonsByNameAsync(existingDungeonOption.DungeonName, userId, token)).Count();
         result.ShouldNotBeNull();
         result.Level.ShouldBe(levelNumber);
         newDungeonCount.ShouldBeGreaterThan(currentDungeonCount);
