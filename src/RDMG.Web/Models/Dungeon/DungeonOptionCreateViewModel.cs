@@ -40,33 +40,33 @@ public class DungeonOptionCreateViewModel : EditViewModel
     public int Theme { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "DungeonSize")]
-    public IList<SelectListItem> DungeonSizes { get; set; }
+    public IEnumerable<SelectListItem> DungeonSizes { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "DungeonDifficulty")]
-    public IList<SelectListItem> DungeonDifficulties { get; set; }
+    public IEnumerable<SelectListItem> DungeonDifficulties { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "PartyLevel")]
-    public IList<SelectListItem> PartyLevels { get; set; }
+    public IEnumerable<SelectListItem> PartyLevels { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "PartySize")]
-    public IList<SelectListItem> PartySizes { get; set; }
+    public IEnumerable<SelectListItem> PartySizes { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "TreasureValue")]
-    public IList<SelectListItem> TreasureValues { get; set; }
+    public IEnumerable<SelectListItem> TreasureValues { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "ItemsRarity")]
-    public IList<SelectListItem> ItemsRarities { get; set; }
+    public IEnumerable<SelectListItem> ItemsRarities { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "RoomDensity")]
-    public IList<SelectListItem> RoomDensities { get; set; }
+    public IEnumerable<SelectListItem> RoomDensities { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "RoomSize")]
-    public IList<SelectListItem> RoomSizes { get; set; }
+    public IEnumerable<SelectListItem> RoomSizes { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "MonsterType")]
-    public IList<SelectListItem> MonsterTypes { get; set; }
+    public IEnumerable<SelectListItem> MonsterTypes { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "TrapPercent")]
-    public IList<SelectListItem> TrapPercents { get; set; }
+    public IEnumerable<SelectListItem> TrapPercents { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "DeadEnd")]
-    public IList<SelectListItem> DeadEnds { get; set; }
+    public IEnumerable<SelectListItem> DeadEnds { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "Corridor")]
-    public IList<SelectListItem> Corridors { get; set; }
+    public IEnumerable<SelectListItem> Corridors { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "RoamingPercent")]
-    public IList<SelectListItem> RoamingPercents { get; set; }
+    public IEnumerable<SelectListItem> RoamingPercents { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "Theme")]
-    public IList<SelectListItem> Themes { get; set; }
+    public IEnumerable<SelectListItem> Themes { get; set; }
     public int UserId { get; set; }
     public bool AddDungeon { get; set; }
     public int Level { get; set; }

@@ -1,3 +1,4 @@
+using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Domain;
 using System.Collections.Generic;
@@ -9,15 +10,18 @@ namespace RDMG.Core.Tests.GeneratorTests;
 public abstract class DungeonTestBase
 {
     private readonly ITestOutputHelper _output;
-    private readonly StringBuilder _stringBuilder;
-
+    private readonly StringBuilder _stringBuilder = new();
+    protected readonly IDungeon Dungeon;
+    protected readonly IDungeonNoCorridor DungeonNoCorridor;
     protected DungeonTestBase(ITestOutputHelper output)
     {
+        var env = new TestEnvironment();
+        Dungeon = env.GetDungeon();
+        DungeonNoCorridor = env.GetNcDungeon();
         _output = output;
-        _stringBuilder = new StringBuilder();
     }
 
-    public void Draw(DungeonTile[][] dungeonTiles)
+    protected void Draw(IEnumerable<DungeonTile[]> dungeonTiles)
     {
         foreach (var row in dungeonTiles)
         {
@@ -26,7 +30,7 @@ public abstract class DungeonTestBase
         _output.WriteLine(" ");
     }
 
-    public void PrintRow(IEnumerable<DungeonTile> row)
+    private void PrintRow(IEnumerable<DungeonTile> row)
     {
         foreach (var i in row)
         {

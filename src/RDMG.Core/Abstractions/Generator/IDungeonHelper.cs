@@ -17,8 +17,8 @@ public interface IDungeonHelper
     string GetNcDoorDescription(DungeonTile[][] dungeonTiles, IEnumerable<DungeonTile> closedList);
     string GetNcDoor(DungeonTile door);
     string GetTreasure();
-    string GetMonster();
+    string GetMonsterDescription();
     string GetRandomTrapDescription(bool door);
-    string GetRoamingMonster();
+    string GetRoamingMonsterDescription();
     DungeonTile[][] GenerateDungeonTiles(int dungeonSize, int imgSizeX, int imgSizeY);
 }

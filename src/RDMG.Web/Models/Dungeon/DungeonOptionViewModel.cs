@@ -36,9 +36,5 @@ public class DungeonOptionViewModel : EditViewModel
     [Required]
     public int RoamingPercent { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
-    public IList<DungeonViewModel> Dungeons { get; set; }
-    public DungeonOptionViewModel()
-    {
-        Dungeons = new List<DungeonViewModel>();
-    }
+    public IEnumerable<DungeonViewModel> Dungeons { get; set; } = new List<DungeonViewModel>();
 }

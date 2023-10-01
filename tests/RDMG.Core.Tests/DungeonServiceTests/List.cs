@@ -1,5 +1,4 @@
-﻿using RDMG.Core.Abstractions.Services;
-using Shouldly;
+﻿using Shouldly;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,28 +6,28 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class List
+public class List : DungeonServiceTestBase
 {
+    private const int UserId = 1;
+
     [Fact]
-    public async Task CanListUserDungeons()
+    public async Task ListUserDungeonsAsync_WithValidUserIdWithDungeons_ReturnsDungeonModelList()
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonService>();
         var source = new CancellationTokenSource();
         var token = source.Token;
-        var result = await service.ListUserDungeonsAsync(1, token);
-        result.Count.ShouldBe(2);
+        const int expectedCount = 2;
+        var result = await DungeonService.ListUserDungeonsAsync(UserId, token);
+        result.Count.ShouldBe(expectedCount);
     }
 
     [Fact]
-    public async Task CanListDungeonsByName()
+    public async Task ListUserDungeonsByNameAsync_WithValidNameAndUserId_ReturnsDungeonModelList()
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonService>();
         var source = new CancellationTokenSource();
         var token = source.Token;
-        var dungeonName = (await service.GetAllDungeonOptionsAsync(token)).First().DungeonName;
-        var result = await service.ListUserDungeonsByNameAsync(dungeonName, 1, token);
-        result.Count.ShouldBe(1);
+        const int expectedCount = 1;
+        var dungeonName = (await DungeonService.GetAllDungeonOptionsAsync(token)).First().DungeonName;
+        var result = await DungeonService.ListUserDungeonsByNameAsync(dungeonName, UserId, token);
+        result.Count.ShouldBe(expectedCount);
     }
 }

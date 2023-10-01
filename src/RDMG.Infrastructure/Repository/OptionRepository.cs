@@ -24,7 +24,7 @@ public class OptionRepository : IOptionRepository
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<Option>> ListAsync(CancellationToken cancellationToken, OptionKey? filter = null)
+    public async Task<IEnumerable<Option>> ListAsync(OptionKey? filter = null, CancellationToken cancellationToken = default)
     {
         var query = _context.Options.AsNoTracking();
 

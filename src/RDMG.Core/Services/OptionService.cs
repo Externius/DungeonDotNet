@@ -23,7 +23,7 @@ public class OptionService : IOptionService
     public OptionService(IMapper mapper,
         IOptionRepository optionRepository,
         IMemoryCache memoryCache,
-        ILogger<DungeonService> logger)
+        ILogger<OptionService> logger)
     {
         _optionRepository = optionRepository;
         _memoryCache = memoryCache;
@@ -31,22 +31,22 @@ public class OptionService : IOptionService
         _logger = logger;
     }
 
-    public async Task<List<OptionModel>> ListOptionsAsync(CancellationToken cancellationToken, OptionKey? filter = null)
+    public async Task<IEnumerable<OptionModel>> ListOptionsAsync(OptionKey? filter = null, CancellationToken cancellationToken = default)
     {
         try
         {
-            if (!_memoryCache.TryGetValue(nameof(ListOptionsAsync), out List<OptionModel> cacheEntry))
-            {
-                var options = await _optionRepository.ListAsync(cancellationToken);
-                cacheEntry = options.Select(_mapper.Map<OptionModel>).ToList();
+            if (_memoryCache.TryGetValue(nameof(ListOptionsAsync), out List<OptionModel> cacheEntry))
+                return filter.HasValue ? cacheEntry.Where(o => o.Key == filter.Value) : cacheEntry;
 
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(1));
+            var options = await _optionRepository.ListAsync(null, cancellationToken);
+            cacheEntry = options.Select(_mapper.Map<OptionModel>).ToList();
 
-                _memoryCache.Set(nameof(ListOptionsAsync), cacheEntry, cacheEntryOptions);
-            }
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromMinutes(10));
 
-            return filter.HasValue ? cacheEntry.Where(o => o.Key == filter.Value).ToList() : cacheEntry;
+            _memoryCache.Set(nameof(ListOptionsAsync), cacheEntry, cacheEntryOptions);
+
+            return filter.HasValue ? cacheEntry.Where(o => o.Key == filter.Value) : cacheEntry;
         }
         catch (Exception ex)
         {

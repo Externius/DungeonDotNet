@@ -10,105 +10,101 @@ namespace RDMG.Core.Tests.DungeonHelperTests;
 
 public class Get
 {
-    [Fact]
-    public void CanGetRandomInt()
+    private readonly IDungeonHelper _dungeonHelper;
+    private readonly IDungeonNoCorridor _dungeonNoCorridor;
+    public Get()
     {
         using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonHelper>();
-        var result = service.GetRandomInt(1, 10);
-
-        result.ShouldBeGreaterThan(0);
-        result.ShouldBeLessThan(10);
+        _dungeonHelper = env.GetService<IDungeonHelper>();
+        _dungeonNoCorridor = env.GetNcDungeon();
     }
 
-    [Fact]
-    public void CanGetNcDoor()
+    [Theory]
+    [InlineData(1, 2)]
+    [InlineData(1, 10)]
+    [InlineData(3, 235)]
+    [InlineData(11, 329)]
+    public void GetRandomInt_WithTwoInteger_ReturnsIntBetweenThem(int min, int max)
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonHelper>();
+        var result = _dungeonHelper.GetRandomInt(min, max);
 
-        var currentDoors = new List<DungeonTile>
+        result.ShouldBeGreaterThan(min - 1);
+        result.ShouldBeLessThan(max);
+    }
+
+    public static IEnumerable<object[]> GetNCTestDoorTiles()
+    {
+        return new List<object[]>
         {
-            new(2,2,2,2,50,50,Textures.NoCorridorDoor),
-            new(5,5,2,2,50,50,Textures.NoCorridorDoorTrapped),
-            new(5,2,2,2,50,50,Textures.NoCorridorDoorLocked)
+            new object[] {new DungeonTile(2,2,2,2,50,50,Textures.NoCorridorDoor)},
+            new object[] {new DungeonTile(5,5,2,2,50,50,Textures.NoCorridorDoorTrapped)},
+            new object[] {new DungeonTile(5,2,2,2,50,50,Textures.NoCorridorDoorLocked)}
         };
+    }
 
-        var result = new string[currentDoors.Count];
-        for (var i = 0; i < currentDoors.Count; i++)
-        {
-            result[i] = service.GetNcDoor(currentDoors[i]);
-        }
-
-        result.Any(s => !string.IsNullOrWhiteSpace(s)).ShouldBeTrue();
+    [Theory]
+    [MemberData(nameof(GetNCTestDoorTiles))]
+    public void GetNcDoor_WithValidNCCorridorDoorDungeonTile_ReturnsDoorDescription(DungeonTile dungeonTile)
+    {
+        var result = _dungeonHelper.GetNcDoor(dungeonTile);
+        result.ShouldNotBeEmpty();
     }
 
     [Fact]
-    public void CanGetNcDoorDescription()
+    public void GetNcDoorDescription_WithValidParameters_ReturnsNcDoorDescription()
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonHelper>();
-        var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.AddFirstRoom();
-        var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
+        _dungeonNoCorridor.AddFirstRoom();
+        var list = _dungeonNoCorridor.DungeonTiles.SelectMany(T => T);
         var match = list.Where(x => x.Texture == Textures.Room);
-        var result = service.GetNcDoorDescription(dungeonNoCorridor.DungeonTiles, match.ToList());
+        var result = _dungeonHelper.GetNcDoorDescription(_dungeonNoCorridor.DungeonTiles, match);
         result.ShouldNotBeNull();
     }
 
-    [Fact]
-    public void CanGetTreasure()
+    [Theory]
+    [InlineData(20)]
+    public void GetTreasure_ReturnsTreasure(int testRunCount)
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonHelper>();
-        env.GetDungeon();
-        var result = new string[20];
-        for (var i = 0; i < 20; i++)
+        var result = new string[testRunCount];
+        for (var i = 0; i < testRunCount; i++)
         {
-            result[i] = service.GetTreasure();
+            result[i] = _dungeonHelper.GetTreasure();
         }
-        result.Any(s => !string.IsNullOrWhiteSpace(s)).ShouldBeTrue();
+        result.ShouldAllBe(s => !string.IsNullOrWhiteSpace(s));
     }
 
-    [Fact]
-    public void CanGetMonster()
+    [Theory]
+    [InlineData(20)]
+    public void GetMonsterDescription_ReturnsMonsterDescription(int testRunCount)
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonHelper>();
-        env.GetDungeon();
-        var result = new string[20];
-        for (var i = 0; i < 20; i++)
+        var result = new string[testRunCount];
+        for (var i = 0; i < testRunCount; i++)
         {
-            result[i] = service.GetMonster();
+            result[i] = _dungeonHelper.GetMonsterDescription();
         }
-        result.Any(s => !string.IsNullOrWhiteSpace(s)).ShouldBeTrue();
+        result.ShouldAllBe(s => !string.IsNullOrWhiteSpace(s));
     }
 
-    [Fact]
-    public void CanGetRandomTrapDescription()
+    [Theory]
+    [InlineData(20)]
+    public void GetRandomTrapDescription_WithRandomDoorParameter_ReturnsDoorOrTrapDescription(int testRunCount)
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonHelper>();
-        env.GetDungeon();
-        var result = new string[20];
-        for (var i = 0; i < 20; i++)
+        var result = new string[testRunCount];
+        for (var i = 0; i < testRunCount; i++)
         {
-            result[i] = service.GetRandomTrapDescription(i % 2 == 0);
+            result[i] = _dungeonHelper.GetRandomTrapDescription(i % 2 == 0);
         }
-        result.Any(s => !string.IsNullOrWhiteSpace(s)).ShouldBeTrue();
+        result.ShouldAllBe(s => !string.IsNullOrWhiteSpace(s));
     }
 
-    [Fact]
-    public void CanGetRoamingMonster()
+    [Theory]
+    [InlineData(20)]
+    public void GetRoamingMonsterDescription_ReturnsRoamingMonsterDescription(int testRunCount)
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonHelper>();
-        env.GetDungeon();
-        var result = new string[20];
-        for (var i = 0; i < 20; i++)
+        var result = new string[testRunCount];
+        for (var i = 0; i < testRunCount; i++)
         {
-            result[i] = service.GetRoamingMonster();
+            result[i] = _dungeonHelper.GetRoamingMonsterDescription();
         }
-        result.Any(s => !string.IsNullOrWhiteSpace(s)).ShouldBeTrue();
+        result.ShouldAllBe(s => !string.IsNullOrWhiteSpace(s));
     }
 }

@@ -58,9 +58,9 @@ public class DungeonService : IDungeonService
     {
         var errors = new List<ServiceException>();
         if (string.IsNullOrWhiteSpace(model.DungeonName))
-            errors.Add(new ServiceException(Error.Required));
+            errors.Add(new ServiceException(string.Format(Error.RequiredValidation, model.DungeonName)));
         if (model.UserId == 0)
-            errors.Add(new ServiceException(Error.Required));
+            errors.Add(new ServiceException(string.Format(Error.RequiredValidation, model.UserId)));
         if (errors.Any())
             throw new ServiceAggregateException(errors);
     }
@@ -312,11 +312,11 @@ public class DungeonService : IDungeonService
         }
     }
 
-    public async Task RenameDungeonAsync(int id, int userId, string newName, CancellationToken cancellationToken)
+    public async Task RenameDungeonAsync(int optionId, int userId, string newName, CancellationToken cancellationToken)
     {
         try
         {
-            var entity = await _dungeonOptionRepository.GetDungeonOptionAsync(id, cancellationToken);
+            var entity = await _dungeonOptionRepository.GetDungeonOptionAsync(optionId, cancellationToken);
             entity.DungeonName = newName;
             await _dungeonOptionRepository.UpdateDungeonOptionAsync(entity, cancellationToken);
         }

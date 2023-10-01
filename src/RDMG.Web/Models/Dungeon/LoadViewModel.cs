@@ -6,14 +6,10 @@ namespace RDMG.Web.Models.Dungeon;
 
 public class LoadViewModel
 {
-    public DungeonOptionViewModel Option { get; set; }
+    public DungeonOptionViewModel Option { get; set; } = new();
     public string Theme { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "Theme")]
-    public IList<SelectListItem> Themes { get; set; }
+    public IEnumerable<SelectListItem> Themes { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "GeneratePlainMap")]
     public bool GeneratePlainMap { get; set; }
-    public LoadViewModel()
-    {
-        Option = new DungeonOptionViewModel();
-    }
 }

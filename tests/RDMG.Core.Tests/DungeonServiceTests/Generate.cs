@@ -1,5 +1,4 @@
-﻿using RDMG.Core.Abstractions.Services;
-using RDMG.Core.Abstractions.Services.Models;
+﻿using RDMG.Core.Abstractions.Services.Models;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
@@ -7,14 +6,12 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class Generate
+public class Generate : DungeonServiceTestBase
 {
     [Fact]
-    public async Task CanGenerate()
+    public async Task GenerateDungeonAsync_WithValidOptionModel_ReturnsDungeonModel()
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonService>();
-        var result = await service.GenerateDungeonAsync(new DungeonOptionModel
+        var result = await DungeonService.GenerateDungeonAsync(new DungeonOptionModel
         {
             DungeonName = "UT Dungeon",
             Created = DateTime.UtcNow,

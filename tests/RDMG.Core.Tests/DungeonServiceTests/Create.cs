@@ -1,7 +1,9 @@
-﻿using RDMG.Core.Abstractions.Services;
+﻿using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Core.Abstractions.Services.Models;
+using RDMG.Core.Generator;
 using Shouldly;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,13 +11,11 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class Create
+public class Create : DungeonServiceTestBase
 {
     [Fact]
-    public async Task CanCreateDungeonOption()
+    public async Task CreateDungeonOptionAsync_WithOptionModel_ReturnsNewEntityId()
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonService>();
         var optionsModel = new DungeonOptionModel
         {
             DungeonName = "UT Dungeon",
@@ -37,30 +37,54 @@ public class Create
         };
         var source = new CancellationTokenSource();
         var token = source.Token;
-        var result = await service.CreateDungeonOptionAsync(optionsModel, token);
+        var result = await DungeonService.CreateDungeonOptionAsync(optionsModel, token);
         result.ShouldBeGreaterThan(0);
     }
 
     [Fact]
-    public async Task CanAddDungeon()
+    public async Task AddDungeonAsync_WithDungeonModel_ReturnsNewEntityId()
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonService>();
         var source = new CancellationTokenSource();
         var token = source.Token;
 
-        var optionsModel = (await service.GetAllDungeonOptionsForUserAsync(1, token)).First();
-        var savedDungeon = await service.GenerateDungeonAsync(optionsModel);
+        var optionsModel = (await DungeonService.GetAllDungeonOptionsForUserAsync(1, token)).First();
+        var dungeon = await DungeonService.GenerateDungeonAsync(optionsModel);
 
-        var result = await service.AddDungeonAsync(savedDungeon, token);
+        var result = await DungeonService.AddDungeonAsync(dungeon, token);
         result.ShouldBeGreaterThan(1);
     }
 
     [Fact]
-    public async Task CanCreateOrUpdateDungeon()
+    public async Task CreateOrUpdateDungeonAsync_WithInvalidModel_ReturnsServiceAggregateException()
     {
-        using var env = new TestEnvironment();
-        var service = env.GetService<IDungeonService>();
+        var source = new CancellationTokenSource();
+        var token = source.Token;
+        var optionsModel = new DungeonOptionModel
+        {
+            DungeonName = string.Empty,
+            UserId = 0
+        };
+        var expectedErrors = new List<string>
+        {
+            string.Format(Resources.Error.RequiredValidation, nameof(DungeonOptionModel.DungeonName)),
+            string.Format(Resources.Error.RequiredValidation, nameof(DungeonOptionModel.UserId))
+        };
+
+        var act = async () =>
+        {
+            await DungeonService.CreateOrUpdateDungeonAsync(optionsModel, false, 1, token);
+        };
+
+        var result = await act.ShouldThrowAsync<ServiceAggregateException>();
+        result.GetInnerExceptions()
+                    .Select(se => se.Message)
+                    .OrderBy(s => s)
+                    .SequenceEqual(expectedErrors.OrderBy(s => s));
+    }
+
+    [Fact]
+    public async Task CreateOrUpdateDungeonAsync_WithValidNewModel_CreateOptionAndReturnsDungeonModel()
+    {
         var source = new CancellationTokenSource();
         var token = source.Token;
 
@@ -83,16 +107,24 @@ public class Create
             Corridor = false,
             UserId = 1
         };
-        var result = await service.CreateOrUpdateDungeonAsync(optionsModel, false, 1, token);
+        var result = await DungeonService.CreateOrUpdateDungeonAsync(optionsModel, false, 1, token);
         result.ShouldNotBeNull();
+        result.RoamingMonsterDescription.ShouldBe(Constants.Empty);
+    }
 
-        var existingDungeonOption = (await service.GetAllDungeonOptionsForUserAsync(optionsModel.UserId, token)).First();
-        var dungeonCount = (await service.ListUserDungeonsByNameAsync(existingDungeonOption.DungeonName, optionsModel.UserId, token)).Count;
-
-        result = await service.CreateOrUpdateDungeonAsync(existingDungeonOption, true, 2, token);
-        var newDungeonCount = (await service.ListUserDungeonsByNameAsync(existingDungeonOption.DungeonName, optionsModel.UserId, token)).Count;
+    [Fact]
+    public async Task CreateOrUpdateDungeonAsync_WithValidExistingModel_AddsDungeonToExistingOptionAndReturnsDungeonModel()
+    {
+        var source = new CancellationTokenSource();
+        const int userId = 1;
+        const int levelNumber = 2;
+        var token = source.Token;
+        var existingDungeonOption = (await DungeonService.GetAllDungeonOptionsForUserAsync(userId, token)).First();
+        var currentDungeonCount = (await DungeonService.ListUserDungeonsByNameAsync(existingDungeonOption.DungeonName, userId, token)).Count;
+        var result = await DungeonService.CreateOrUpdateDungeonAsync(existingDungeonOption, true, levelNumber, token);
+        var newDungeonCount = (await DungeonService.ListUserDungeonsByNameAsync(existingDungeonOption.DungeonName, userId, token)).Count;
         result.ShouldNotBeNull();
-        result.Level.ShouldBe(2);
-        newDungeonCount.ShouldBeGreaterThan(dungeonCount);
+        result.Level.ShouldBe(levelNumber);
+        newDungeonCount.ShouldBeGreaterThan(currentDungeonCount);
     }
 }

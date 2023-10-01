@@ -48,7 +48,7 @@ public class DungeonController : Controller
         var dungeons = await _dungeonService.ListUserDungeonsAsync(userId, cancellationToken);
         foreach (var option in model.List)
         {
-            option.Dungeons = dungeons.Where(dm => dm.DungeonOptionId == option.Id).Select(_mapper.Map<DungeonViewModel>).ToList();
+            option.Dungeons = dungeons.Where(dm => dm.DungeonOptionId == option.Id).Select(_mapper.Map<DungeonViewModel>);
         }
 
         return View(model);
@@ -61,14 +61,15 @@ public class DungeonController : Controller
         {
             Theme = string.Empty,
             Option = _mapper.Map<DungeonOptionViewModel>(await _dungeonService.GetDungeonOptionByNameAsync(name, id, cancellationToken)),
-            Themes = (await _optionService.ListOptionsAsync(cancellationToken, OptionKey.Theme)).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList()
+            Themes = (await _optionService.ListOptionsAsync(OptionKey.Theme, cancellationToken))
+                        .Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true })
         };
 
         var dungeons = await _dungeonService.ListUserDungeonsByNameAsync(model.Option.DungeonName, id, cancellationToken);
         if (level != 0)
             dungeons = dungeons.Where(dm => dm.Level == level).ToList();
 
-        model.Option.Dungeons = dungeons.Select(_mapper.Map<DungeonViewModel>).ToList();
+        model.Option.Dungeons = dungeons.Select(_mapper.Map<DungeonViewModel>);
         ViewData["ReturnUrl"] = Url.Action("Index", "Dungeon");
         return View(model);
     }
@@ -136,6 +137,22 @@ public class DungeonController : Controller
         return RedirectToAction("Index");
     }
 
+    private async Task<string> GetMonsterTypeAsync(DungeonOptionCreateViewModel model, CancellationToken cancellationToken)
+    {
+        var monsterType = string.Join(",", model.MonsterType);
+        var monsters = await _optionService.ListOptionsAsync(OptionKey.MonsterType, cancellationToken);
+        if (model.MonsterType.Length == monsters.Count())
+        {
+            monsterType = "any";
+        }
+        if (model.MonsterType.Length == 0)
+        {
+            monsterType = "none";
+        }
+
+        return monsterType;
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(DungeonOptionCreateViewModel model, CancellationToken cancellationToken)
@@ -156,22 +173,6 @@ public class DungeonController : Controller
         }
         await FillCreateModelDropDownsAsync(model, cancellationToken);
         return View(model);
-    }
-
-    private async Task<string> GetMonsterTypeAsync(DungeonOptionCreateViewModel model, CancellationToken cancellationToken)
-    {
-        var monsterType = string.Join(",", model.MonsterType);
-        var monsters = await _optionService.ListOptionsAsync(cancellationToken, OptionKey.MonsterType);
-        if (model.MonsterType.Length == monsters.Count)
-        {
-            monsterType = "any";
-        }
-        if (model.MonsterType.Length == 0)
-        {
-            monsterType = "none";
-        }
-
-        return monsterType;
     }
 
     public async Task<IActionResult> Create(int optionId, CancellationToken cancellationToken)
@@ -203,22 +204,22 @@ public class DungeonController : Controller
 
     private async Task FillCreateModelDropDownsAsync(DungeonOptionCreateViewModel model, CancellationToken cancellationToken)
     {
-        var options = await _optionService.ListOptionsAsync(cancellationToken);
-
-        model.DungeonSizes = options.Where(om => om.Key == OptionKey.Size).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
-        model.DungeonDifficulties = options.Where(om => om.Key == OptionKey.Difficulty).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
+        var options = await _optionService.ListOptionsAsync(null, cancellationToken);
+        var optionModels = options.ToList();
+        model.DungeonSizes = optionModels.Where(om => om.Key == OptionKey.Size).Select(om => new SelectListItem { Text = om.Name, Value = om.Value });
+        model.DungeonDifficulties = optionModels.Where(om => om.Key == OptionKey.Difficulty).Select(om => new SelectListItem { Text = om.Name, Value = om.Value });
         model.PartyLevels = GenerateIntSelectList(1, 21);
         model.PartySizes = GenerateIntSelectList(1, 9);
-        model.TreasureValues = options.Where(om => om.Key == OptionKey.TreasureValue).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
-        model.ItemsRarities = options.Where(om => om.Key == OptionKey.ItemsRarity).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
-        model.RoomDensities = options.Where(om => om.Key == OptionKey.RoomDensity).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
-        model.RoomSizes = options.Where(om => om.Key == OptionKey.RoomSize).Select(om => new SelectListItem { Text = om.Name, Value = om.Value }).ToList();
-        model.MonsterTypes = options.Where(om => om.Key == OptionKey.MonsterType).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList();
-        model.TrapPercents = options.Where(om => om.Key == OptionKey.TrapPercent).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList();
+        model.TreasureValues = optionModels.Where(om => om.Key == OptionKey.TreasureValue).Select(om => new SelectListItem { Text = om.Name, Value = om.Value });
+        model.ItemsRarities = optionModels.Where(om => om.Key == OptionKey.ItemsRarity).Select(om => new SelectListItem { Text = om.Name, Value = om.Value });
+        model.RoomDensities = optionModels.Where(om => om.Key == OptionKey.RoomDensity).Select(om => new SelectListItem { Text = om.Name, Value = om.Value });
+        model.RoomSizes = optionModels.Where(om => om.Key == OptionKey.RoomSize).Select(om => new SelectListItem { Text = om.Name, Value = om.Value });
+        model.MonsterTypes = optionModels.Where(om => om.Key == OptionKey.MonsterType).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true });
+        model.TrapPercents = optionModels.Where(om => om.Key == OptionKey.TrapPercent).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true });
         model.DeadEnds = GetBool();
         model.Corridors = GetBool();
-        model.RoamingPercents = options.Where(om => om.Key == OptionKey.RoamingPercent).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList();
-        model.Themes = options.Where(om => om.Key == OptionKey.Theme).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true }).ToList();
+        model.RoamingPercents = optionModels.Where(om => om.Key == OptionKey.RoamingPercent).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true });
+        model.Themes = optionModels.Where(om => om.Key == OptionKey.Theme).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true });
     }
 
     private static List<SelectListItem> GetBool()

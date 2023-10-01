@@ -95,7 +95,7 @@ public class DungeonHelper : IDungeonHelper
         roomDescription.Add(new RoomDescription(
             GetRoomName(roomDescription.Count + 1),
             GetTreasure(),
-            GetMonster(),
+            GetMonsterDescription(),
             GetDoorDescription()));
         dungeonTiles[x][y].Description = Convert.ToString(roomDescription.Count);
     }
@@ -115,7 +115,7 @@ public class DungeonHelper : IDungeonHelper
         dungeonTile.Index = roamingMonsterDescription.Count;
         roamingMonsterDescription.Add(new RoamingMonsterDescription(
             GetRoamingName(roamingMonsterDescription.Count + 1),
-            GetRoamingMonster()));
+            GetRoamingMonsterDescription()));
         dungeonTile.Description = roamingMonsterDescription.Count.ToString();
     }
 
@@ -135,7 +135,7 @@ public class DungeonHelper : IDungeonHelper
         roomDescription.Add(new RoomDescription(
             GetRoomName(roomDescription.Count + 1),
             GetTreasure(),
-            GetMonster(),
+            GetMonsterDescription(),
             doors));
         dungeonTile.Description = roomDescription.Count.ToString();
     }
@@ -155,7 +155,7 @@ public class DungeonHelper : IDungeonHelper
             .ToList();
     }
 
-    public string GetMonster()
+    public string GetMonsterDescription()
     {
         if (MonsterType.Equals(Constants.None, StringComparison.OrdinalIgnoreCase))
             return Constants.MonsterNone;
@@ -201,7 +201,7 @@ public class DungeonHelper : IDungeonHelper
         return "ROAMING MONSTERS " + count + "# ";
     }
 
-    public string GetRoamingMonster()
+    public string GetRoamingMonsterDescription()
     {
         return CheckPossible() ? CalcEncounter()[9..] : // remove "Monster: "
             "No suitable monsters with this settings";

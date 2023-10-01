@@ -21,5 +21,5 @@ public interface IDungeonService
     Task<bool> DeleteDungeonOptionAsync(int id, CancellationToken cancellationToken);
     Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken);
     Task<DungeonModel> GenerateDungeonAsync(DungeonOptionModel model);
-    Task RenameDungeonAsync(int id, int userId, string newName, CancellationToken cancellationToken);
+    Task RenameDungeonAsync(int optionId, int userId, string newName, CancellationToken cancellationToken);
 }

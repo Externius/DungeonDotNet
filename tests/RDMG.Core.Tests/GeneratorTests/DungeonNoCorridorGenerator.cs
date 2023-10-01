@@ -15,20 +15,16 @@ public class DungeonNoCorridorGenerator : DungeonTestBase
     [Fact]
     public void CanInit()
     {
-        using var env = new TestEnvironment();
-        var dungeonNoCorridor = env.GetNcDungeon();
-        Draw(dungeonNoCorridor.DungeonTiles);
-        dungeonNoCorridor.RoomDescription.Count.ShouldBe(0);
+        Draw(DungeonNoCorridor.DungeonTiles);
+        DungeonNoCorridor.RoomDescription.Count.ShouldBe(0);
     }
 
     [Fact]
     public void TestAddFirstRoom()
     {
-        using var env = new TestEnvironment();
-        var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.AddFirstRoom();
-        Draw(dungeonNoCorridor.DungeonTiles);
-        var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
+        DungeonNoCorridor.AddFirstRoom();
+        Draw(DungeonNoCorridor.DungeonTiles);
+        var list = DungeonNoCorridor.DungeonTiles.SelectMany(T => T);
         var match = list.Where(x => x.Texture == Textures.Room);
         match.ShouldNotBeNull();
     }
@@ -36,24 +32,20 @@ public class DungeonNoCorridorGenerator : DungeonTestBase
     [Fact]
     public void TestFillRoomToDoor()
     {
-        using var env = new TestEnvironment();
-        var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.AddFirstRoom();
-        dungeonNoCorridor.FillRoomToDoor();
-        Draw(dungeonNoCorridor.DungeonTiles);
-        dungeonNoCorridor.OpenDoorList.Count.ShouldBe(0);
+        DungeonNoCorridor.AddFirstRoom();
+        DungeonNoCorridor.FillRoomToDoor();
+        Draw(DungeonNoCorridor.DungeonTiles);
+        DungeonNoCorridor.OpenDoorList.Count.ShouldBe(0);
     }
 
     [Fact]
     public void TestAddEntryPoint()
     {
-        using var env = new TestEnvironment();
-        var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.AddFirstRoom();
-        dungeonNoCorridor.FillRoomToDoor();
-        dungeonNoCorridor.AddEntryPoint();
-        Draw(dungeonNoCorridor.DungeonTiles);
-        var list = dungeonNoCorridor.DungeonTiles.SelectMany(T => T).ToList();
+        DungeonNoCorridor.AddFirstRoom();
+        DungeonNoCorridor.FillRoomToDoor();
+        DungeonNoCorridor.AddEntryPoint();
+        Draw(DungeonNoCorridor.DungeonTiles);
+        var list = DungeonNoCorridor.DungeonTiles.SelectMany(T => T);
         var match = list.Where(x => x.Texture == Textures.Entry);
         match.ShouldNotBeNull();
     }
@@ -61,13 +53,11 @@ public class DungeonNoCorridorGenerator : DungeonTestBase
     [Fact]
     public void TestAddDescription()
     {
-        using var env = new TestEnvironment();
-        var dungeonNoCorridor = env.GetNcDungeon();
-        dungeonNoCorridor.AddFirstRoom();
-        dungeonNoCorridor.FillRoomToDoor();
-        dungeonNoCorridor.AddEntryPoint();
-        dungeonNoCorridor.AddDescription();
-        Draw(dungeonNoCorridor.DungeonTiles);
-        dungeonNoCorridor.RoomDescription.Count.ShouldBeGreaterThan(1);
+        DungeonNoCorridor.AddFirstRoom();
+        DungeonNoCorridor.FillRoomToDoor();
+        DungeonNoCorridor.AddEntryPoint();
+        DungeonNoCorridor.AddDescription();
+        Draw(DungeonNoCorridor.DungeonTiles);
+        DungeonNoCorridor.RoomDescription.Count.ShouldBeGreaterThan(1);
     }
 }
