@@ -1,39 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using RDMG.Core;
+using RDMG.Infrastructure;
+using RDMG.Infrastructure.Data;
 using RDMG.Web;
-using RDMG.Web.Extensions;
 using System;
 using System.Globalization;
+using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddCookiePolicy()
-    .AddDatabase(builder.Configuration)
-    .AddHttpContextAccessor()
-    .AddApplicationServices(builder.Configuration)
-    .AddAutoMapper(cfg =>
-        {
-            cfg.AllowNullCollections = true;
-        }
-        , AppDomain.CurrentDomain.GetAssemblies())
-    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = new PathString("/Auth/Login");
-        options.AccessDeniedPath = new PathString("/Auth/Forbidden/");
-    });
-builder.Services.AddMemoryCache();
-builder.Services.AddMvc()
-#if DEBUG
-    .AddRazorRuntimeCompilation()
-#endif
-    ;
+builder.Services.AddWebServices()
+    .AddInfrastructureServices(builder.Configuration)
+    .AddApplicationServices();
 
-builder.Services.AddHealthChecks();
 builder.Host.AddSerilog(builder.Configuration);
 
 var app = builder.Build();
@@ -41,7 +24,6 @@ var cultureInfo = new CultureInfo("en-US");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
-app.ConfigureDb(builder.Configuration);
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -51,6 +33,30 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var initializer = scope.ServiceProvider
+            .GetRequiredService<AppDbContextInitializer>();
+        var source = new CancellationTokenSource();
+        var token = source.Token;
+        initializer.UpdateAsync(token).Wait();
+        initializer.SeedDataAsync(token).Wait();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider
+            .GetRequiredService<ILogger<Program>>();
+
+        logger.LogError(ex,
+            "An error occurred during database initialization.");
+
+        throw;
+    }
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

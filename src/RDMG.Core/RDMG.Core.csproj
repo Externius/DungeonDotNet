@@ -3,9 +3,14 @@
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
 		<PackageReference Include="AutoMapper" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 		<PackageReference Include="System.Text.Json" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Settings.Configuration" />
+		<PackageReference Include="Serilog.Sinks.File" />
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\RDMG.Resources\RDMG.Resources.csproj" />

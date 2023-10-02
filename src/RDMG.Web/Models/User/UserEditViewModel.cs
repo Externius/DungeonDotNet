@@ -17,5 +17,5 @@ public class UserEditViewModel : EditViewModel
     [Required(ErrorMessageResourceType = typeof(Resources.Error), ErrorMessageResourceName = "RequiredValidation")]
     [Display(ResourceType = typeof(Resources.User), Name = "Role")]
     public string Role { get; set; }
-    public bool Deleted { get; set; }
+    public bool IsDeleted { get; set; }
 }

@@ -24,5 +24,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\RDMG.Core\RDMG.Core.csproj" />
 		<ProjectReference Include="..\..\src\RDMG.Infrastructure\RDMG.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\src\RDMG.Web\RDMG.Web.csproj" />
 	</ItemGroup>
 </Project>

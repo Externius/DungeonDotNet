@@ -1,11 +1,8 @@
 ﻿using System;
 
-namespace RDMG.Core.Abstractions.Services.Models;
-
-public class EditModel
+namespace RDMG.Core.Domain;
+public abstract class AuditableEntity : BaseEntity
 {
-    public int Id { get; set; }
-    public byte[] Timestamp { get; set; }
     public string CreatedBy { get; set; }
 
     public DateTime Created { get; set; }

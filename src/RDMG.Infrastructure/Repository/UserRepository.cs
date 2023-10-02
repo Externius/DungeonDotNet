@@ -38,7 +38,7 @@ public class UserRepository : IUserRepository
     {
         var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
 
-        if (local == null)
+        if (local is null)
             return null;
         _mapper.Map(user, local);
         await _context.SaveChangesAsync(CancellationToken.None);
@@ -49,9 +49,9 @@ public class UserRepository : IUserRepository
     {
         var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-        if (local != null)
+        if (local is not null)
         {
-            local.Deleted = true;
+            local.IsDeleted = true;
             await _context.SaveChangesAsync(CancellationToken.None);
             return true;
         }
@@ -65,7 +65,7 @@ public class UserRepository : IUserRepository
         var query = _context.Users.AsNoTracking();
 
         if (deleted.HasValue)
-            query = query.Where(x => x.Deleted == deleted.Value);
+            query = query.Where(x => x.IsDeleted == deleted.Value);
 
         return await query.FirstOrDefaultAsync(u => u.Username == username);
     }
@@ -75,7 +75,7 @@ public class UserRepository : IUserRepository
         var query = _context.Users.AsNoTracking();
 
         if (deleted.HasValue)
-            query = query.Where(x => x.Deleted == deleted.Value);
+            query = query.Where(x => x.IsDeleted == deleted.Value);
 
         return await query.ToListAsync();
     }

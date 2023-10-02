@@ -53,11 +53,11 @@
                         @item.Role
                     </td>
                     <td>
-                        @(item.Deleted == true ? Resources.User.Deleted : Resources.User.Active)
+                        @(item.IsDeleted == true ? Resources.User.Deleted : Resources.User.Active)
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id" title="@Resources.Common.Edit" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                        @if (!item.Deleted)
+                        @if (!item.IsDeleted)
                         {
                             <form method="post" asp-action="Delete" asp-controller="User" asp-route-id="@item.Id" class="list-inline-item">
                                 <button id="deleteBtn" title="@Resources.Common.Delete" class="btn btn-primary deleteUser"><i class="fas fa-minus-circle"></i></button>

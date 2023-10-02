@@ -4,9 +4,5 @@ namespace RDMG.Web.Models.User;
 
 public class UserListViewModel
 {
-    public IList<UserEditViewModel> Details { get; set; }
-    public UserListViewModel()
-    {
-        Details = new List<UserEditViewModel>();
-    }
+    public IEnumerable<UserEditViewModel> Details { get; set; } = new List<UserEditViewModel>();
 }

@@ -25,12 +25,13 @@ public class DungeonRepository : IDungeonRepository
 
     public async Task<IEnumerable<Dungeon>> GetAllDungeonsForUserAsync(int userId, CancellationToken cancellationToken)
     {
-        return await _context.Dungeons
-            .AsNoTracking()
-            .Include(d => d.DungeonOption)
-            .Where(d => d.DungeonOption.UserId == userId)
-            .OrderBy(d => d.DungeonOption.Created)
-            .ToListAsync(cancellationToken);
+        return await _context.DungeonOptions
+                .AsNoTracking()
+                .Include(d => d.Dungeons)
+                .Where(d => d.UserId == userId)
+                .OrderBy(d => d.Created)
+                .SelectMany(d => d.Dungeons)
+                .ToListAsync(cancellationToken);
     }
 
     public async Task<Dungeon> AddDungeonAsync(Dungeon savedDungeon, CancellationToken cancellationToken)
@@ -42,9 +43,10 @@ public class DungeonRepository : IDungeonRepository
 
     public async Task<bool> DeleteDungeonAsync(int id, CancellationToken cancellationToken)
     {
-        var entity = await _context.Dungeons.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        var entity = await _context.Dungeons
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-        if (entity != null)
+        if (entity is not null)
         {
             _context.Dungeons.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
@@ -57,25 +59,28 @@ public class DungeonRepository : IDungeonRepository
 
     public async Task<IEnumerable<Dungeon>> GetAllDungeonByOptionNameForUserAsync(string dungeonName, int userId, CancellationToken cancellationToken)
     {
-        return await _context.Dungeons
+        return await _context.DungeonOptions
             .AsNoTracking()
-            .Include(d => d.DungeonOption)
-            .Where(d => d.DungeonOption.DungeonName == dungeonName && d.DungeonOption.UserId == userId)
-            .OrderBy(d => d.DungeonOption.Created)
+            .Include(d => d.Dungeons)
+            .Where(d => d.DungeonName == dungeonName && d.UserId == userId)
+            .OrderBy(d => d.Created)
+            .SelectMany(d => d.Dungeons)
             .ToListAsync(cancellationToken);
     }
 
     public async Task<Dungeon> GetDungeonAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.Dungeons.AsNoTracking()
-                                      .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
+        return await _context.Dungeons
+            .AsNoTracking()
+            .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
     }
 
     public async Task<Dungeon> UpdateDungeonAsync(Dungeon dungeon, CancellationToken cancellationToken)
     {
-        var local = await _context.Dungeons.FirstOrDefaultAsync(d => d.Id == dungeon.Id, cancellationToken);
+        var local = await _context.Dungeons
+            .FirstOrDefaultAsync(d => d.Id == dungeon.Id, cancellationToken);
 
-        if (local == null)
+        if (local is null)
             return null;
         _mapper.Map(dungeon, local);
         await _context.SaveChangesAsync(cancellationToken);

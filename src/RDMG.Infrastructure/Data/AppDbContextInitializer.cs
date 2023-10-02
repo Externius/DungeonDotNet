@@ -1,3 +1,4 @@
+﻿using Microsoft.EntityFrameworkCore;
 using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
@@ -9,41 +10,50 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RDMG.Infrastructure.Seed;
-
-public class ContextSeedData
+namespace RDMG.Infrastructure.Data;
+public class AppDbContextInitializer
 {
     private readonly IAppDbContext _context;
     private readonly IDungeonService _dungeonService;
-
-    public ContextSeedData(IDungeonService dungeonService, IAppDbContext context)
+    public AppDbContextInitializer(IAppDbContext context, IDungeonService dungeonService)
     {
         _context = context;
         _dungeonService = dungeonService;
     }
 
-    public async Task SeedDataAsync()
+    public async Task UpdateAsync(CancellationToken cancellationToken)
+    {
+        if (_context.Database.IsSqlServer() || _context.Database.IsSqlite())
+        {
+            await _context.Database.MigrateAsync(cancellationToken: cancellationToken);
+        }
+        else
+        {
+            await _context.Database.EnsureCreatedAsync(cancellationToken);
+        }
+    }
+    public async Task SeedDataAsync(CancellationToken cancellationToken)
     {
         if (!_context.Users.Any())
         {
-            var source = new CancellationTokenSource();
-            var token = source.Token;
-            await SeedUsers(token);
-            await SeedOptions(token);
-            await SeedDungeons(token);
+            await SeedUsersAsync(cancellationToken);
+            await SeedOptionsAsync(cancellationToken);
+            await SeedDungeonsAsync(cancellationToken, 1);
         }
     }
 
-    public async Task SeedBaseAsync()
+    public async Task SeedTestBaseAsync(CancellationToken cancellationToken)
     {
-        if (!_context.Options.Any())
+        if (!_context.Users.Any())
         {
-            var source = new CancellationTokenSource();
-            await SeedOptions(source.Token);
+            await SeedUsersAsync(cancellationToken);
+            await SeedOptionsAsync(cancellationToken);
+            await SeedDungeonsAsync(cancellationToken, 1);
+            await SeedDungeonsAsync(cancellationToken, 2);
         }
     }
 
-    private async Task SeedOptions(CancellationToken token)
+    private async Task SeedOptionsAsync(CancellationToken token)
     {
         await SeedSizeAsync(token);
         await SeedDifficultyAsync(token);
@@ -417,12 +427,13 @@ public class ContextSeedData
         await _context.SaveChangesAsync(token);
     }
 
-    private async Task SeedDungeons(CancellationToken token)
+    private async Task SeedDungeonsAsync(CancellationToken token,
+        int userId)
     {
         var dungeonOption = new DungeonOption
         {
-            UserId = 1,
-            DungeonName = "Test1",
+            UserId = userId,
+            DungeonName = "Test 1",
             Created = DateTime.UtcNow,
             ItemsRarity = 1,
             DeadEnd = true,
@@ -469,8 +480,8 @@ public class ContextSeedData
 
         dungeonOption = new DungeonOption
         {
-            UserId = 1,
-            DungeonName = "Test2",
+            UserId = userId,
+            DungeonName = "Test 2",
             Created = DateTime.UtcNow,
             ItemsRarity = 1,
             DeadEnd = true,
@@ -515,7 +526,7 @@ public class ContextSeedData
         await _dungeonService.AddDungeonAsync(sd, token);
     }
 
-    private async Task SeedUsers(CancellationToken token)
+    private async Task SeedUsersAsync(CancellationToken token)
     {
         _context.Users.Add(new User
         {

@@ -1,4 +1,5 @@
-﻿using RDMG.Core.Generator;
+﻿using RDMG.Core.Abstractions.Services;
+using RDMG.Core.Generator;
 using Shouldly;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,25 +7,33 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class Update : DungeonServiceTestBase
+public class Update : IClassFixture<TestFixture>
 {
+    private readonly IDungeonService _dungeonService;
+
+    public Update(TestFixture fixture)
+    {
+        _dungeonService = fixture.DungeonService;
+    }
+
     [Fact]
     public async Task UpdateDungeonAsync_WithValidDungeonModel_UpdatesExistingDungeon()
     {
         var source = new CancellationTokenSource();
         var token = source.Token;
-        const int dungeonId = 1;
-        var oldDungeon = await DungeonService.GetDungeonAsync(dungeonId, token);
-        oldDungeon.DungeonTiles = DungeonNoCorridor.DungeonTiles.ToString();
+        const int dungeonId = 4;
+        var oldDungeon = await _dungeonService.GetDungeonAsync(dungeonId, token);
+        oldDungeon.DungeonTiles = Constants.Empty;
         oldDungeon.TrapDescription = Constants.Empty;
-        oldDungeon.RoomDescription = DungeonNoCorridor.RoomDescription.ToString();
+        oldDungeon.RoomDescription = Constants.Empty;
         oldDungeon.RoamingMonsterDescription = Constants.Empty;
-        await DungeonService.UpdateDungeonAsync(oldDungeon, token);
-        var result = await DungeonService.GetDungeonAsync(dungeonId, token);
+        await _dungeonService.UpdateDungeonAsync(oldDungeon, token);
+        var result = await _dungeonService.GetDungeonAsync(dungeonId, token);
+        result.ShouldNotBeNull();
         result.RoamingMonsterDescription.ShouldBe(Constants.Empty);
         result.TrapDescription.ShouldBe(Constants.Empty);
-        result.DungeonTiles.ShouldBe(DungeonNoCorridor.DungeonTiles.ToString());
-        result.RoomDescription.ShouldBe(DungeonNoCorridor.RoomDescription.ToString());
+        result.DungeonTiles.ShouldBe(Constants.Empty);
+        result.RoomDescription.ShouldBe(Constants.Empty);
     }
 
     [Fact]
@@ -34,9 +43,9 @@ public class Update : DungeonServiceTestBase
         var token = source.Token;
         const int id = 1;
         const string newName = "New Name";
-        var existingOption = await DungeonService.GetDungeonOptionAsync(id, token);
-        await DungeonService.RenameDungeonAsync(existingOption.Id, existingOption.UserId, newName, token);
-        var renamed = await DungeonService.GetDungeonOptionAsync(id, token);
+        var existingOption = await _dungeonService.GetDungeonOptionAsync(id, token);
+        await _dungeonService.RenameDungeonAsync(existingOption.Id, existingOption.UserId, newName, token);
+        var renamed = await _dungeonService.GetDungeonOptionAsync(id, token);
         renamed.DungeonName.ShouldBe(newName);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Shouldly;
+﻿using RDMG.Core.Abstractions.Services;
+using Shouldly;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,26 +7,33 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class Get : DungeonServiceTestBase
+public class Get : IClassFixture<TestFixture>
 {
+    private readonly IDungeonService _dungeonService;
+
+    public Get(TestFixture fixture)
+    {
+        _dungeonService = fixture.DungeonService;
+    }
+
     [Fact]
     public async Task GetAllDungeonOptionsAsync_ReturnsDungeonOptionModelList()
     {
         var source = new CancellationTokenSource();
         var token = source.Token;
-        const int expectedCount = 2;
-        var result = (await DungeonService.GetAllDungeonOptionsAsync(token)).ToList();
+        const int expectedCount = 4;
+        var result = (await _dungeonService.GetAllDungeonOptionsAsync(token)).ToList();
         result.ShouldNotBeEmpty();
         result.Count.ShouldBe(expectedCount);
     }
 
     [Fact]
-    public async Task GetAllDungeonOptionsForUserAsync_WithValidUserIdWithoutGeneratedDungeons_ReturnsEmptyList()
+    public async Task GetAllDungeonOptionsForUserAsync_WithNotExistingUserId_ReturnsEmptyList()
     {
         var source = new CancellationTokenSource();
         var token = source.Token;
-        const int userId = 2;
-        var result = await DungeonService.GetAllDungeonOptionsForUserAsync(userId, token);
+        const int userId = 3;
+        var result = await _dungeonService.GetAllDungeonOptionsForUserAsync(userId, token);
         result.ShouldBeEmpty();
     }
 
@@ -34,8 +42,8 @@ public class Get : DungeonServiceTestBase
     {
         var source = new CancellationTokenSource();
         var token = source.Token;
-        var option = (await DungeonService.GetAllDungeonOptionsAsync(token)).First();
-        var result = await DungeonService.GetDungeonOptionByNameAsync(option.DungeonName, option.UserId, token);
+        var option = (await _dungeonService.GetAllDungeonOptionsAsync(token)).First();
+        var result = await _dungeonService.GetDungeonOptionByNameAsync(option.DungeonName, option.UserId, token);
         result.ShouldNotBeNull();
         result.ShouldBeEquivalentTo(option);
     }
@@ -46,7 +54,7 @@ public class Get : DungeonServiceTestBase
         var source = new CancellationTokenSource();
         var token = source.Token;
         const int id = 1;
-        var result = await DungeonService.GetDungeonAsync(id, token);
+        var result = await _dungeonService.GetDungeonAsync(id, token);
         result.Id.ShouldBe(id);
     }
 }

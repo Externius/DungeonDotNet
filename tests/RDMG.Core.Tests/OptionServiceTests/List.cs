@@ -9,15 +9,14 @@ using Xunit;
 
 namespace RDMG.Core.Tests.OptionServiceTests;
 
-public class List
+public class List : IClassFixture<TestFixture>
 {
     private readonly IOptionService _optionService;
     private readonly IOptionRepository _optionRepository;
-    public List()
+    public List(TestFixture fixture)
     {
-        var env = new TestEnvironment();
-        _optionService = env.GetService<IOptionService>();
-        _optionRepository = env.GetService<IOptionRepository>();
+        _optionService = fixture.OptionService;
+        _optionRepository = fixture.OptionRepository;
     }
 
     [Fact]

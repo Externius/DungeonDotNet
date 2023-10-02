@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using RDMG.Core.Domain;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,5 +12,6 @@ public interface IAppDbContext
     public DbSet<Dungeon> Dungeons { get; }
     public DbSet<User> Users { get; }
     public DbSet<Option> Options { get; }
+    public DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

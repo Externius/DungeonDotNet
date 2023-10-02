@@ -5,7 +5,7 @@ using RDMG.Infrastructure.Extensions;
 
 namespace RDMG.Infrastructure.Data;
 
-public class Context : DbContext, IAppDbContext
+public class AppDbContext : DbContext, IAppDbContext
 {
     public const string DbProvider = "DbProvider";
     public const string Rdmg = "RDMG";
@@ -16,14 +16,14 @@ public class Context : DbContext, IAppDbContext
     public DbSet<Dungeon> Dungeons { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Option> Options { get; set; }
-    public Context()
+    public AppDbContext()
     {
 
     }
-    protected Context(DbContextOptions options) : base(options)
+    protected AppDbContext(DbContextOptions options) : base(options)
     {
     }
-    public Context(DbContextOptions<Context> options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,37 +38,4 @@ public class Context : DbContext, IAppDbContext
 
         modelBuilder.UseEnumStringConverter();
     }
-}
-
-public class SqlServerContext : Context
-{
-    public SqlServerContext()
-    {
-
-    }
-    public SqlServerContext(DbContextOptions<SqlServerContext> options) : base(options)
-    {
-
-    }
-
-#if DEBUG
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlServer();
-#endif
-}
-
-public class SqliteContext : Context
-{
-    public SqliteContext()
-    {
-
-    }
-    public SqliteContext(DbContextOptions<SqliteContext> options) : base(options)
-    {
-
-    }
-#if DEBUG
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlite();
-#endif
 }

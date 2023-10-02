@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
-using RDMG.Web.Helpers;
 using RDMG.Web.Models.Dungeon;
 using System;
 using System.Collections.Generic;
@@ -22,54 +21,48 @@ public class DungeonController : Controller
 {
     private readonly IOptionService _optionService;
     private readonly IDungeonService _dungeonService;
+    private readonly ICurrentUserService _currentUserService;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
     public DungeonController(IDungeonService dungeonService,
         IOptionService optionService,
+        ICurrentUserService currentUserService,
         IMapper mapper,
         ILogger<DungeonController> logger)
     {
         _optionService = optionService;
         _dungeonService = dungeonService;
+        _currentUserService = currentUserService;
         _mapper = mapper;
         _logger = logger;
     }
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        var userId = UserHelper.GetUserId(User.Claims);
-        var list = await _dungeonService.GetAllDungeonOptionsForUserAsync(userId, cancellationToken);
+        var list =
+            await _dungeonService.GetAllDungeonOptionsForUserAsync(_currentUserService.GetUserIdAsInt(), cancellationToken);
         var model = new DungeonListViewModel
         {
-            List = list.Select(_mapper.Map<DungeonOptionViewModel>).ToList()
+            List = list.Select(_mapper.Map<DungeonOptionViewModel>)
         };
-
-        var dungeons = await _dungeonService.ListUserDungeonsAsync(userId, cancellationToken);
-        foreach (var option in model.List)
-        {
-            option.Dungeons = dungeons.Where(dm => dm.DungeonOptionId == option.Id).Select(_mapper.Map<DungeonViewModel>);
-        }
 
         return View(model);
     }
 
     public async Task<IActionResult> Load(string name, int level, CancellationToken cancellationToken)
     {
-        var id = UserHelper.GetUserId(User.Claims);
         var model = new LoadViewModel
         {
             Theme = string.Empty,
-            Option = _mapper.Map<DungeonOptionViewModel>(await _dungeonService.GetDungeonOptionByNameAsync(name, id, cancellationToken)),
+            Option = _mapper.Map<DungeonOptionViewModel>(await _dungeonService.GetDungeonOptionByNameAsync(name, _currentUserService.GetUserIdAsInt(), cancellationToken)),
             Themes = (await _optionService.ListOptionsAsync(OptionKey.Theme, cancellationToken))
                         .Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true })
         };
 
-        var dungeons = await _dungeonService.ListUserDungeonsByNameAsync(model.Option.DungeonName, id, cancellationToken);
         if (level != 0)
-            dungeons = dungeons.Where(dm => dm.Level == level).ToList();
+            model.Option.Dungeons = model.Option.Dungeons.Where(dm => dm.Level == level);
 
-        model.Option.Dungeons = dungeons.Select(_mapper.Map<DungeonViewModel>);
         ViewData["ReturnUrl"] = Url.Action("Index", "Dungeon");
         return View(model);
     }
@@ -95,7 +88,7 @@ public class DungeonController : Controller
         {
             Id = id,
             DungeonName = dungeonName,
-            UserId = UserHelper.GetUserId(User.Claims)
+            UserId = _currentUserService.GetUserIdAsInt()
         };
 
         return View(model);
@@ -182,7 +175,7 @@ public class DungeonController : Controller
             DeadEnd = true,
             Corridor = true,
             ItemsRarity = 1,
-            UserId = UserHelper.GetUserId(User.Claims),
+            UserId = _currentUserService.GetUserIdAsInt(),
             TrapPercent = 15,
             Level = 1
         };
@@ -222,7 +215,7 @@ public class DungeonController : Controller
         model.Themes = optionModels.Where(om => om.Key == OptionKey.Theme).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true });
     }
 
-    private static List<SelectListItem> GetBool()
+    private static IEnumerable<SelectListItem> GetBool()
     {
         return new List<SelectListItem>
         {
@@ -231,7 +224,7 @@ public class DungeonController : Controller
         };
     }
 
-    private static List<SelectListItem> GenerateIntSelectList(int from, int to)
+    private static IEnumerable<SelectListItem> GenerateIntSelectList(int from, int to)
     {
         var list = new List<SelectListItem>();
         for (var i = from; i <= to; i++)

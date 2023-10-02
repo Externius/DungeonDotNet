@@ -122,7 +122,7 @@ public class UserService : IUserService
         try
         {
             var model = await _userRepository.GetAsync(id);
-            model.Deleted = false;
+            model.IsDeleted = false;
             await _userRepository.UpdateAsync(model);
             return true;
         }

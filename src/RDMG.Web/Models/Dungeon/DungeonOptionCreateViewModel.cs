@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -38,7 +37,6 @@ public class DungeonOptionCreateViewModel : EditViewModel
     [Required]
     public int RoamingPercent { get; set; }
     public int Theme { get; set; }
-    public DateTime Created { get; set; } = DateTime.UtcNow;
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "DungeonSize")]
     public IEnumerable<SelectListItem> DungeonSizes { get; set; }
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "DungeonDifficulty")]

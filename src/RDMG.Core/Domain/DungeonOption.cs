@@ -1,12 +1,10 @@
-using System;
+using System.Collections.Generic;
 
 namespace RDMG.Core.Domain;
 
-public class DungeonOption : BaseEntity
+public class DungeonOption : AuditableEntity
 {
     public string DungeonName { get; set; }
-    public int UserId { get; set; }
-    public User User { get; set; }
     public int DungeonSize { get; set; }
     public int DungeonDifficulty { get; set; }
     public int PartyLevel { get; set; }
@@ -20,5 +18,8 @@ public class DungeonOption : BaseEntity
     public bool DeadEnd { get; set; }
     public bool Corridor { get; set; }
     public int RoamingPercent { get; set; }
-    public DateTime Created { get; set; }
+
+    public int UserId { get; set; }
+    public User User { get; set; }
+    public IEnumerable<Dungeon> Dungeons { get; } = new List<Dungeon>();
 }

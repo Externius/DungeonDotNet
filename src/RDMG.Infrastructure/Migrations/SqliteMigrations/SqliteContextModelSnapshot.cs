@@ -15,7 +15,7 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
 
             modelBuilder.Entity("RDMG.Core.Domain.Dungeon", b =>
                 {
@@ -23,10 +23,22 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("DungeonOptionId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("DungeonTiles")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastModifiedBy")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Level")
@@ -65,6 +77,9 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("DeadEnd")
                         .HasColumnType("INTEGER");
 
@@ -79,6 +94,12 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
 
                     b.Property<int>("ItemsRarity")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("MonsterType")
                         .HasColumnType("TEXT");
@@ -116,9 +137,6 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("DungeonName", "UserId")
-                        .IsUnique();
-
                     b.ToTable("DungeonOptions");
                 });
 
@@ -128,9 +146,8 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Key")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
@@ -145,9 +162,6 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Key", "Name")
-                        .IsUnique();
-
                     b.ToTable("Options");
                 });
 
@@ -157,13 +171,25 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastModifiedBy")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
@@ -172,9 +198,8 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     b.Property<string>("Password")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -192,7 +217,7 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
             modelBuilder.Entity("RDMG.Core.Domain.Dungeon", b =>
                 {
                     b.HasOne("RDMG.Core.Domain.DungeonOption", "DungeonOption")
-                        .WithMany()
+                        .WithMany("Dungeons")
                         .HasForeignKey("DungeonOptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -209,6 +234,11 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("RDMG.Core.Domain.DungeonOption", b =>
+                {
+                    b.Navigation("Dungeons");
                 });
 #pragma warning restore 612, 618
         }

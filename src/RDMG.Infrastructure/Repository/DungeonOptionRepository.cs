@@ -26,6 +26,8 @@ public class DungeonOptionRepository : IDungeonOptionRepository
     public async Task<IEnumerable<DungeonOption>> GetAllDungeonOptionsAsync(CancellationToken cancellationToken)
     {
         return await _context.DungeonOptions
+            .Include(d => d.Dungeons)
+            .AsNoTracking()
             .OrderBy(d => d.Created)
             .ToListAsync(cancellationToken);
 
@@ -35,6 +37,8 @@ public class DungeonOptionRepository : IDungeonOptionRepository
     {
 
         return await _context.DungeonOptions
+            .AsNoTracking()
+            .Include(d => d.Dungeons)
             .Where(d => d.UserId == userId)
             .OrderBy(d => d.Created)
             .ToListAsync(cancellationToken);
@@ -45,12 +49,13 @@ public class DungeonOptionRepository : IDungeonOptionRepository
         _context.DungeonOptions.Add(dungeonOption);
         await _context.SaveChangesAsync(cancellationToken);
         return dungeonOption;
-
     }
 
     public async Task<DungeonOption> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
     {
         return await _context.DungeonOptions
+            .Include(d => d.Dungeons)
+            .AsNoTracking()
             .Where(d => d.DungeonName == dungeonName && d.UserId == userId)
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -60,7 +65,7 @@ public class DungeonOptionRepository : IDungeonOptionRepository
         var entity = await _context.DungeonOptions
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-        if (entity != null)
+        if (entity is not null)
         {
             var dungeons = await _context.Dungeons.Where(sd => sd.DungeonOptionId == entity.Id).ToListAsync(cancellationToken);
             _context.Dungeons.RemoveRange(dungeons);
@@ -82,7 +87,7 @@ public class DungeonOptionRepository : IDungeonOptionRepository
     {
         var local = await _context.DungeonOptions.FirstOrDefaultAsync(d => d.Id == dungeonOption.Id, cancellationToken);
 
-        if (local == null)
+        if (local is null)
             return null;
         _mapper.Map(dungeonOption, local);
         await _context.SaveChangesAsync(cancellationToken);

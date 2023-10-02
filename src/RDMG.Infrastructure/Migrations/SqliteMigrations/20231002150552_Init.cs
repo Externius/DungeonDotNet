@@ -5,8 +5,10 @@ using System;
 
 namespace RDMG.Infrastructure.Migrations.SqliteMigrations
 {
+    /// <inheritdoc />
     public partial class Init : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -15,7 +17,7 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Key = table.Column<string>(type: "TEXT", nullable: false),
+                    Key = table.Column<int>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Value = table.Column<string>(type: "TEXT", nullable: true),
                     Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
@@ -36,9 +38,13 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     LastName = table.Column<string>(type: "TEXT", nullable: true),
                     Email = table.Column<string>(type: "TEXT", nullable: true),
                     Password = table.Column<string>(type: "TEXT", nullable: true),
-                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Role = table.Column<string>(type: "TEXT", nullable: false),
-                    Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
+                    Role = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
+                    CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    Created = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -52,7 +58,6 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     DungeonName = table.Column<string>(type: "TEXT", nullable: true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
                     DungeonSize = table.Column<int>(type: "INTEGER", nullable: false),
                     DungeonDifficulty = table.Column<int>(type: "INTEGER", nullable: false),
                     PartyLevel = table.Column<int>(type: "INTEGER", nullable: false),
@@ -66,8 +71,12 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     DeadEnd = table.Column<bool>(type: "INTEGER", nullable: false),
                     Corridor = table.Column<bool>(type: "INTEGER", nullable: false),
                     RoamingPercent = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
+                    CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
+                    LastModifiedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,9 +99,13 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                     RoomDescription = table.Column<string>(type: "TEXT", nullable: true),
                     TrapDescription = table.Column<string>(type: "TEXT", nullable: true),
                     RoamingMonsterDescription = table.Column<string>(type: "TEXT", nullable: true),
-                    DungeonOptionId = table.Column<int>(type: "INTEGER", nullable: false),
                     Level = table.Column<int>(type: "INTEGER", nullable: false),
-                    Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
+                    DungeonOptionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Timestamp = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
+                    CreatedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    Created = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,12 +119,6 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DungeonOptions_DungeonName_UserId",
-                table: "DungeonOptions",
-                columns: new[] { "DungeonName", "UserId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DungeonOptions_UserId",
                 table: "DungeonOptions",
                 column: "UserId");
@@ -120,14 +127,9 @@ namespace RDMG.Infrastructure.Migrations.SqliteMigrations
                 name: "IX_Dungeons_DungeonOptionId",
                 table: "Dungeons",
                 column: "DungeonOptionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Options_Key_Name",
-                table: "Options",
-                columns: new[] { "Key", "Name" },
-                unique: true);
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

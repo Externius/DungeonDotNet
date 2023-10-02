@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -35,6 +34,5 @@ public class DungeonOptionViewModel : EditViewModel
     public bool Corridor { get; set; }
     [Required]
     public int RoamingPercent { get; set; }
-    public DateTime Created { get; set; } = DateTime.UtcNow;
     public IEnumerable<DungeonViewModel> Dungeons { get; set; } = new List<DungeonViewModel>();
 }

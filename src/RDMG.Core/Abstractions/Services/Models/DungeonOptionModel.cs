@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace RDMG.Core.Abstractions.Services.Models;
 
@@ -19,7 +19,7 @@ public class DungeonOptionModel : EditModel
     public bool DeadEnd { get; set; }
     public bool Corridor { get; set; }
     public int RoamingPercent { get; set; }
-    public DateTime Created { get; set; }
     public int Width { get; set; } = 800;
     public int Height { get; set; } = 800;
+    public IEnumerable<DungeonModel> Dungeons { get; } = new List<DungeonModel>();
 }
