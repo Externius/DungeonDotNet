@@ -7,14 +7,9 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class Generate : IClassFixture<TestFixture>
+public class Generate(TestFixture fixture) : IClassFixture<TestFixture>
 {
-    private readonly IDungeonService _dungeonService;
-
-    public Generate(TestFixture fixture)
-    {
-        _dungeonService = fixture.DungeonService;
-    }
+    private readonly IDungeonService _dungeonService = fixture.DungeonService;
 
     [Fact]
     public async Task GenerateDungeonAsync_WithValidOptionModel_ReturnsDungeonModel()

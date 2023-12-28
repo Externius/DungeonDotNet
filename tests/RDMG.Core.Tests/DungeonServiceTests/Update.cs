@@ -7,19 +7,14 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class Update : IClassFixture<TestFixture>
+public class Update(TestFixture fixture) : IClassFixture<TestFixture>
 {
-    private readonly IDungeonService _dungeonService;
-
-    public Update(TestFixture fixture)
-    {
-        _dungeonService = fixture.DungeonService;
-    }
+    private readonly IDungeonService _dungeonService = fixture.DungeonService;
 
     [Fact]
     public async Task UpdateDungeonAsync_WithValidDungeonModel_UpdatesExistingDungeon()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         const int dungeonId = 4;
         var oldDungeon = await _dungeonService.GetDungeonAsync(dungeonId, token);
@@ -39,7 +34,7 @@ public class Update : IClassFixture<TestFixture>
     [Fact]
     public async Task RenameDungeonAsync_WithValidOptionIdAndUserId_RenamesExistingDungeon()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         const int id = 1;
         const string newName = "New Name";

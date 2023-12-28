@@ -1,14 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using RDMG.Core;
+﻿using RDMG.Core;
 using RDMG.Infrastructure;
 using RDMG.Infrastructure.Data;
 using RDMG.Web;
-using System;
 using System.Globalization;
-using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +34,7 @@ using (var scope = app.Services.CreateScope())
     {
         var initializer = scope.ServiceProvider
             .GetRequiredService<AppDbContextInitializer>();
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         initializer.UpdateAsync(token).Wait();
         initializer.SeedDataAsync(token).Wait();

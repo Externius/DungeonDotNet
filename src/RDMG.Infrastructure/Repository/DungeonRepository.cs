@@ -11,17 +11,11 @@ using System.Threading.Tasks;
 
 namespace RDMG.Infrastructure.Repository;
 
-public class DungeonRepository : IDungeonRepository
+public class DungeonRepository(IAppDbContext context, IMapper mapper, ILogger<DungeonRepository> logger) : IDungeonRepository
 {
-    private readonly IAppDbContext _context;
-    private readonly ILogger<DungeonRepository> _logger;
-    private readonly IMapper _mapper;
-    public DungeonRepository(IAppDbContext context, IMapper mapper, ILogger<DungeonRepository> logger)
-    {
-        _context = context;
-        _logger = logger;
-        _mapper = mapper;
-    }
+    private readonly IAppDbContext _context = context;
+    private readonly ILogger<DungeonRepository> _logger = logger;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<IEnumerable<Dungeon>> GetAllDungeonsForUserAsync(int userId, CancellationToken cancellationToken)
     {
@@ -68,14 +62,14 @@ public class DungeonRepository : IDungeonRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Dungeon> GetDungeonAsync(int id, CancellationToken cancellationToken)
+    public async Task<Dungeon?> GetDungeonAsync(int id, CancellationToken cancellationToken)
     {
         return await _context.Dungeons
             .AsNoTracking()
             .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
     }
 
-    public async Task<Dungeon> UpdateDungeonAsync(Dungeon dungeon, CancellationToken cancellationToken)
+    public async Task<Dungeon?> UpdateDungeonAsync(Dungeon dungeon, CancellationToken cancellationToken)
     {
         var local = await _context.Dungeons
             .FirstOrDefaultAsync(d => d.Id == dungeon.Id, cancellationToken);

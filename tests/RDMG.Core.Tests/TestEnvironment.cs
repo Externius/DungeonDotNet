@@ -21,7 +21,7 @@ public sealed class TestEnvironment : IDisposable
     private bool _disposedValue;
     public TestEnvironment()
     {
-        IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        var configurationBuilder = new ConfigurationBuilder();
         var configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
         configurationBuilder.AddJsonFile(configFile);
         var config = configurationBuilder.Build();
@@ -31,7 +31,7 @@ public sealed class TestEnvironment : IDisposable
         Connection.Open();
 
         var services = new ServiceCollection();
-        ConfigureServices(services);
+        ConfigureServices(services, config);
 
         _scope = services.BuildServiceProvider().CreateScope();
         InitDbAsync().Wait();
@@ -49,13 +49,12 @@ public sealed class TestEnvironment : IDisposable
 
     public T GetService<T>()
     {
-        return _scope.ServiceProvider.GetService<T>();
+        return _scope.ServiceProvider.GetService<T>() ?? throw new NotImplementedException();
     }
 
-    public IDungeon GetDungeon(DungeonOptionModel optionModel = null)
+    public IDungeon GetDungeon(DungeonOptionModel? optionModel = null)
     {
-        var service = _scope.ServiceProvider.GetService<IDungeon>();
-
+        var dungeon = GetService<IDungeon>();
         optionModel ??= new DungeonOptionModel
         {
             DungeonName = "UT Dungeon",
@@ -75,14 +74,13 @@ public sealed class TestEnvironment : IDisposable
             Corridor = false
         };
 
-        service?.Init(optionModel);
-        return service;
+        dungeon.Init(optionModel);
+        return dungeon;
     }
 
-    public IDungeonNoCorridor GetNcDungeon(DungeonOptionModel optionModel = null)
+    public IDungeonNoCorridor GetNcDungeon(DungeonOptionModel? optionModel = null)
     {
-        var service = _scope.ServiceProvider.GetService<IDungeonNoCorridor>();
-
+        var dungeonNoCorridor = GetService<IDungeonNoCorridor>();
         optionModel ??= new DungeonOptionModel
         {
             DungeonName = "UT Dungeon",
@@ -102,14 +100,14 @@ public sealed class TestEnvironment : IDisposable
             Corridor = false
         };
 
-        service?.Init(optionModel);
-        return service;
+        dungeonNoCorridor.Init(optionModel);
+        return dungeonNoCorridor;
     }
 
-    private void ConfigureServices(IServiceCollection services)
+    private void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions()
-            .AddTestInfrastructureServices(Connection)
+            .AddTestInfrastructureServices(configuration, Connection)
             .AddApplicationServices()
             .AddHttpContextAccessor()
             .AddScoped<ICurrentUserService, CurrentUserService>()

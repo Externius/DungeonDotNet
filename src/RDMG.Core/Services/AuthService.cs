@@ -9,26 +9,19 @@ using System.Threading.Tasks;
 
 namespace RDMG.Core.Services;
 
-public class AuthService : IAuthService
+public class AuthService(IMapper mapper, IUserRepository userRepository, ILogger<AuthService> logger) : IAuthService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger _logger = logger;
 
-    public AuthService(IMapper mapper, IUserRepository userRepository, ILogger<AuthService> logger)
-    {
-        _userRepository = userRepository;
-        _mapper = mapper;
-        _logger = logger;
-    }
-
-    public async Task<UserModel> LoginAsync(UserModel model)
+    public async Task<UserModel?> LoginAsync(UserModel model)
     {
         try
         {
             var user = await _userRepository.GetByUsernameAsync(model.Username);
 
-            if (user == null)
+            if (user is null)
                 return null;
 
             return PasswordHelper.CheckPassword(user.Password, model.Password) ? _mapper.Map<UserModel>(user) : null;

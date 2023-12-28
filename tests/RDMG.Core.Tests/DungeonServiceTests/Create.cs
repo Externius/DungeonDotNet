@@ -12,14 +12,9 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class Create : IClassFixture<TestFixture>
+public class Create(TestFixture fixture) : IClassFixture<TestFixture>
 {
-    private readonly IDungeonService _dungeonService;
-
-    public Create(TestFixture fixture)
-    {
-        _dungeonService = fixture.DungeonService;
-    }
+    private readonly IDungeonService _dungeonService = fixture.DungeonService;
 
     [Fact]
     public async Task CreateDungeonOptionAsync_WithOptionModel_ReturnsNewEntityId()

@@ -7,14 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace RDMG.Infrastructure.Interceptors;
-public class AuditEntitiesSaveChangesInterceptor : SaveChangesInterceptor
+public class AuditEntitiesSaveChangesInterceptor(ICurrentUserService currentUserService) : SaveChangesInterceptor
 {
-    private readonly ICurrentUserService _currentUserService;
-
-    public AuditEntitiesSaveChangesInterceptor(ICurrentUserService currentUserService)
-    {
-        _currentUserService = currentUserService;
-    }
+    private readonly ICurrentUserService _currentUserService = currentUserService;
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -30,9 +25,9 @@ public class AuditEntitiesSaveChangesInterceptor : SaveChangesInterceptor
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private void AuditEntities(DbContext context)
+    private void AuditEntities(DbContext? context)
     {
-        if (context == null)
+        if (context is null)
             return;
 
         foreach (var entry in context.ChangeTracker.Entries<AuditableEntity>())

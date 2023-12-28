@@ -6,19 +6,19 @@ namespace RDMG.Core.Abstractions.Generator.Models.Json;
 public class Monster
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [JsonPropertyName("size")]
-    public string Size { get; set; }
+    public string? Size { get; set; }
 
     [JsonPropertyName("type")]
-    public string Type { get; set; }
+    public string Type { get; set; } = string.Empty;
 
     [JsonPropertyName("subtype")]
-    public string Subtype { get; set; }
+    public string? Subtype { get; set; }
 
     [JsonPropertyName("alignment")]
-    public string Alignment { get; set; }
+    public string? Alignment { get; set; }
 
     [JsonPropertyName("armor_class")]
     public int? ArmorClass { get; set; }
@@ -27,10 +27,10 @@ public class Monster
     public int? HitPoints { get; set; }
 
     [JsonPropertyName("hit_dice")]
-    public string HitDice { get; set; }
+    public string? HitDice { get; set; }
 
     [JsonPropertyName("speed")]
-    public string Speed { get; set; }
+    public string? Speed { get; set; }
 
     [JsonPropertyName("strength")]
     public int? Strength { get; set; }
@@ -66,34 +66,34 @@ public class Monster
     public int? Perception { get; set; }
 
     [JsonPropertyName("damage_vulnerabilities")]
-    public string DamageVulnerabilities { get; set; }
+    public string? DamageVulnerabilities { get; set; }
 
     [JsonPropertyName("damage_resistances")]
-    public string DamageResistances { get; set; }
+    public string? DamageResistances { get; set; }
 
     [JsonPropertyName("damage_immunities")]
-    public string DamageImmunities { get; set; }
+    public string? DamageImmunities { get; set; }
 
     [JsonPropertyName("condition_immunities")]
-    public string ConditionImmunities { get; set; }
+    public string? ConditionImmunities { get; set; }
 
     [JsonPropertyName("senses")]
-    public string Senses { get; set; }
+    public string? Senses { get; set; }
 
     [JsonPropertyName("languages")]
-    public string Languages { get; set; }
+    public string? Languages { get; set; }
 
     [JsonPropertyName("challenge_rating")]
-    public string ChallengeRating { get; set; }
+    public string ChallengeRating { get; set; } = string.Empty;
 
     [JsonPropertyName("special_abilities")]
-    public List<SpecialAbility> SpecialAbilities { get; set; }
+    public List<SpecialAbility>? SpecialAbilities { get; set; }
 
     [JsonPropertyName("actions")]
-    public List<Action> Actions { get; set; }
+    public List<Action>? Actions { get; set; }
 
     [JsonPropertyName("legendary_actions")]
-    public List<LegendaryAction> LegendaryActions { get; set; }
+    public List<LegendaryAction>? LegendaryActions { get; set; }
 
     [JsonPropertyName("medicine")]
     public int? Medicine { get; set; }
@@ -132,7 +132,7 @@ public class Monster
     public int? StrengthSave { get; set; }
 
     [JsonPropertyName("reactions")]
-    public List<Reaction> Reactions { get; set; }
+    public List<Reaction>? Reactions { get; set; }
 
     [JsonPropertyName("survival")]
     public int? Survival { get; set; }

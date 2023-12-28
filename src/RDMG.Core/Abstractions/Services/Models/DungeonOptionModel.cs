@@ -4,7 +4,7 @@ namespace RDMG.Core.Abstractions.Services.Models;
 
 public class DungeonOptionModel : EditModel
 {
-    public string DungeonName { get; set; }
+    public string DungeonName { get; set; } = string.Empty;
     public int UserId { get; set; }
     public int DungeonSize { get; set; }
     public int DungeonDifficulty { get; set; }
@@ -14,7 +14,7 @@ public class DungeonOptionModel : EditModel
     public int ItemsRarity { get; set; }
     public int RoomDensity { get; set; }
     public int RoomSize { get; set; }
-    public string MonsterType { get; set; }
+    public string MonsterType { get; set; } = string.Empty;
     public int TrapPercent { get; set; }
     public bool DeadEnd { get; set; }
     public bool Corridor { get; set; }

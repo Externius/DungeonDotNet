@@ -1,18 +1,12 @@
 ﻿using IdentityModel;
-using Microsoft.AspNetCore.Http;
 using RDMG.Core.Abstractions.Services;
 using System.Security.Claims;
 
 namespace RDMG.Web.Services;
 
-public class CurrentUserService : ICurrentUserService
+public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
     public int GetUserIdAsInt()
     {
@@ -21,9 +15,9 @@ public class CurrentUserService : ICurrentUserService
 
     public string UserId => _httpContextAccessor.HttpContext?
         .User
-        .FindFirstValue(JwtClaimTypes.Id);
+        .FindFirstValue(JwtClaimTypes.Id) ?? string.Empty;
 
     public string UserName => _httpContextAccessor.HttpContext?
         .User
-        .FindFirstValue(JwtClaimTypes.PreferredUserName);
+        .FindFirstValue(JwtClaimTypes.PreferredUserName) ?? string.Empty;
 }

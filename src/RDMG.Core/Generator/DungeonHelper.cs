@@ -24,24 +24,24 @@ public class DungeonHelper : IDungeonHelper
         };
     }
     // encounter
-    private IList<Monster> _filteredMonsters;
+    private IList<Monster> _filteredMonsters = [];
     private int _sumXp;
-    private readonly int[] _difficulty = {
+    private readonly int[] _difficulty = [
         0, 0, 0, 0
-    };
+    ];
     // treasure
     private int _sumValue;
     // door
-    private DungeonTile[][] DungeonTiles { get; set; }
-    private ICollection<DungeonTile> DoorList { get; set; }
+    private DungeonTile[][] DungeonTiles { get; set; } = [];
+    private ICollection<DungeonTile> DoorList { get; set; } = [];
     private int _westCount;
     private int _southCount;
     private int _eastCount;
     private int _northCount;
     private static readonly Random Random = new();
 
-    private IList<TreasureDescription> TreasureList { get; set; }
-    private IList<Monster> _monsterList;
+    private IList<TreasureDescription> TreasureList { get; set; } = [];
+    private IList<Monster> _monsterList = [];
 
     private IList<Monster> MonsterList
     {
@@ -52,7 +52,7 @@ public class DungeonHelper : IDungeonHelper
     private int PartyLevel { get; set; }
     private int PartySize { get; set; }
     private int DungeonDifficulty { get; set; }
-    private string MonsterType { get; set; }
+    private string MonsterType { get; set; } = string.Empty;
     private double TreasureValue { get; set; }
     private int ItemsRarity { get; set; }
 
@@ -192,8 +192,8 @@ public class DungeonHelper : IDungeonHelper
 
     private IList<T> DeserializeJson<T>(string fileName)
     {
-        var json = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/Data/" + fileName);
-        return JsonSerializer.Deserialize<IList<T>>(json, _options);
+        var json = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/Data/" + fileName) ?? throw new FileNotFoundException(fileName);
+        return JsonSerializer.Deserialize<IList<T>>(json, _options) ?? [];
     }
 
     private static string GetRoamingName(int count)

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace RDMG.Web.Models.Dungeon;
@@ -7,9 +6,9 @@ namespace RDMG.Web.Models.Dungeon;
 public class LoadViewModel
 {
     public DungeonOptionViewModel Option { get; set; } = new();
-    public string Theme { get; set; }
+    public string Theme { get; set; } = string.Empty;
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "Theme")]
-    public IEnumerable<SelectListItem> Themes { get; set; }
+    public IEnumerable<SelectListItem> Themes { get; set; } = [];
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "GeneratePlainMap")]
     public bool GeneratePlainMap { get; set; }
 }

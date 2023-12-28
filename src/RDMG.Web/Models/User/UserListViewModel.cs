@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace RDMG.Web.Models.User;
+﻿namespace RDMG.Web.Models.User;
 
 public class UserListViewModel
 {

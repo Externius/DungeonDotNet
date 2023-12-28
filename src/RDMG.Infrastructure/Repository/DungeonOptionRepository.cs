@@ -11,17 +11,11 @@ using System.Threading.Tasks;
 
 namespace RDMG.Infrastructure.Repository;
 
-public class DungeonOptionRepository : IDungeonOptionRepository
+public class DungeonOptionRepository(IAppDbContext context, IMapper mapper, ILogger<DungeonOptionRepository> logger) : IDungeonOptionRepository
 {
-    private readonly IAppDbContext _context;
-    private readonly ILogger<DungeonOptionRepository> _logger;
-    private readonly IMapper _mapper;
-    public DungeonOptionRepository(IAppDbContext context, IMapper mapper, ILogger<DungeonOptionRepository> logger)
-    {
-        _context = context;
-        _logger = logger;
-        _mapper = mapper;
-    }
+    private readonly IAppDbContext _context = context;
+    private readonly ILogger<DungeonOptionRepository> _logger = logger;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<IEnumerable<DungeonOption>> GetAllDungeonOptionsAsync(CancellationToken cancellationToken)
     {
@@ -51,7 +45,7 @@ public class DungeonOptionRepository : IDungeonOptionRepository
         return dungeonOption;
     }
 
-    public async Task<DungeonOption> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
+    public async Task<DungeonOption?> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
     {
         return await _context.DungeonOptions
             .Include(d => d.Dungeons)
@@ -78,17 +72,18 @@ public class DungeonOptionRepository : IDungeonOptionRepository
         return false;
     }
 
-    public async Task<DungeonOption> GetDungeonOptionAsync(int id, CancellationToken cancellationToken)
+    public async Task<DungeonOption?> GetDungeonOptionAsync(int id, CancellationToken cancellationToken)
     {
         return await _context.DungeonOptions.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
     }
 
-    public async Task<DungeonOption> UpdateDungeonOptionAsync(DungeonOption dungeonOption, CancellationToken cancellationToken)
+    public async Task<DungeonOption?> UpdateDungeonOptionAsync(DungeonOption dungeonOption, CancellationToken cancellationToken)
     {
         var local = await _context.DungeonOptions.FirstOrDefaultAsync(d => d.Id == dungeonOption.Id, cancellationToken);
 
         if (local is null)
             return null;
+
         _mapper.Map(dungeonOption, local);
         await _context.SaveChangesAsync(cancellationToken);
 

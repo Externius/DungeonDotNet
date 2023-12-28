@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace RDMG.Web.Models.Dungeon;
+﻿namespace RDMG.Web.Models.Dungeon;
 
 public class DungeonListViewModel
 {

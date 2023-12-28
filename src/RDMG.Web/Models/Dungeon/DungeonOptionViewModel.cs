@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace RDMG.Web.Models.Dungeon;
@@ -7,7 +6,7 @@ public class DungeonOptionViewModel : EditViewModel
 {
     [Required]
     [StringLength(50, MinimumLength = 3)]
-    public string DungeonName { get; set; }
+    public string DungeonName { get; set; } = string.Empty;
     [Required]
     public int DungeonSize { get; set; }
     [Required]
@@ -25,7 +24,7 @@ public class DungeonOptionViewModel : EditViewModel
     [Required]
     public int RoomSize { get; set; }
     [Required]
-    public string MonsterType { get; set; }
+    public string MonsterType { get; set; } = string.Empty;
     [Required]
     public int TrapPercent { get; set; }
     [Required]

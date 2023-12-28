@@ -2,41 +2,26 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Web.Models.Dungeon;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RDMG.Web.Controllers.Web;
 
 [Authorize]
-public class DungeonController : Controller
+public class DungeonController(IDungeonService dungeonService,
+    IOptionService optionService,
+    ICurrentUserService currentUserService,
+    IMapper mapper,
+    ILogger<DungeonController> logger) : Controller
 {
-    private readonly IOptionService _optionService;
-    private readonly IDungeonService _dungeonService;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IMapper _mapper;
-    private readonly ILogger _logger;
-
-    public DungeonController(IDungeonService dungeonService,
-        IOptionService optionService,
-        ICurrentUserService currentUserService,
-        IMapper mapper,
-        ILogger<DungeonController> logger)
-    {
-        _optionService = optionService;
-        _dungeonService = dungeonService;
-        _currentUserService = currentUserService;
-        _mapper = mapper;
-        _logger = logger;
-    }
+    private readonly IOptionService _optionService = optionService;
+    private readonly IDungeonService _dungeonService = dungeonService;
+    private readonly ICurrentUserService _currentUserService = currentUserService;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger _logger = logger;
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
@@ -132,17 +117,20 @@ public class DungeonController : Controller
 
     private async Task<string> GetMonsterTypeAsync(DungeonOptionCreateViewModel model, CancellationToken cancellationToken)
     {
-        var monsterType = string.Join(",", model.MonsterType);
+        var monsterType = string.Empty;
         var monsters = await _optionService.ListOptionsAsync(OptionKey.MonsterType, cancellationToken);
-        if (model.MonsterType.Length == monsters.Count())
+        if (model.MonsterType?.Length == monsters.Count())
         {
             monsterType = "any";
         }
-        if (model.MonsterType.Length == 0)
+        else if (model.MonsterType?.Length == 0)
         {
             monsterType = "none";
         }
-
+        else if (model.MonsterType is not null)
+        {
+            monsterType = string.Join(",", model.MonsterType);
+        }
         return monsterType;
     }
 
@@ -185,7 +173,7 @@ public class DungeonController : Controller
             var option = await _dungeonService.GetDungeonOptionAsync(optionId, cancellationToken);
             model = _mapper.Map<DungeonOptionCreateViewModel>(option);
             model.AddDungeon = true;
-            if (model.MonsterType[0].Equals("any"))
+            if (model.MonsterType is not null && model.MonsterType[0].Equals("any"))
             {
                 model.MonsterType = null;
             }
@@ -215,16 +203,16 @@ public class DungeonController : Controller
         model.Themes = optionModels.Where(om => om.Key == OptionKey.Theme).Select(om => new SelectListItem { Text = om.Name, Value = om.Value, Selected = true });
     }
 
-    private static IEnumerable<SelectListItem> GetBool()
+    private static List<SelectListItem> GetBool()
     {
-        return new List<SelectListItem>
-        {
+        return
+        [
             new() { Text = Resources.Common.Yes, Value = "true", Selected = true },
             new() { Text = Resources.Common.No, Value = "false" }
-        };
+        ];
     }
 
-    private static IEnumerable<SelectListItem> GenerateIntSelectList(int from, int to)
+    private static List<SelectListItem> GenerateIntSelectList(int from, int to)
     {
         var list = new List<SelectListItem>();
         for (var i = from; i <= to; i++)

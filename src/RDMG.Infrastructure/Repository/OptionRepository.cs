@@ -11,18 +11,11 @@ using System.Threading.Tasks;
 
 namespace RDMG.Infrastructure.Repository;
 
-public class OptionRepository : IOptionRepository
+public class OptionRepository(IAppDbContext context, IMapper mapper, ILogger<OptionRepository> logger) : IOptionRepository
 {
-    private readonly IAppDbContext _context;
-    private readonly ILogger<OptionRepository> _logger;
-    private readonly IMapper _mapper;
-
-    public OptionRepository(IAppDbContext context, IMapper mapper, ILogger<OptionRepository> logger)
-    {
-        _context = context;
-        _logger = logger;
-        _mapper = mapper;
-    }
+    private readonly IAppDbContext _context = context;
+    private readonly ILogger<OptionRepository> _logger = logger;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<IEnumerable<Option>> ListAsync(OptionKey? filter = null, CancellationToken cancellationToken = default)
     {

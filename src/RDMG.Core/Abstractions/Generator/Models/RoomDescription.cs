@@ -1,17 +1,9 @@
 namespace RDMG.Core.Abstractions.Generator.Models;
 
-public class RoomDescription
+public class RoomDescription(string name, string treasure, string monster, string doors)
 {
-    public string Name { get; }
-    public string Treasure { get; }
-    public string Monster { get; }
-    public string Doors { get; }
-
-    public RoomDescription(string name, string treasure, string monster, string doors)
-    {
-        Name = name;
-        Treasure = treasure;
-        Monster = monster;
-        Doors = doors;
-    }
+    public string Name { get; } = name;
+    public string Treasure { get; } = treasure;
+    public string Monster { get; } = monster;
+    public string Doors { get; } = doors;
 }

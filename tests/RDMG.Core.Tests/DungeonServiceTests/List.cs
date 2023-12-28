@@ -7,15 +7,10 @@ using Xunit;
 
 namespace RDMG.Core.Tests.DungeonServiceTests;
 
-public class List : IClassFixture<TestFixture>
+public class List(TestFixture fixture) : IClassFixture<TestFixture>
 {
     private const int UserId = 1;
-    private readonly IDungeonService _dungeonService;
-
-    public List(TestFixture fixture)
-    {
-        _dungeonService = fixture.DungeonService;
-    }
+    private readonly IDungeonService _dungeonService = fixture.DungeonService;
 
     [Fact]
     public async Task ListUserDungeonsAsync_WithValidUserIdWithDungeons_ReturnsDungeonModelList()

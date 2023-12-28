@@ -9,5 +9,5 @@ public abstract class BaseEntity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     [Timestamp]
-    public byte[] Timestamp { get; set; }
+    public byte[] Timestamp { get; set; } = [];
 }

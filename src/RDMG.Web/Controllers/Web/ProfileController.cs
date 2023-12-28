@@ -1,33 +1,22 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Web.Models.Profile;
-using System;
-using System.Threading.Tasks;
 
 namespace RDMG.Web.Controllers.Web;
 
 [Authorize]
-public class ProfileController : Controller
+public class ProfileController(IUserService userService,
+    ICurrentUserService currentUserService,
+    IMapper mapper,
+    ILogger<ProfileController> logger) : Controller
 {
-    private readonly IUserService _userService;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IMapper _mapper;
-    private readonly ILogger _logger;
-
-    public ProfileController(IUserService userService,
-        ICurrentUserService currentUserService,
-        IMapper mapper,
-        ILogger<ProfileController> logger)
-    {
-        _userService = userService;
-        _currentUserService = currentUserService;
-        _mapper = mapper;
-        _logger = logger;
-    }
+    private readonly IUserService _userService = userService;
+    private readonly ICurrentUserService _currentUserService = currentUserService;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger _logger = logger;
 
     public async Task<IActionResult> Index()
     {

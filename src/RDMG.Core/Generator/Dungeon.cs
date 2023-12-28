@@ -9,18 +9,18 @@ using System.Text.Json;
 
 namespace RDMG.Core.Generator;
 
-public class Dungeon : IDungeon
+public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
 {
-    private readonly IDungeonHelper _dungeonHelper;
+    private readonly IDungeonHelper _dungeonHelper = dungeonHelper;
     private const int Movement = 10;
-    internal readonly List<DungeonTile> Rooms = new();
-    internal List<DungeonTile> Doors = new();
-    public ICollection<RoomDescription> RoomDescription { get; set; }
-    private ICollection<TrapDescription> TrapDescription { get; set; }
-    private ICollection<RoamingMonsterDescription> RoamingMonsterDescription { get; set; }
-    public DungeonTile[][] DungeonTiles { get; set; }
-    private IList<DungeonTile> _result;
-    private IList<DungeonTile> _corridors;
+    internal readonly List<DungeonTile> Rooms = [];
+    internal List<DungeonTile> Doors = [];
+    public ICollection<RoomDescription> RoomDescription { get; set; } = [];
+    private ICollection<TrapDescription> TrapDescription { get; set; } = [];
+    private ICollection<RoamingMonsterDescription> RoamingMonsterDescription { get; set; } = [];
+    public DungeonTile[][] DungeonTiles { get; set; } = [];
+    private List<DungeonTile> _result = [];
+    private List<DungeonTile> _corridors = [];
     private int _trapCount;
     private int _roamingCount;
     private int _roomCount;
@@ -30,11 +30,6 @@ public class Dungeon : IDungeon
     protected int DungeonSize { get; set; }
     protected int RoomSizePercent { get; set; }
     protected int RoomSize { get; set; }
-
-    public Dungeon(IDungeonHelper dungeonHelper)
-    {
-        _dungeonHelper = dungeonHelper;
-    }
 
     public virtual DungeonModel Generate(DungeonOptionModel model)
     {
@@ -104,11 +99,11 @@ public class Dungeon : IDungeon
         var firstDoor = Doors[0]; // get first door
         foreach (var end in deadEnds)
         {
-            Doors = new List<DungeonTile>
-            {
+            Doors =
+            [
                 firstDoor,
                 end
-            }; // empty doors
+            ]; // empty doors
             GenerateCorridors();
         }
     }
@@ -225,7 +220,7 @@ public class Dungeon : IDungeon
 
     private static void CalcGValue(List<DungeonTile> openList)
     {
-        openList.ForEach(tile => tile.G = tile.Parent.G + Movement);
+        openList.ForEach(tile => tile.G = tile.Parent?.G ?? 0 + Movement);
     }
 
     private void AddToOpenList(DungeonTile node, int x, int y, ICollection<DungeonTile> openList, ICollection<DungeonTile> closedList, DungeonTile end)
@@ -424,7 +419,7 @@ public class Dungeon : IDungeon
             failSafeCount--;
         }
         while (!roomIsOk && failSafeCount > 0);
-        return failSafeCount > 0 ? new[] { x, y, right, down } : new[] { 0, 0, 0, 0 }; // it can never be 0 if its a good coordinate
+        return failSafeCount > 0 ? [x, y, right, down] : [0, 0, 0, 0]; // it can never be 0 if its a good coordinate
     }
 
     private bool CheckTileGoodForRoom(int x, int y, int right, int down)

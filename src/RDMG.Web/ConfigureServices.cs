@@ -1,15 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Infrastructure.Data;
 using RDMG.Web.Services;
 using Serilog;
-using System.IO;
 
 namespace RDMG.Web;
 

@@ -8,9 +8,9 @@ public class DungeonRenameViewModel : EditViewModel
     [Required]
     [StringLength(50, MinimumLength = 3)]
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "Name")]
-    public string DungeonName { get; set; }
+    public string DungeonName { get; set; } = string.Empty;
     [Required]
     [StringLength(50, MinimumLength = 3)]
     [Display(ResourceType = typeof(Resources.Dungeon), Name = "NewName")]
-    public string NewDungeonName { get; set; }
+    public string NewDungeonName { get; set; } = string.Empty;
 }

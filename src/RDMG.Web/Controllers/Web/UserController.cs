@@ -1,30 +1,19 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Web.Models.User;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RDMG.Web.Controllers.Web;
 
 [Authorize(Roles = Roles.Admin)]
-public class UserController : Controller
+public class UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger) : Controller
 {
-    private readonly IUserService _userService;
-    private readonly IMapper _mapper;
-    private readonly ILogger _logger;
-
-    public UserController(IUserService userService, IMapper mapper, ILogger<UserController> logger)
-    {
-        _userService = userService;
-        _mapper = mapper;
-        _logger = logger;
-    }
+    private readonly IUserService _userService = userService;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger _logger = logger;
 
     public async Task<IActionResult> Index()
     {

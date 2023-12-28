@@ -10,16 +10,12 @@ using System.Text.Json;
 
 namespace RDMG.Core.Generator;
 
-public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
+public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHelper), IDungeonNoCorridor
 {
-    private readonly IDungeonHelper _dungeonHelper;
-    public IList<DungeonTile> OpenDoorList { get; set; }
-    private List<DungeonTile> _edgeTileList;
-    private IList<DungeonTile> _roomStart;
-    public DungeonNoCorridor(IDungeonHelper dungeonHelper) : base(dungeonHelper)
-    {
-        _dungeonHelper = dungeonHelper;
-    }
+    private readonly IDungeonHelper _dungeonHelper = dungeonHelper;
+    public IList<DungeonTile> OpenDoorList { get; set; } = [];
+    private List<DungeonTile> _edgeTileList = [];
+    private List<DungeonTile> _roomStart = [];
 
     public override DungeonModel Generate(DungeonOptionModel model)
     {
@@ -157,7 +153,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 
     private void FillLeftRight(int x, int y, int down, int right)
     {
-        _edgeTileList = new List<DungeonTile>();
+        _edgeTileList = [];
         if (right < 0)
         {
             for (var i = right + 1; i < 1; i++)
@@ -230,7 +226,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 
     private void FillUpDown(int x, int y, int down, int right)
     {
-        _edgeTileList = new List<DungeonTile>();
+        _edgeTileList = [];
         if (down < 0)
         {
             for (var i = down + 1; i < 1; i++)
@@ -367,13 +363,13 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
         var vertical = CheckVertical(x, y);
         var horizontal = CheckHorizontal(x, y);
         if (!CheckPossible(vertical, horizontal, door))
-            return new[] { 0, 0 };
+            return [0, 0];
         var result = GetDownRight(vertical, horizontal);
         var down = result[0];
         var right = result[1];
         vertical = CheckVerticalOneWay(x, y + right, down); // check horizontal end vertically
         horizontal = CheckHorizontalOneWay(x + down, y, right); // check vertical end horizontally
-        return CheckPossibleEnd(vertical, horizontal, door, down, right) ? new[] { down, right } : new[] { 0, 0 };
+        return CheckPossibleEnd(vertical, horizontal, door, down, right) ? [down, right] : [0, 0];
     }
 
     private bool CheckPossibleEnd(int vertical, int horizontal, DungeonTile door, int down, int right)
@@ -408,7 +404,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
             down = -down;
         if (horizontal < 0)
             right = -right;
-        return new[] { down, right };
+        return [down, right];
     }
 
     private bool CheckPossible(int vertical, int horizontal, DungeonTile door)
@@ -531,7 +527,7 @@ public class DungeonNoCorridor : Dungeon, IDungeonNoCorridor
 
     public void AddFirstRoom()
     {
-        _roomStart = new List<DungeonTile>();
+        _roomStart = [];
         OpenDoorList = new List<DungeonTile>();
         var x = _dungeonHelper.GetRandomInt(5, DungeonTiles.Length - (RoomSize + 4));
         var y = _dungeonHelper.GetRandomInt(5, DungeonTiles.Length - (RoomSize + 4));

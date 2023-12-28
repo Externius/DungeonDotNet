@@ -9,15 +9,10 @@ using Xunit;
 
 namespace RDMG.Core.Tests.OptionServiceTests;
 
-public class List : IClassFixture<TestFixture>
+public class List(TestFixture fixture) : IClassFixture<TestFixture>
 {
-    private readonly IOptionService _optionService;
-    private readonly IOptionRepository _optionRepository;
-    public List(TestFixture fixture)
-    {
-        _optionService = fixture.OptionService;
-        _optionRepository = fixture.OptionRepository;
-    }
+    private readonly IOptionService _optionService = fixture.OptionService;
+    private readonly IOptionRepository _optionRepository = fixture.OptionRepository;
 
     [Fact]
     public async Task ListOptionsAsync_WithNoFilter_ReturnsAllOptions()

@@ -5,5 +5,5 @@ namespace RDMG.Core.Abstractions.Services;
 
 public interface IAuthService
 {
-    Task<UserModel> LoginAsync(UserModel model);
+    Task<UserModel?> LoginAsync(UserModel model);
 }

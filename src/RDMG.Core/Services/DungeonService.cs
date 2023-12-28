@@ -15,29 +15,19 @@ using System.Threading.Tasks;
 
 namespace RDMG.Core.Services;
 
-public class DungeonService : IDungeonService
+public class DungeonService(IMapper mapper,
+    IDungeonRepository dungeonRepository,
+    IDungeonOptionRepository dungeonOptionRepository,
+    IDungeon dungeon,
+    IDungeonNoCorridor dungeonNcDungeon,
+    ILogger<DungeonService> logger) : IDungeonService
 {
-    private readonly IDungeonRepository _dungeonRepository;
-    private readonly IDungeonOptionRepository _dungeonOptionRepository;
-    private readonly IDungeon _dungeon;
-    private readonly IDungeonNoCorridor _dungeonNcDungeon;
-    private readonly IMapper _mapper;
-    private readonly ILogger _logger;
-
-    public DungeonService(IMapper mapper,
-        IDungeonRepository dungeonRepository,
-        IDungeonOptionRepository dungeonOptionRepository,
-        IDungeon dungeon,
-        IDungeonNoCorridor dungeonNcDungeon,
-        ILogger<DungeonService> logger)
-    {
-        _dungeonRepository = dungeonRepository;
-        _dungeonOptionRepository = dungeonOptionRepository;
-        _dungeon = dungeon;
-        _dungeonNcDungeon = dungeonNcDungeon;
-        _mapper = mapper;
-        _logger = logger;
-    }
+    private readonly IDungeonRepository _dungeonRepository = dungeonRepository;
+    private readonly IDungeonOptionRepository _dungeonOptionRepository = dungeonOptionRepository;
+    private readonly IDungeon _dungeon = dungeon;
+    private readonly IDungeonNoCorridor _dungeonNcDungeon = dungeonNcDungeon;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger _logger = logger;
 
     public async Task<int> CreateDungeonOptionAsync(DungeonOptionModel dungeonOption, CancellationToken cancellationToken)
     {
@@ -61,7 +51,7 @@ public class DungeonService : IDungeonService
             errors.Add(new ServiceException(string.Format(Error.RequiredValidation, nameof(model.DungeonName))));
         if (model.UserId == 0)
             errors.Add(new ServiceException(string.Format(Error.RequiredValidation, nameof(model.UserId))));
-        if (errors.Any())
+        if (errors.Count != 0)
             throw new ServiceAggregateException(errors);
     }
 
@@ -289,8 +279,11 @@ public class DungeonService : IDungeonService
         try
         {
             var entity = await _dungeonRepository.GetDungeonAsync(model.Id, cancellationToken);
-            _mapper.Map(model, entity);
-            await _dungeonRepository.UpdateDungeonAsync(entity, cancellationToken);
+            if (entity is not null)
+            {
+                _mapper.Map(model, entity);
+                await _dungeonRepository.UpdateDungeonAsync(entity, cancellationToken);
+            }
         }
         catch (Exception ex)
         {
@@ -317,8 +310,11 @@ public class DungeonService : IDungeonService
         try
         {
             var entity = await _dungeonOptionRepository.GetDungeonOptionAsync(optionId, cancellationToken);
-            entity.DungeonName = newName;
-            await _dungeonOptionRepository.UpdateDungeonOptionAsync(entity, cancellationToken);
+            if (entity is not null)
+            {
+                entity.DungeonName = newName;
+                await _dungeonOptionRepository.UpdateDungeonOptionAsync(entity, cancellationToken);
+            }
         }
         catch (Exception ex)
         {

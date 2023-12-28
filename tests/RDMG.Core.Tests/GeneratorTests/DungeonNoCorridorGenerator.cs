@@ -6,12 +6,8 @@ using Xunit.Abstractions;
 
 namespace RDMG.Core.Tests.GeneratorTests;
 
-public class DungeonNoCorridorGenerator : DungeonTestBase
+public class DungeonNoCorridorGenerator(ITestOutputHelper output) : DungeonTestBase(output)
 {
-    public DungeonNoCorridorGenerator(ITestOutputHelper output) : base(output)
-    {
-    }
-
     [Fact]
     public void CanInit()
     {

@@ -13,18 +13,11 @@ using System.Threading.Tasks;
 
 namespace RDMG.Core.Services;
 
-public class UserService : IUserService
+public class UserService(IMapper mapper, IUserRepository userRepository, ILogger<UserService> logger) : IUserService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IMapper _mapper;
-    private readonly ILogger _logger;
-
-    public UserService(IMapper mapper, IUserRepository userRepository, ILogger<UserService> logger)
-    {
-        _userRepository = userRepository;
-        _mapper = mapper;
-        _logger = logger;
-    }
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILogger _logger = logger;
 
     public async Task<int> CreateAsync(UserModel model)
     {
@@ -121,9 +114,12 @@ public class UserService : IUserService
     {
         try
         {
-            var model = await _userRepository.GetAsync(id);
-            model.IsDeleted = false;
-            await _userRepository.UpdateAsync(model);
+            var user = await _userRepository.GetAsync(id);
+            if (user is not null)
+            {
+                user.IsDeleted = false;
+                await _userRepository.UpdateAsync(user);
+            }
             return true;
         }
         catch (Exception ex)
@@ -139,12 +135,14 @@ public class UserService : IUserService
         try
         {
             var user = await _userRepository.GetAsync(model.Id);
-
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.Email = model.Email;
-            user.Role = (Role)Enum.Parse(typeof(Role), model.Role);
-            await _userRepository.UpdateAsync(user);
+            if (user is not null)
+            {
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.Role = (Role)Enum.Parse(typeof(Role), model.Role);
+                await _userRepository.UpdateAsync(user);
+            }
         }
         catch (Exception ex)
         {
@@ -156,7 +154,7 @@ public class UserService : IUserService
     private static void ValidateModelForEdit(UserModel model)
     {
         var errors = new List<ServiceException>();
-        if (model == null)
+        if (model is null)
             throw new ArgumentNullException(nameof(model));
         if (string.IsNullOrEmpty(model.FirstName))
             errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.FirstName)));
@@ -166,7 +164,7 @@ public class UserService : IUserService
             errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Email)));
         if (string.IsNullOrEmpty(model.Role))
             errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Role)));
-        if (errors.Any())
+        if (errors.Count != 0)
             throw new ServiceAggregateException(errors);
     }
 

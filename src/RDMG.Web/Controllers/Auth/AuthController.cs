@@ -6,21 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Web.Models.Auth;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace RDMG.Web.Controllers.Auth;
 
-public class AuthController : Controller
+public class AuthController(IAuthService authService, IMapper mapper) : Controller
 {
-    private readonly IAuthService _authService;
-    private readonly IMapper _mapper;
-    public AuthController(IAuthService authService, IMapper mapper)
-    {
-        _authService = authService;
-        _mapper = mapper;
-    }
+    private readonly IAuthService _authService = authService;
+    private readonly IMapper _mapper = mapper;
+
     public IActionResult Login()
     {
         if (User.Identity is { IsAuthenticated: true })
@@ -30,13 +24,13 @@ public class AuthController : Controller
         return View();
     }
     [HttpPost]
-    public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+    public async Task<ActionResult> Login(LoginViewModel model, string? returnUrl)
     {
         if (ModelState.IsValid)
         {
             var user = await _authService.LoginAsync(_mapper.Map<UserModel>(model));
 
-            if (user == null)
+            if (user is null)
             {
                 ModelState.AddModelError("", "Username or password incorrect");
                 return View();

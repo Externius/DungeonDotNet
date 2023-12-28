@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using RDMG.Core.Abstractions.Configuration;
 using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
@@ -11,15 +13,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace RDMG.Infrastructure.Data;
-public class AppDbContextInitializer
+public class AppDbContextInitializer(IAppDbContext context, IDungeonService dungeonService, IOptions<AppConfig> config)
 {
-    private readonly IAppDbContext _context;
-    private readonly IDungeonService _dungeonService;
-    public AppDbContextInitializer(IAppDbContext context, IDungeonService dungeonService)
-    {
-        _context = context;
-        _dungeonService = dungeonService;
-    }
+    private readonly IAppDbContext _context = context;
+    private readonly IDungeonService _dungeonService = dungeonService;
 
     public async Task UpdateAsync(CancellationToken cancellationToken)
     {
@@ -531,7 +528,7 @@ public class AppDbContextInitializer
         _context.Users.Add(new User
         {
             Username = "TestAdmin",
-            Password = PasswordHelper.EncryptPassword("adminPassword123"),
+            Password = PasswordHelper.EncryptPassword(config.Value.DefaultAdminPassword),
             FirstName = "Test",
             LastName = "Admin",
             Email = "admin@admin.com",
@@ -541,7 +538,7 @@ public class AppDbContextInitializer
         _context.Users.Add(new User
         {
             Username = "TestUser",
-            Password = PasswordHelper.EncryptPassword("simplePassword123"),
+            Password = PasswordHelper.EncryptPassword(config.Value.DefaultUserPassword),
             FirstName = "Test",
             LastName = "User",
             Email = "user@user.com",
