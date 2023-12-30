@@ -15,13 +15,13 @@ public static class RoomPosition
         Down = false;
         Left = false;
         Right = false;
-        if (dungeonTiles[x][y - 1].Texture == Textures.Room) // left
+        if (dungeonTiles[x][y - 1].Texture == Texture.Room) // left
             Left = true;
-        if (dungeonTiles[x][y + 1].Texture == Textures.Room) // right
+        if (dungeonTiles[x][y + 1].Texture == Texture.Room) // right
             Right = true;
-        if (dungeonTiles[x + 1][y].Texture == Textures.Room) // bottom
+        if (dungeonTiles[x + 1][y].Texture == Texture.Room) // bottom
             Down = true;
-        if (dungeonTiles[x - 1][y].Texture == Textures.Room) // top
+        if (dungeonTiles[x - 1][y].Texture == Texture.Room) // top
             Up = true;
     }
 }

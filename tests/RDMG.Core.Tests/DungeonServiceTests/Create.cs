@@ -38,7 +38,7 @@ public class Create(TestFixture fixture) : IClassFixture<TestFixture>
             Corridor = false,
             UserId = 1
         };
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         var result = await _dungeonService.CreateDungeonOptionAsync(optionsModel, token);
         result.ShouldBeGreaterThan(0);
@@ -47,7 +47,7 @@ public class Create(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task AddDungeonAsync_WithDungeonModel_ReturnsNewEntityId()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
 
         var optionsModel = (await _dungeonService.GetAllDungeonOptionsForUserAsync(1, token)).First();
@@ -60,7 +60,7 @@ public class Create(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task CreateOrUpdateDungeonAsync_WithInvalidModel_ReturnsServiceAggregateException()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         var optionsModel = new DungeonOptionModel
         {
@@ -89,7 +89,7 @@ public class Create(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task CreateOrUpdateDungeonAsync_WithValidNewModel_CreateOptionAndReturnsDungeonModel()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
 
         var optionsModel = new DungeonOptionModel
@@ -119,7 +119,7 @@ public class Create(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task CreateOrUpdateDungeonAsync_WithValidExistingModel_AddsDungeonToExistingOptionAndReturnsDungeonModel()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         const int userId = 1;
         const int levelNumber = 2;
         var token = source.Token;

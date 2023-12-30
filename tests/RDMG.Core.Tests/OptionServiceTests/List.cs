@@ -1,8 +1,8 @@
 ﻿using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
+using RDMG.Core.Domain;
 using Shouldly;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -22,14 +22,19 @@ public class List(TestFixture fixture) : IClassFixture<TestFixture>
         result.Count().ShouldBe(expectedCount);
     }
 
-    public static IEnumerable<object[]> GetOptionKeys()
+    public static TheoryData<OptionKey> GetOptionKeys()
     {
-        return from object value in Enum.GetValues(typeof(Domain.OptionKey)) select new[] { value };
+        var result = new TheoryData<OptionKey>();
+        foreach (OptionKey key in Enum.GetValues(typeof(OptionKey)))
+        {
+            result.Add(key);
+        }
+        return result;
     }
 
     [Theory]
-    [MemberData(nameof(GetOptionKeys))]
-    public async Task ListOptionsAsync_WithFilter_ReturnsFilteredOptions(Domain.OptionKey filter)
+    [MemberData(nameof(GetOptionKeys), MemberType = typeof(List))]
+    public async Task ListOptionsAsync_WithFilter_ReturnsFilteredOptions(OptionKey filter)
     {
         var expectedCount = (await _optionRepository.ListAsync(filter)).Count();
         var result = await _optionService.ListOptionsAsync(filter);

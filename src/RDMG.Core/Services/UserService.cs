@@ -40,8 +40,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
     private static void ValidateModel(UserModel model)
     {
         var errors = new List<ServiceException>();
-        if (model is null)
-            throw new ArgumentNullException(nameof(model));
+        ArgumentNullException.ThrowIfNull(model);
         if (model.Password.Length < 8)
             errors.Add(new ServiceException(Resources.Error.PasswordLength));
         if (string.IsNullOrEmpty(model.Username))
@@ -61,7 +60,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
     private async Task CheckUserExist(UserModel model)
     {
         var user = await _userRepository.GetByUsernameAsync(model.Username, null);
-        if (user != null)
+        if (user is not null)
             throw new ServiceException(string.Format(Resources.Error.UserExist, model.Username));
     }
 
@@ -154,8 +153,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
     private static void ValidateModelForEdit(UserModel model)
     {
         var errors = new List<ServiceException>();
-        if (model is null)
-            throw new ArgumentNullException(nameof(model));
+        ArgumentNullException.ThrowIfNull(model);
         if (string.IsNullOrEmpty(model.FirstName))
             errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.FirstName)));
         if (string.IsNullOrEmpty(model.LastName))

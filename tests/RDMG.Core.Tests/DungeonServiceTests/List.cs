@@ -15,7 +15,7 @@ public class List(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task ListUserDungeonsAsync_WithValidUserIdWithDungeons_ReturnsDungeonModelList()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         const int expectedCount = 2;
         var result = await _dungeonService.ListUserDungeonsAsync(UserId, token);
@@ -25,7 +25,7 @@ public class List(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task ListUserDungeonsByNameAsync_WithValidNameAndUserId_ReturnsDungeonModelList()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         const int expectedCount = 1;
         var dungeonName = (await _dungeonService.GetAllDungeonOptionsAsync(token)).First().DungeonName;

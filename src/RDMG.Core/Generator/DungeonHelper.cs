@@ -420,7 +420,7 @@ public class DungeonHelper : IDungeonHelper
         return sb.ToString();
     }
 
-    private string GetDoorText(Textures texture, int x)
+    private string GetDoorText(Texture texture, int x)
     {
         if (RoomPosition.Up)
             return Constants.SouthEntry + _southCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + GetState(texture, x) + Constants.LineBreak;
@@ -431,13 +431,13 @@ public class DungeonHelper : IDungeonHelper
         return Constants.EastEntry + _eastCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + GetState(texture, x) + Constants.LineBreak;
     }
 
-    private string GetState(Textures texture, int x)
+    private string GetState(Texture texture, int x)
     {
         return texture switch
         {
-            Textures.NoCorridorDoorLocked or Textures.DoorLocked =>
+            Texture.NoCorridorDoorLocked or Texture.DoorLocked =>
                 $" Locked Door ({Constants.Ac} {Constants.DoorAc[x]}, {Constants.Hp}{Constants.DoorHp[x]}, {Constants.Dc}{Constants.LockDifficulty[x]} to unlock)",
-            Textures.NoCorridorDoorTrapped or Textures.DoorTrapped
+            Texture.NoCorridorDoorTrapped or Texture.DoorTrapped
                 => $" Trapped Door ({Constants.Ac} {Constants.DoorAc[x]}, {Constants.Hp}{Constants.DoorHp[x]}) {GetRandomTrapDescription(true)}",
             _ => $" Open Door ({Constants.Ac} {Constants.DoorAc[x]}, {Constants.Hp}{Constants.DoorHp[x]})"
         };
@@ -457,7 +457,7 @@ public class DungeonHelper : IDungeonHelper
 
     public bool CheckNcDoor(DungeonTile dungeonTile)
     {
-        return dungeonTile.Texture is Textures.NoCorridorDoor or Textures.NoCorridorDoorLocked or Textures.NoCorridorDoorTrapped;
+        return dungeonTile.Texture is Texture.NoCorridorDoor or Texture.NoCorridorDoorLocked or Texture.NoCorridorDoorTrapped;
     }
 
     public string GetNcDoorDescription(DungeonTile[][] dungeonTiles, IEnumerable<DungeonTile> closedList)
@@ -525,7 +525,7 @@ public class DungeonHelper : IDungeonHelper
             for (var j = 1; j < dungeonSize - 1; j++)
             {
                 dungeonTiles[i][j] = new DungeonTile((j - 1) * imgSizeX, (i - 1) * imgSizeY, i, j, imgSizeX, imgSizeY,
-                    Textures.Marble);
+                    Texture.Marble);
             }
         }
 

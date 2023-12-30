@@ -59,7 +59,7 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
             var x = _dungeonHelper.GetRandomInt(0, _corridors.Count);
             var i = _corridors[x].I;
             var j = _corridors[x].J;
-            if (DungeonTiles[i][j].Texture != Textures.Corridor)
+            if (DungeonTiles[i][j].Texture != Texture.Corridor)
                 continue;
             AddItem(i, j, item);
             count++;
@@ -83,13 +83,13 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
 
     private void AddTrap(int x, int y)
     {
-        DungeonTiles[x][y].Texture = Textures.Trap;
+        DungeonTiles[x][y].Texture = Texture.Trap;
         _dungeonHelper.AddTrapDescription(DungeonTiles[x][y], TrapDescription);
     }
 
     private void AddRoamingMonster(int x, int y)
     {
-        DungeonTiles[x][y].Texture = Textures.RoamingMonster;
+        DungeonTiles[x][y].Texture = Texture.RoamingMonster;
         _dungeonHelper.AddRoamingMonsterDescription(DungeonTiles[x][y], RoamingMonsterDescription);
     }
 
@@ -132,7 +132,7 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
             var tile = dungeonList[_dungeonHelper.GetRandomInt(0, dungeonList.Count)];
             if (CheckTileForDeadEnd(tile.I, tile.J))
             {
-                DungeonTiles[tile.I][tile.J].Texture = Textures.Corridor;
+                DungeonTiles[tile.I][tile.J].Texture = Texture.Corridor;
                 deadEnds.Add(DungeonTiles[tile.I][tile.J]);
                 deadEndsCount++;
             }
@@ -148,7 +148,7 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
         {
             for (var j = y - 1; j < y + 2; j++)
             {
-                if (DungeonTiles[i][j].Texture != Textures.Marble) // check if any other tile is there
+                if (DungeonTiles[i][j].Texture != Texture.Marble) // check if any other tile is there
                     return false;
             }
         }
@@ -190,9 +190,9 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
     private void SetPath()
     {
         // only change the marble texture
-        foreach (var tile in _result.Where(tile => tile.Texture == Textures.Marble))
+        foreach (var tile in _result.Where(tile => tile.Texture == Texture.Marble))
         {
-            DungeonTiles[tile.I][tile.J].Texture = Textures.Corridor;
+            DungeonTiles[tile.I][tile.J].Texture = Texture.Corridor;
             _corridors.Add(tile);
         }
     }
@@ -241,7 +241,7 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
 
     protected virtual bool CheckTileForOpenList(int x, int y)
     {
-        return DungeonTiles[x][y].H != 0 && DungeonTiles[x][y].Texture != Textures.Room && DungeonTiles[x][y].Texture != Textures.RoomEdge; // check its not edge/room/room_edge
+        return DungeonTiles[x][y].H != 0 && DungeonTiles[x][y].Texture != Texture.Room && DungeonTiles[x][y].Texture != Texture.RoomEdge; // check its not edge/room/room_edge
     }
 
     private void CheckG(DungeonTile node, int x, int y, ICollection<DungeonTile> openList)
@@ -263,7 +263,7 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
     {
         _result.Add(node);
         var parent = node;
-        while (parent.Parent != null)
+        while (parent.Parent is not null)
         {
             parent = parent.Parent;
             _result.Add(parent);
@@ -284,10 +284,10 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
         {
             x = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
             y = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
-            entryIsOk = DungeonTiles[x][y].Texture == Textures.Marble;
+            entryIsOk = DungeonTiles[x][y].Texture == Texture.Marble;
         }
         while (!entryIsOk);
-        DungeonTiles[x][y].Texture = Textures.Entry;
+        DungeonTiles[x][y].Texture = Texture.Entry;
         Doors.Add(DungeonTiles[x][y]);
     }
 
@@ -308,14 +308,14 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
         {
             for (var j = 0; j < right + 2; j++)
             {
-                DungeonTiles[x + i - 1][y + j - 1].Texture = Textures.RoomEdge;
+                DungeonTiles[x + i - 1][y + j - 1].Texture = Texture.RoomEdge;
             }
         }
         for (var i = 0; i < down; i++) // fill room texture
         {
             for (var j = 0; j < right; j++)
             {
-                DungeonTiles[x + i][y + j].Texture = Textures.Room;
+                DungeonTiles[x + i][y + j].Texture = Texture.Room;
                 Rooms.Add(DungeonTiles[x + i][y + j]);
                 DungeonTiles[x + i][y + j].Description = " ";
                 DungeonTiles[x + i][y + j].Index = RoomDescription.Count;
@@ -349,7 +349,7 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
         {
             for (var j = y - 1; j < y + 2; j++)
             {
-                if (DungeonTiles[i][j].Texture is Textures.Door or Textures.DoorLocked or Textures.DoorTrapped) // check nearby doors
+                if (DungeonTiles[i][j].Texture is Texture.Door or Texture.DoorLocked or Texture.DoorTrapped) // check nearby doors
                     return false;
             }
         }
@@ -358,22 +358,22 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
 
     internal bool CheckEnvironment(int x, int y)
     {
-        if (DungeonTiles[x][y - 1].Texture == Textures.RoomEdge) // left
+        if (DungeonTiles[x][y - 1].Texture == Texture.RoomEdge) // left
         {
             SetDoor(x, y - 1);
             return true;
         }
-        if (DungeonTiles[x][y + 1].Texture == Textures.RoomEdge) // right
+        if (DungeonTiles[x][y + 1].Texture == Texture.RoomEdge) // right
         {
             SetDoor(x, y + 1);
             return true;
         }
-        if (DungeonTiles[x + 1][y].Texture == Textures.RoomEdge) // bottom
+        if (DungeonTiles[x + 1][y].Texture == Texture.RoomEdge) // bottom
         {
             SetDoor(x + 1, y);
             return true;
         }
-        if (DungeonTiles[x - 1][y].Texture == Textures.RoomEdge) // top
+        if (DungeonTiles[x - 1][y].Texture == Texture.RoomEdge) // top
         {
             SetDoor(x - 1, y);
             return true;
@@ -385,11 +385,11 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
     protected virtual void SetDoor(int x, int y)
     {
         if (_dungeonHelper.GetRandomInt(0, 101) < 40)
-            DungeonTiles[x][y].Texture = Textures.DoorTrapped;
+            DungeonTiles[x][y].Texture = Texture.DoorTrapped;
         else if (_dungeonHelper.GetRandomInt(0, 101) < 50)
-            DungeonTiles[x][y].Texture = Textures.DoorLocked;
+            DungeonTiles[x][y].Texture = Texture.DoorLocked;
         else
-            DungeonTiles[x][y].Texture = Textures.Door;
+            DungeonTiles[x][y].Texture = Texture.Door;
         Doors.Add(DungeonTiles[x][y]);
     }
 
@@ -439,7 +439,7 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
 
     private bool CheckIsRoom(int x, int y)
     {
-        return DungeonTiles[x][y].Texture is Textures.Room or Textures.RoomEdge;
+        return DungeonTiles[x][y].Texture is Texture.Room or Texture.RoomEdge;
     }
 
     public virtual void Init(DungeonOptionModel optionModel)

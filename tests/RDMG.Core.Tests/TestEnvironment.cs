@@ -41,7 +41,7 @@ public sealed class TestEnvironment : IDisposable
     {
         var initializer = _scope.ServiceProvider
             .GetRequiredService<AppDbContextInitializer>();
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         await initializer.UpdateAsync(token);
         await initializer.SeedTestBaseAsync(token);

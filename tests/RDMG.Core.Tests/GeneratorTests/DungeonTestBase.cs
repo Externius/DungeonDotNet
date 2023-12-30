@@ -36,36 +36,36 @@ public abstract class DungeonTestBase
         {
             switch (i.Texture)
             {
-                case Textures.Edge:
+                case Texture.Edge:
                     _stringBuilder.Append('X');
                     break;
-                case Textures.RoomEdge:
+                case Texture.RoomEdge:
                     _stringBuilder.Append('#');
                     break;
-                case Textures.Marble:
+                case Texture.Marble:
                     _stringBuilder.Append(' ');
                     break;
-                case Textures.Room:
+                case Texture.Room:
                     _stringBuilder.Append('.');
                     break;
-                case Textures.NoCorridorDoor:
-                case Textures.NoCorridorDoorLocked:
-                case Textures.NoCorridorDoorTrapped:
-                case Textures.Door:
-                case Textures.DoorLocked:
-                case Textures.DoorTrapped:
+                case Texture.NoCorridorDoor:
+                case Texture.NoCorridorDoorLocked:
+                case Texture.NoCorridorDoorTrapped:
+                case Texture.Door:
+                case Texture.DoorLocked:
+                case Texture.DoorTrapped:
                     _stringBuilder.Append('D');
                     break;
-                case Textures.Corridor:
+                case Texture.Corridor:
                     _stringBuilder.Append('-');
                     break;
-                case Textures.Entry:
+                case Texture.Entry:
                     _stringBuilder.Append('E');
                     break;
-                case Textures.Trap:
+                case Texture.Trap:
                     _stringBuilder.Append('T');
                     break;
-                case Textures.RoamingMonster:
+                case Texture.RoamingMonster:
                     _stringBuilder.Append('M');
                     break;
                 default:
