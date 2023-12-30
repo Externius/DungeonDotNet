@@ -21,7 +21,7 @@ public class DungeonNoCorridorGenerator(ITestOutputHelper output) : DungeonTestB
         DungeonNoCorridor.AddFirstRoom();
         Draw(DungeonNoCorridor.DungeonTiles);
         var list = DungeonNoCorridor.DungeonTiles.SelectMany(T => T);
-        var match = list.Where(x => x.Texture == Textures.Room);
+        var match = list.Where(x => x.Texture == Texture.Room);
         match.ShouldNotBeNull();
     }
 
@@ -42,7 +42,7 @@ public class DungeonNoCorridorGenerator(ITestOutputHelper output) : DungeonTestB
         DungeonNoCorridor.AddEntryPoint();
         Draw(DungeonNoCorridor.DungeonTiles);
         var list = DungeonNoCorridor.DungeonTiles.SelectMany(T => T);
-        var match = list.Where(x => x.Texture == Textures.Entry);
+        var match = list.Where(x => x.Texture == Texture.Entry);
         match.ShouldNotBeNull();
     }
 

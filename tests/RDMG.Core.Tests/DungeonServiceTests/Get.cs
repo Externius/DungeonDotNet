@@ -14,7 +14,7 @@ public class Get(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task GetAllDungeonOptionsAsync_ReturnsDungeonOptionModelList()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         const int expectedCount = 4;
         var result = (await _dungeonService.GetAllDungeonOptionsAsync(token)).ToList();
@@ -25,7 +25,7 @@ public class Get(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task GetAllDungeonOptionsForUserAsync_WithNotExistingUserId_ReturnsEmptyList()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         const int userId = 3;
         var result = await _dungeonService.GetAllDungeonOptionsForUserAsync(userId, token);
@@ -35,7 +35,7 @@ public class Get(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task GetDungeonOptionByNameAsync_WithValidName_ReturnsDungeonOptionModel()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         var option = (await _dungeonService.GetAllDungeonOptionsAsync(token)).First();
         var result = await _dungeonService.GetDungeonOptionByNameAsync(option.DungeonName, option.UserId, token);
@@ -46,7 +46,7 @@ public class Get(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task GetDungeonAsync_WithValidDungeonId_ReturnsDungeonModel()
     {
-        var source = new CancellationTokenSource();
+        using var source = new CancellationTokenSource();
         var token = source.Token;
         const int id = 1;
         var result = await _dungeonService.GetDungeonAsync(id, token);

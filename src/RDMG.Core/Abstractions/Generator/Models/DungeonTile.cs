@@ -2,9 +2,9 @@ using RDMG.Core.Domain;
 
 namespace RDMG.Core.Abstractions.Generator.Models;
 
-public class DungeonTile(int x, int y, int i = 0, int j = 0, int width = 0, int height = 0, Textures texture = Textures.Edge)
+public class DungeonTile(int x, int y, int i = 0, int j = 0, int width = 0, int height = 0, Texture texture = Texture.Edge)
 {
-    public Textures Texture { get; set; } = texture;
+    public Texture Texture { get; set; } = texture;
     public int I { get; set; } = i;
     public int J { get; set; } = j;
     public int X { get; } = x;

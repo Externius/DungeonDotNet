@@ -59,18 +59,18 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             x = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
             y = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
             RoomPosition.CheckRoomPosition(DungeonTiles, x, y);
-            entryIsOk = DungeonTiles[x][y].Texture == Textures.RoomEdge && CheckPos() && CheckNearbyDoor(DungeonTiles[x][y]) && CheckEdges(DungeonTiles, x, y);
+            entryIsOk = DungeonTiles[x][y].Texture == Texture.RoomEdge && CheckPos() && CheckNearbyDoor(DungeonTiles[x][y]) && CheckEdges(DungeonTiles, x, y);
         }
         while (!entryIsOk);
-        DungeonTiles[x][y].Texture = Textures.Entry;
+        DungeonTiles[x][y].Texture = Texture.Entry;
     }
 
     private static bool CheckEdges(IReadOnlyList<DungeonTile[]> dungeonTiles, int x, int y)
     {
-        return dungeonTiles[x][y - 1].Texture == Textures.Room ||
-               dungeonTiles[x][y + 1].Texture == Textures.Room ||
-               dungeonTiles[x + 1][y].Texture == Textures.Room ||
-               dungeonTiles[x - 1][y].Texture == Textures.Room;
+        return dungeonTiles[x][y - 1].Texture == Texture.Room ||
+               dungeonTiles[x][y + 1].Texture == Texture.Room ||
+               dungeonTiles[x + 1][y].Texture == Texture.Room ||
+               dungeonTiles[x - 1][y].Texture == Texture.Room;
     }
 
     public void AddDescription()
@@ -119,7 +119,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
 
     private void CleanDoorList()
     {
-        var toDelete = Doors.Where(door => door.Texture == Textures.RoomEdge).ToList();
+        var toDelete = Doors.Where(door => door.Texture == Texture.RoomEdge).ToList();
         Doors.RemoveAll(toDelete.Contains);
     }
 
@@ -286,10 +286,10 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
 
     private bool CheckRooms(int x, int y)
     {
-        return DungeonTiles[x][y - 1].Texture != Textures.Room &&
-               DungeonTiles[x][y + 1].Texture != Textures.Room &&
-               DungeonTiles[x + 1][y].Texture != Textures.Room &&
-               DungeonTiles[x - 1][y].Texture != Textures.Room;
+        return DungeonTiles[x][y - 1].Texture != Texture.Room &&
+               DungeonTiles[x][y + 1].Texture != Texture.Room &&
+               DungeonTiles[x + 1][y].Texture != Texture.Room &&
+               DungeonTiles[x - 1][y].Texture != Texture.Room;
     }
 
     private void SetHorizontalEdge(int x, int y, int right, int down)
@@ -355,7 +355,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
 
     private void SetTextureToRoomEdge(int x, int y)
     {
-        DungeonTiles[x][y].Texture = Textures.RoomEdge;
+        DungeonTiles[x][y].Texture = Texture.RoomEdge;
     }
 
     private int[] CheckArea(int x, int y, DungeonTile door)
@@ -378,7 +378,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             Math.Abs(vertical) < Math.Abs(down) ||
             Math.Abs(horizontal) < Math.Abs(right))
         { // it would overlap with another room
-            DungeonTiles[door.I][door.J].Texture = Textures.RoomEdge; // change the door to a room_edge
+            DungeonTiles[door.I][door.J].Texture = Texture.RoomEdge; // change the door to a room_edge
             return false;
         }
         return true;
@@ -411,7 +411,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
     {
         if (vertical != 0 && horizontal != 0)
             return true; // its possible to add room
-        DungeonTiles[door.I][door.J].Texture = Textures.RoomEdge; // impossible to add room, change the door to a room_edge
+        DungeonTiles[door.I][door.J].Texture = Texture.RoomEdge; // impossible to add room, change the door to a room_edge
         return false;
     }
 
@@ -512,12 +512,12 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
 
     private bool CheckDungeonTilesEdge(int x, int y)
     {
-        return DungeonTiles[x][y].Texture == Textures.Edge;
+        return DungeonTiles[x][y].Texture == Texture.Edge;
     }
 
     private bool CheckTile(int x, int y)
     {
-        return DungeonTiles[x][y].Texture == Textures.RoomEdge || _dungeonHelper.CheckNcDoor(DungeonTiles[x][y]);
+        return DungeonTiles[x][y].Texture == Texture.RoomEdge || _dungeonHelper.CheckNcDoor(DungeonTiles[x][y]);
     }
 
     private static bool CheckPos()
@@ -539,7 +539,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
 
     private void SetRoomTiles(int x, int y)
     {
-        DungeonTiles[x][y].Texture = Textures.Room;
+        DungeonTiles[x][y].Texture = Texture.Room;
         DungeonTiles[x][y].Description = " ";
         DungeonTiles[x][y].Index = _roomStart.Count;
     }
@@ -551,7 +551,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
         {
             for (var j = 0; j < right + 2; j++)
             {
-                DungeonTiles[x + i - 1][y + j - 1].Texture = Textures.RoomEdge;
+                DungeonTiles[x + i - 1][y + j - 1].Texture = Texture.RoomEdge;
             }
         }
         for (var i = 0; i < down; i++) // fill room texture
@@ -577,7 +577,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
 
     protected override bool CheckTileForOpenList(int x, int y)
     {
-        return DungeonTiles[x][y].Texture == Textures.Room;
+        return DungeonTiles[x][y].Texture == Texture.Room;
     }
 
     protected override bool CheckDoor(int x, int y)
@@ -596,11 +596,11 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
     protected override void SetDoor(int x, int y)
     {
         if (_dungeonHelper.GetRandomInt(0, 101) < 40)
-            DungeonTiles[x][y].Texture = Textures.NoCorridorDoorTrapped;
+            DungeonTiles[x][y].Texture = Texture.NoCorridorDoorTrapped;
         else if (_dungeonHelper.GetRandomInt(0, 101) < 50)
-            DungeonTiles[x][y].Texture = Textures.NoCorridorDoorLocked;
+            DungeonTiles[x][y].Texture = Texture.NoCorridorDoorLocked;
         else
-            DungeonTiles[x][y].Texture = Textures.NoCorridorDoor;
+            DungeonTiles[x][y].Texture = Texture.NoCorridorDoor;
         OpenDoorList.Add(DungeonTiles[x][y]);
         Doors.Add(DungeonTiles[x][y]);
     }

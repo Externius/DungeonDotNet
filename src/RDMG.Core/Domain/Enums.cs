@@ -12,7 +12,7 @@ public enum Item
     Trap = 0,
     RoamingMonster
 }
-public enum Textures
+public enum Texture
 {
     Edge,
     Marble,

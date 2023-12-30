@@ -30,7 +30,7 @@ public class DungeonGenerator(ITestOutputHelper output) : DungeonTestBase(output
         Dungeon.AddEntryPoint();
         Draw(Dungeon.DungeonTiles);
         var list = Dungeon.DungeonTiles.SelectMany(T => T);
-        var match = list.Where(x => x.Texture == Textures.Entry);
+        var match = list.Where(x => x.Texture == Texture.Entry);
         match.ShouldNotBeNull();
     }
 
@@ -42,7 +42,7 @@ public class DungeonGenerator(ITestOutputHelper output) : DungeonTestBase(output
         Dungeon.GenerateCorridors();
         Draw(Dungeon.DungeonTiles);
         var list = Dungeon.DungeonTiles.SelectMany(T => T);
-        var match = list.Where(x => x.Texture == Textures.Corridor);
+        var match = list.Where(x => x.Texture == Texture.Corridor);
         match.ShouldNotBeNull();
     }
 
@@ -55,7 +55,7 @@ public class DungeonGenerator(ITestOutputHelper output) : DungeonTestBase(output
         Dungeon.AddDeadEnds();
         Draw(Dungeon.DungeonTiles);
         var list = Dungeon.DungeonTiles.SelectMany(T => T);
-        var match = list.Where(x => x.Texture == Textures.Corridor);
+        var match = list.Where(x => x.Texture == Texture.Corridor);
         match.ShouldNotBeNull();
     }
 
@@ -69,7 +69,7 @@ public class DungeonGenerator(ITestOutputHelper output) : DungeonTestBase(output
         Dungeon.AddCorridorItem(2, Item.Trap);
         Draw(Dungeon.DungeonTiles);
         var list = Dungeon.DungeonTiles.SelectMany(T => T);
-        var match = list.Where(x => x.Texture == Textures.Trap);
+        var match = list.Where(x => x.Texture == Texture.Trap);
         match.ShouldNotBeNull();
     }
 
@@ -83,7 +83,7 @@ public class DungeonGenerator(ITestOutputHelper output) : DungeonTestBase(output
         Dungeon.AddCorridorItem(2, Item.RoamingMonster);
         Draw(Dungeon.DungeonTiles);
         var list = Dungeon.DungeonTiles.SelectMany(T => T);
-        var match = list.Where(x => x.Texture == Textures.RoamingMonster);
+        var match = list.Where(x => x.Texture == Texture.RoamingMonster);
         match.ShouldNotBeNull();
     }
 }

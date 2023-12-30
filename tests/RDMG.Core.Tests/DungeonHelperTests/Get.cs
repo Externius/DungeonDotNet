@@ -32,18 +32,18 @@ public class Get
         result.ShouldBeLessThan(max);
     }
 
-    public static IEnumerable<object[]> GetNcTestDoorTiles()
+    public static TheoryData<DungeonTile> GetNcTestDoorTiles()
     {
-        return new List<object[]>
-        {
-            new object[] {new DungeonTile(2,2,2,2,50,50,Textures.NoCorridorDoor)},
-            new object[] {new DungeonTile(5,5,2,2,50,50,Textures.NoCorridorDoorTrapped)},
-            new object[] {new DungeonTile(5,2,2,2,50,50,Textures.NoCorridorDoorLocked)}
-        };
+        return
+        [
+            new (2,2,2,2,50,50,Texture.NoCorridorDoor),
+            new (5,5,2,2,50,50,Texture.NoCorridorDoorTrapped),
+            new (5,2,2,2,50,50,Texture.NoCorridorDoorLocked)
+        ];
     }
 
     [Theory]
-    [MemberData(nameof(GetNcTestDoorTiles))]
+    [MemberData(nameof(GetNcTestDoorTiles), MemberType = typeof(Get))]
     public void GetNcDoor_WithValidNCCorridorDoorDungeonTile_ReturnsDoorDescription(DungeonTile dungeonTile)
     {
         var result = _dungeonHelper.GetNcDoor(dungeonTile);
@@ -55,7 +55,7 @@ public class Get
     {
         _dungeonNoCorridor.AddFirstRoom();
         var list = _dungeonNoCorridor.DungeonTiles.SelectMany(T => T);
-        var match = list.Where(x => x.Texture == Textures.Room);
+        var match = list.Where(x => x.Texture == Texture.Room);
         var result = _dungeonHelper.GetNcDoorDescription(_dungeonNoCorridor.DungeonTiles, match);
         result.ShouldNotBeNull();
     }
