@@ -59,9 +59,10 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             x = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
             y = _dungeonHelper.GetRandomInt(1, DungeonTiles.Length - 1);
             RoomPosition.CheckRoomPosition(DungeonTiles, x, y);
-            entryIsOk = DungeonTiles[x][y].Texture == Texture.RoomEdge && CheckPos() && CheckNearbyDoor(DungeonTiles[x][y]) && CheckEdges(DungeonTiles, x, y);
-        }
-        while (!entryIsOk);
+            entryIsOk = DungeonTiles[x][y].Texture == Texture.RoomEdge && CheckPos() &&
+                        CheckNearbyDoor(DungeonTiles[x][y]) && CheckEdges(DungeonTiles, x, y);
+        } while (!entryIsOk);
+
         DungeonTiles[x][y].Texture = Texture.Entry;
     }
 
@@ -84,14 +85,16 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             var start = room;
             AddToClosedList(closedList, start); // add start point to closed list
             AddToOpen(start, openList, closedList); // add the nearby nodes to openList
-            while (openList.Any())
+            while (openList.Count != 0)
             {
                 start = openList[0]; // get next room
                 AddToClosedList(closedList, start); // add to closed list this node
                 RemoveFromOpen(openList, start); // remove from open list this node
                 AddToOpen(start, openList, closedList); // add open list the nearby nodes
             }
-            _dungeonHelper.AddNcRoomDescription(DungeonTiles[room.I][room.J], RoomDescription, _dungeonHelper.GetNcDoorDescription(DungeonTiles, closedList));
+
+            _dungeonHelper.AddNcRoomDescription(DungeonTiles[room.I][room.J], RoomDescription,
+                _dungeonHelper.GetNcDoorDescription(DungeonTiles, closedList));
         }
     }
 
@@ -105,7 +108,8 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
 
     private void AddToOpenList(int x, int y, ICollection<DungeonTile> openList, ICollection<DungeonTile> closedList)
     {
-        if (CheckTileForOpenList(x, y) && !closedList.Contains(DungeonTiles[x][y]) && !openList.Contains(DungeonTiles[x][y])) // not in openlist/closedlist
+        if (CheckTileForOpenList(x, y) && !closedList.Contains(DungeonTiles[x][y]) &&
+            !openList.Contains(DungeonTiles[x][y])) // not in openlist/closedlist
             openList.Add(DungeonTiles[x][y]);
     }
 
@@ -113,7 +117,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
     {
         foreach (var door in Doors)
         {
-            door.Description = (_dungeonHelper.GetNcDoor(door));
+            door.Description = _dungeonHelper.GetNcDoor(door);
         }
     }
 
@@ -140,6 +144,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
                 else if (RoomPosition.Left)
                     RandomFillLeftRight(OpenDoorList[i].I, OpenDoorList[i].J + 1, OpenDoorList[i]);
             }
+
             OpenDoorList.Remove(OpenDoorList[i]);
         }
     }
@@ -168,6 +173,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
                 FillVertical(x, y + i, down);
             }
         }
+
         SetVerticalEdge(x, y, right, down);
         SetVerticalEdge(x, y, right < 0 ? 1 : -1, down);
         FillDoor(down, right);
@@ -201,6 +207,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             {
                 SetRoomTiles(x + i, y); // set room
             }
+
             SetTextureToRoomEdge(x + 1, y); // bottom edge
             AddEdgeTileList(x + 1, y);
         }
@@ -210,9 +217,11 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             {
                 SetRoomTiles(x + i, y); // set room
             }
+
             SetTextureToRoomEdge(x - 1, y); // top edge
             AddEdgeTileList(x - 1, y);
         }
+
         SetTextureToRoomEdge(x + down, y);
         AddEdgeTileList(x + down, y);
     }
@@ -241,6 +250,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
                 FillHorizontal(x + i, y, right);
             }
         }
+
         SetHorizontalEdge(x, y, right, down);
         SetHorizontalEdge(x, y, right, down < 0 ? 1 : -1);
         FillDoor(down, right);
@@ -260,9 +270,9 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
                 SetDoor(_edgeTileList[random].I, _edgeTileList[random].J);
                 doorCount--;
             }
+
             maxTryNumber--;
-        }
-        while (doorCount > 0 && maxTryNumber > 0);
+        } while (doorCount > 0 && maxTryNumber > 0);
     }
 
     private bool CheckNearbyDoor(DungeonTile node)
@@ -275,6 +285,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
                     return false;
             }
         }
+
         return true;
     }
 
@@ -332,6 +343,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             {
                 SetRoomTiles(x, y + i); // set room
             }
+
             SetTextureToRoomEdge(x, y + 1); // right edge
             AddEdgeTileList(x, y + 1);
         }
@@ -341,9 +353,11 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             {
                 SetRoomTiles(x, y + i); // set room
             }
+
             SetTextureToRoomEdge(x, y - 1); // left edge
             AddEdgeTileList(x, y - 1);
         }
+
         SetTextureToRoomEdge(x, y + right);
         AddEdgeTileList(x, y + right);
     }
@@ -377,10 +391,12 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
         if (vertical < 0 != down < 0 || horizontal < 0 != right < 0 ||
             Math.Abs(vertical) < Math.Abs(down) ||
             Math.Abs(horizontal) < Math.Abs(right))
-        { // it would overlap with another room
+        {
+            // it would overlap with another room
             DungeonTiles[door.I][door.J].Texture = Texture.RoomEdge; // change the door to a room_edge
             return false;
         }
+
         return true;
     }
 
@@ -398,8 +414,8 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
 
     private int[] GetDownRight(int vertical, int horizontal)
     {
-        var down = _dungeonHelper.GetRandomInt(2, (Math.Abs(vertical)) > RoomSize ? RoomSize : Math.Abs(vertical));
-        var right = _dungeonHelper.GetRandomInt(2, (Math.Abs(horizontal)) > RoomSize ? RoomSize : Math.Abs(horizontal));
+        var down = _dungeonHelper.GetRandomInt(2, Math.Abs(vertical) > RoomSize ? RoomSize : Math.Abs(vertical));
+        var right = _dungeonHelper.GetRandomInt(2, Math.Abs(horizontal) > RoomSize ? RoomSize : Math.Abs(horizontal));
         if (vertical < 0)
             down = -down;
         if (horizontal < 0)
@@ -410,8 +426,9 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
     private bool CheckPossible(int vertical, int horizontal, DungeonTile door)
     {
         if (vertical != 0 && horizontal != 0)
-            return true; // its possible to add room
-        DungeonTiles[door.I][door.J].Texture = Texture.RoomEdge; // impossible to add room, change the door to a room_edge
+            return true; // it's possible to add room
+        DungeonTiles[door.I][door.J].Texture =
+            Texture.RoomEdge; // impossible to add room, change the door to a room_edge
         return false;
     }
 
@@ -432,8 +449,8 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             edge = CheckDungeonTilesEdge(x, temp);
             temp--;
             count--;
-        }
-        while (!tile && !edge);
+        } while (!tile && !edge);
+
         if (edge)
             count++;
         return count;
@@ -451,8 +468,8 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             edge = CheckDungeonTilesEdge(x, temp);
             temp++;
             count++;
-        }
-        while (!tile && !edge);
+        } while (!tile && !edge);
+
         if (edge)
             count--;
         return count;
@@ -484,8 +501,8 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             edge = CheckDungeonTilesEdge(temp, y);
             temp--;
             count--;
-        }
-        while (!tile && !edge);
+        } while (!tile && !edge);
+
         if (edge)
             count++;
         return count;
@@ -503,8 +520,8 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
             edge = CheckDungeonTilesEdge(temp, y);
             temp++;
             count++;
-        }
-        while (!tile && !edge);
+        } while (!tile && !edge);
+
         if (edge)
             count--;
         return count;
@@ -554,6 +571,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
                 DungeonTiles[x + i - 1][y + j - 1].Texture = Texture.RoomEdge;
             }
         }
+
         for (var i = 0; i < down; i++) // fill room texture
         {
             for (var j = 0; j < right; j++)
@@ -562,6 +580,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
                 Rooms.Add(DungeonTiles[x + i][y + j]);
             }
         }
+
         for (var d = 0; d < doorCount; d++)
         {
             AddDoor(x, y, down, right);
@@ -590,6 +609,7 @@ public class DungeonNoCorridor(IDungeonHelper dungeonHelper) : Dungeon(dungeonHe
                     return false;
             }
         }
+
         return CheckEnvironment(x, y);
     }
 

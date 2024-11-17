@@ -6,6 +6,7 @@ using RDMG.Core.Services;
 using System;
 
 namespace RDMG.Core;
+
 public static class ConfigureServices
 {
     public static IServiceCollection AddApplicationServices(
@@ -21,10 +22,7 @@ public static class ConfigureServices
             .AddScoped<IDungeonNoCorridor, DungeonNoCorridor>()
             .AddScoped<IDungeonService, DungeonService>();
 
-        services.AddAutoMapper(cfg =>
-            {
-                cfg.AllowNullCollections = true;
-            }
+        services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; }
             , AppDomain.CurrentDomain.GetAssemblies());
 
         return services;

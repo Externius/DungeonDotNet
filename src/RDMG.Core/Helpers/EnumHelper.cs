@@ -15,6 +15,8 @@ public static class EnumHelper
         if (memberInfo.Length <= 0)
             return enumerationValue.ToString() ?? string.Empty;
         var attrs = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-        return attrs.Length > 0 ? ((DescriptionAttribute)attrs[0]).Description : enumerationValue.ToString() ?? string.Empty;
+        return attrs.Length > 0
+            ? ((DescriptionAttribute)attrs[0]).Description
+            : enumerationValue.ToString() ?? string.Empty;
     }
 }

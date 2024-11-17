@@ -53,7 +53,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
             errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Email)));
         if (string.IsNullOrEmpty(model.Role))
             errors.Add(new ServiceException(string.Format(Resources.Error.RequiredValidation, model.Role)));
-        if (errors.Any())
+        if (errors.Count != 0)
             throw new ServiceAggregateException(errors);
     }
 
@@ -119,6 +119,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
                 user.IsDeleted = false;
                 await _userRepository.UpdateAsync(user);
             }
+
             return true;
         }
         catch (Exception ex)
@@ -139,7 +140,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Email;
-                user.Role = (Role)Enum.Parse(typeof(Role), model.Role);
+                user.Role = Enum.Parse<Role>(model.Role);
                 await _userRepository.UpdateAsync(user);
             }
         }
