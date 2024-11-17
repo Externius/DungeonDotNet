@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace RDMG.Core.Services;
 
-public class OptionService(IMapper mapper,
+public class OptionService(
+    IMapper mapper,
     IOptionRepository optionRepository,
     IMemoryCache memoryCache,
     ILogger<OptionService> logger) : IOptionService
@@ -23,7 +24,8 @@ public class OptionService(IMapper mapper,
     private readonly IMapper _mapper = mapper;
     private readonly ILogger _logger = logger;
 
-    public async Task<IEnumerable<OptionModel>> ListOptionsAsync(OptionKey? filter = null, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<OptionModel>> ListOptionsAsync(OptionKey? filter = null,
+        CancellationToken cancellationToken = default)
     {
         try
         {

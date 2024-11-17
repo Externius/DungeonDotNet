@@ -15,7 +15,8 @@ using System.Threading.Tasks;
 
 namespace RDMG.Core.Services;
 
-public class DungeonService(IMapper mapper,
+public class DungeonService(
+    IMapper mapper,
     IDungeonRepository dungeonRepository,
     IDungeonOptionRepository dungeonOptionRepository,
     IDungeon dungeon,
@@ -29,12 +30,15 @@ public class DungeonService(IMapper mapper,
     private readonly IMapper _mapper = mapper;
     private readonly ILogger _logger = logger;
 
-    public async Task<int> CreateDungeonOptionAsync(DungeonOptionModel dungeonOption, CancellationToken cancellationToken)
+    public async Task<int> CreateDungeonOptionAsync(DungeonOptionModel dungeonOption,
+        CancellationToken cancellationToken)
     {
         try
         {
             ValidateModel(dungeonOption);
-            var option = await _dungeonOptionRepository.AddDungeonOptionAsync(_mapper.Map<DungeonOption>(dungeonOption), cancellationToken);
+            var option =
+                await _dungeonOptionRepository.AddDungeonOptionAsync(_mapper.Map<DungeonOption>(dungeonOption),
+                    cancellationToken);
             return option.Id;
         }
         catch (Exception ex)
@@ -70,7 +74,8 @@ public class DungeonService(IMapper mapper,
         }
     }
 
-    public async Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon, int level, CancellationToken cancellationToken)
+    public async Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon,
+        int level, CancellationToken cancellationToken)
     {
         try
         {
@@ -80,18 +85,21 @@ public class DungeonService(IMapper mapper,
                 return await AddDungeonToExistingOptionAsync(optionModel, level, cancellationToken);
             }
 
-            var existingDungeonOption = await GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
+            var existingDungeonOption =
+                await GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
             if (existingDungeonOption is null)
             {
                 return await CreateOptionAndAddDungeonToItAsync(optionModel, cancellationToken);
             }
 
             // regenerate
-            var existingDungeons = await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
+            var existingDungeons =
+                await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
             var oldDungeon = existingDungeons.FirstOrDefault();
             if (oldDungeon is not null)
             {
-                return await UpdateExistingDungeonAsync(optionModel, existingDungeonOption, oldDungeon, cancellationToken);
+                return await UpdateExistingDungeonAsync(optionModel, existingDungeonOption, oldDungeon,
+                    cancellationToken);
             }
 
             optionModel.Id = existingDungeonOption.Id;
@@ -104,7 +112,8 @@ public class DungeonService(IMapper mapper,
         }
     }
 
-    private async Task<DungeonModel> UpdateExistingDungeonAsync(DungeonOptionModel optionModel, DungeonOptionModel existingDungeonOption, DungeonModel oldDungeon, CancellationToken cancellationToken)
+    private async Task<DungeonModel> UpdateExistingDungeonAsync(DungeonOptionModel optionModel,
+        DungeonOptionModel existingDungeonOption, DungeonModel oldDungeon, CancellationToken cancellationToken)
     {
         var dungeon = await GenerateDungeonAsync(optionModel, existingDungeonOption.Id);
         dungeon.Id = oldDungeon.Id;
@@ -113,7 +122,8 @@ public class DungeonService(IMapper mapper,
         return dungeon;
     }
 
-    private async Task<DungeonModel> CreateOptionAndAddDungeonToItAsync(DungeonOptionModel optionModel, CancellationToken cancellationToken)
+    private async Task<DungeonModel> CreateOptionAndAddDungeonToItAsync(DungeonOptionModel optionModel,
+        CancellationToken cancellationToken)
     {
         await CreateDungeonOptionAsync(optionModel, cancellationToken);
         var created = await GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
@@ -124,9 +134,12 @@ public class DungeonService(IMapper mapper,
         return dungeon;
     }
 
-    private async Task<DungeonModel> AddDungeonToExistingOptionAsync(DungeonOptionModel optionModel, int level, CancellationToken cancellationToken)
+    private async Task<DungeonModel> AddDungeonToExistingOptionAsync(DungeonOptionModel optionModel, int level,
+        CancellationToken cancellationToken)
     {
-        var existingDungeons = (await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken)).ToList();
+        var existingDungeons =
+            (await ListUserDungeonsByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken))
+            .ToList();
         var dungeon = await GenerateDungeonAsync(optionModel, optionModel.Id);
         dungeon.Level = level;
         if (existingDungeons.Exists(d => d.Level == level))
@@ -138,6 +151,7 @@ public class DungeonService(IMapper mapper,
         {
             dungeon.Id = await AddDungeonAsync(dungeon, cancellationToken);
         }
+
         return dungeon;
     }
 
@@ -179,7 +193,8 @@ public class DungeonService(IMapper mapper,
         }
     }
 
-    public async Task<IEnumerable<DungeonOptionModel>> GetAllDungeonOptionsForUserAsync(int userId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<DungeonOptionModel>> GetAllDungeonOptionsForUserAsync(int userId,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -194,11 +209,13 @@ public class DungeonService(IMapper mapper,
         }
     }
 
-    public async Task<DungeonOptionModel> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
+    public async Task<DungeonOptionModel> GetDungeonOptionByNameAsync(string dungeonName, int userId,
+        CancellationToken cancellationToken)
     {
         try
         {
-            return _mapper.Map<DungeonOptionModel>(await _dungeonOptionRepository.GetDungeonOptionByNameAsync(dungeonName, userId, cancellationToken));
+            return _mapper.Map<DungeonOptionModel>(
+                await _dungeonOptionRepository.GetDungeonOptionByNameAsync(dungeonName, userId, cancellationToken));
         }
         catch (Exception ex)
         {
@@ -247,11 +264,13 @@ public class DungeonService(IMapper mapper,
         }
     }
 
-    public async Task<IEnumerable<DungeonModel>> ListUserDungeonsByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<DungeonModel>> ListUserDungeonsByNameAsync(string dungeonName, int userId,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var result = await _dungeonRepository.GetAllDungeonByOptionNameForUserAsync(dungeonName, userId, cancellationToken);
+            var result =
+                await _dungeonRepository.GetAllDungeonByOptionNameForUserAsync(dungeonName, userId, cancellationToken);
             return result.Select(_mapper.Map<DungeonModel>);
         }
         catch (Exception ex)
@@ -296,7 +315,8 @@ public class DungeonService(IMapper mapper,
     {
         try
         {
-            return _mapper.Map<DungeonOptionModel>(await _dungeonOptionRepository.GetDungeonOptionAsync(id, cancellationToken));
+            return _mapper.Map<DungeonOptionModel>(
+                await _dungeonOptionRepository.GetDungeonOptionAsync(id, cancellationToken));
         }
         catch (Exception ex)
         {

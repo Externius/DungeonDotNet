@@ -4,6 +4,7 @@ using RDMG.Core.Abstractions.Services;
 using System;
 
 namespace RDMG.Core.Tests;
+
 public class TestFixture : IDisposable
 {
     public readonly IDungeonService DungeonService;
