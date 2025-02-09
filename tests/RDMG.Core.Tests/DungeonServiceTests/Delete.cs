@@ -1,7 +1,6 @@
 ﻿using RDMG.Core.Abstractions.Services;
 using Shouldly;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -15,12 +14,10 @@ public class Delete(TestFixture fixture) : IClassFixture<TestFixture>
     public async Task DeleteDungeonOptionAsync_WithValidId_ReturnsTrue()
     {
         const int toDeleteId = 1;
-        using var source = new CancellationTokenSource();
-        var token = source.Token;
-        var result = await _dungeonService.DeleteDungeonOptionAsync(toDeleteId, token);
+        var result = await _dungeonService.DeleteDungeonOptionAsync(toDeleteId, TestContext.Current.CancellationToken);
         result.ShouldBeTrue();
 
-        var list = await _dungeonService.GetAllDungeonOptionsAsync(token);
+        var list = await _dungeonService.GetAllDungeonOptionsAsync(TestContext.Current.CancellationToken);
         list.Any(o => o.Id == toDeleteId).ShouldBeFalse();
     }
 
@@ -28,9 +25,7 @@ public class Delete(TestFixture fixture) : IClassFixture<TestFixture>
     public async Task DeleteDungeonAsync_WithValidId_ReturnsTrue()
     {
         const int toDeleteId = 2;
-        using var source = new CancellationTokenSource();
-        var token = source.Token;
-        var result = await _dungeonService.DeleteDungeonAsync(toDeleteId, token);
+        var result = await _dungeonService.DeleteDungeonAsync(toDeleteId, TestContext.Current.CancellationToken);
         result.ShouldBeTrue();
     }
 }

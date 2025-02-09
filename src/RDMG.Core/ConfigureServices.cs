@@ -3,7 +3,7 @@ using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Generator;
 using RDMG.Core.Services;
-using System;
+using RDMG.Core.Services.Automapper;
 
 namespace RDMG.Core;
 
@@ -22,8 +22,7 @@ public static class ConfigureServices
             .AddScoped<IDungeonNoCorridor, DungeonNoCorridor>()
             .AddScoped<IDungeonService, DungeonService>();
 
-        services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; }
-            , AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; }, typeof(DungeonProfile));
 
         return services;
     }

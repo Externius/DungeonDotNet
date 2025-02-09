@@ -1,54 +1,57 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - RDMG</title>
-    <partial name="_StylesPartial" />
+    <partial name="_StylesPartial"/>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@Resources.Common.NavHome</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex ">
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (User.Identity!.IsAuthenticated)
-                        {
-                            if (User.Claims.Any(c => c.Value == RDMG.Core.Domain.Roles.Admin))
-                            {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">@Resources.Common.NavUserManagement </a></li>
-                            }
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Dungeon" asp-action="Index">@Resources.Common.NavDungeons</a></li>
-                        }
-                    </ul>
-                    <ul class="navbar-nav ml-auto">
-                        <partial name="_Login" />
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <partial name="_CookieConsentPartial" />
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted text-center">
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container">
-            &copy; @DateTime.Now.Year @Resources.Common.Copyright - @System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version?.ToString() - <a asp-area="" asp-controller="Home" asp-action="Privacy">@Resources.Common.Privacy</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@Resources.Common.NavHome</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex ">
+                <ul class="navbar-nav flex-grow-1">
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        if (User.Claims.Any(c => c.Value == RDMG.Core.Domain.Roles.Admin))
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="User"
+                                                    asp-action="Index">@Resources.Common.NavUserManagement </a></li>
+                        }
+
+                        <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Dungeon"
+                                                asp-action="Index">@Resources.Common.NavDungeons</a></li>
+                    }
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <partial name="_Login"/>
+                </ul>
+            </div>
         </div>
-    </footer>
+    </nav>
+</header>
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
 
-    <em class="far fa-arrow-alt-circle-up toparrow" onclick="topFunction()" style="display:none"></em>
+<footer class="border-top footer text-muted text-center">
+    <div class="container">
+        &copy; @DateTime.Now.Year @Resources.Common.Copyright - @System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version?.ToString()
+    </div>
+</footer>
 
-    <partial name="_ScriptsPartial" />
-    @RenderSection("Scripts", required: false)
+<em class="far fa-arrow-alt-circle-up toparrow" onclick="topFunction()" style="display:none"></em>
+
+<partial name="_ScriptsPartial"/>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

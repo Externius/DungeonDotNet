@@ -3,7 +3,7 @@ using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Domain;
 using System.Collections.Generic;
 using System.Text;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace RDMG.Core.Tests.GeneratorTests;
 
@@ -13,6 +13,7 @@ public abstract class DungeonTestBase
     private readonly StringBuilder _stringBuilder = new();
     protected readonly IDungeon Dungeon;
     protected readonly IDungeonNoCorridor DungeonNoCorridor;
+
     protected DungeonTestBase(ITestOutputHelper output)
     {
         var env = new TestEnvironment();
@@ -27,6 +28,7 @@ public abstract class DungeonTestBase
         {
             PrintRow(row);
         }
+
         _output.WriteLine(" ");
     }
 
@@ -73,6 +75,7 @@ public abstract class DungeonTestBase
                     break;
             }
         }
+
         _output.WriteLine(_stringBuilder.ToString());
         _stringBuilder.Clear();
     }
