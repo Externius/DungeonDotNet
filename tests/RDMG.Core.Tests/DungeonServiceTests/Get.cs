@@ -1,7 +1,6 @@
 ﻿using RDMG.Core.Abstractions.Services;
 using Shouldly;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -14,10 +13,8 @@ public class Get(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task GetAllDungeonOptionsAsync_ReturnsDungeonOptionModelList()
     {
-        using var source = new CancellationTokenSource();
-        var token = source.Token;
         const int expectedCount = 4;
-        var result = (await _dungeonService.GetAllDungeonOptionsAsync(token)).ToList();
+        var result = (await _dungeonService.GetAllDungeonOptionsAsync(TestContext.Current.CancellationToken)).ToList();
         result.ShouldNotBeEmpty();
         result.Count.ShouldBe(expectedCount);
     }
@@ -25,20 +22,18 @@ public class Get(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task GetAllDungeonOptionsForUserAsync_WithNotExistingUserId_ReturnsEmptyList()
     {
-        using var source = new CancellationTokenSource();
-        var token = source.Token;
         const int userId = 3;
-        var result = await _dungeonService.GetAllDungeonOptionsForUserAsync(userId, token);
+        var result =
+            await _dungeonService.GetAllDungeonOptionsForUserAsync(userId, TestContext.Current.CancellationToken);
         result.ShouldBeEmpty();
     }
 
     [Fact]
     public async Task GetDungeonOptionByNameAsync_WithValidName_ReturnsDungeonOptionModel()
     {
-        using var source = new CancellationTokenSource();
-        var token = source.Token;
-        var option = (await _dungeonService.GetAllDungeonOptionsAsync(token)).First();
-        var result = await _dungeonService.GetDungeonOptionByNameAsync(option.DungeonName, option.UserId, token);
+        var option = (await _dungeonService.GetAllDungeonOptionsAsync(TestContext.Current.CancellationToken)).First();
+        var result = await _dungeonService.GetDungeonOptionByNameAsync(option.DungeonName, option.UserId,
+            TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.ShouldBeEquivalentTo(option);
     }
@@ -46,10 +41,8 @@ public class Get(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task GetDungeonAsync_WithValidDungeonId_ReturnsDungeonModel()
     {
-        using var source = new CancellationTokenSource();
-        var token = source.Token;
         const int id = 1;
-        var result = await _dungeonService.GetDungeonAsync(id, token);
+        var result = await _dungeonService.GetDungeonAsync(id, TestContext.Current.CancellationToken);
         result.Id.ShouldBe(id);
     }
 }

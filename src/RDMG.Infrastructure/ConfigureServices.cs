@@ -12,8 +12,10 @@ using RDMG.Infrastructure.Repository;
 using System;
 using System.IO;
 using System.Reflection;
+using RDMG.Infrastructure.Repository.Automapper;
 
 namespace RDMG.Infrastructure;
+
 public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructureServices(
@@ -26,10 +28,11 @@ public static class ConfigureServices
                 services.AddDbContext<SqlServerContext>((sp, options) =>
                 {
                     options.UseSqlServer(configuration.GetConnectionString(AppDbContext.Rdmg),
-                        sqlServerOptionsAction: sqlOptions =>
-                        {
-                            sqlOptions.MigrationsAssembly(typeof(SqlServerContext).GetTypeInfo().Assembly.GetName().Name);
-                        })
+                            sqlServerOptionsAction: sqlOptions =>
+                            {
+                                sqlOptions.MigrationsAssembly(typeof(SqlServerContext).GetTypeInfo().Assembly.GetName()
+                                    .Name);
+                            })
                         .AddInterceptors(
                             ActivatorUtilities.CreateInstance<AuditEntitiesSaveChangesInterceptor>(sp));
                 });
@@ -44,10 +47,11 @@ public static class ConfigureServices
                 services.AddDbContext<SqliteContext>((sp, options) =>
                 {
                     options.UseSqlite(connString?.Replace(SqliteContext.HomeToken, home),
-                        sqliteOptionsAction: sqlOptions =>
-                        {
-                            sqlOptions.MigrationsAssembly(typeof(SqliteContext).GetTypeInfo().Assembly.GetName().Name);
-                        })
+                            sqliteOptionsAction: sqlOptions =>
+                            {
+                                sqlOptions.MigrationsAssembly(typeof(SqliteContext).GetTypeInfo().Assembly.GetName()
+                                    .Name);
+                            })
                         .AddInterceptors(
                             ActivatorUtilities.CreateInstance<AuditEntitiesSaveChangesInterceptor>(sp));
                 });
@@ -58,7 +62,8 @@ public static class ConfigureServices
                 break;
             default:
                 throw new ServiceException(
-                    string.Format(Resources.Error.DbProviderError, configuration.GetConnectionString(AppDbContext.DbProvider)));
+                    string.Format(Resources.Error.DbProviderError,
+                        configuration.GetConnectionString(AppDbContext.DbProvider)));
         }
 
         Configure(services, configuration);
@@ -74,6 +79,7 @@ public static class ConfigureServices
             .AddScoped<IDungeonOptionRepository, DungeonOptionRepository>()
             .AddScoped<IOptionRepository, OptionRepository>()
             .AddScoped<IUserRepository, UserRepository>();
+        services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; }, typeof(DungeonProfile));
     }
 
     public static IServiceCollection AddTestInfrastructureServices(this IServiceCollection services,
@@ -83,10 +89,10 @@ public static class ConfigureServices
         services.AddDbContext<SqliteContext>((sp, options) =>
         {
             options.UseSqlite(connection,
-                sqliteOptionsAction: sqlOptions =>
-                {
-                    sqlOptions.MigrationsAssembly(typeof(SqliteContext).GetTypeInfo().Assembly.GetName().Name);
-                })
+                    sqliteOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.MigrationsAssembly(typeof(SqliteContext).GetTypeInfo().Assembly.GetName().Name);
+                    })
                 .AddInterceptors(ActivatorUtilities.CreateInstance<AuditEntitiesSaveChangesInterceptor>(sp));
         });
         services.AddScoped<IAppDbContext, SqliteContext>(sp =>

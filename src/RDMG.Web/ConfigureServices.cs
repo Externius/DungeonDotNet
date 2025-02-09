@@ -2,6 +2,7 @@
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Infrastructure.Data;
+using RDMG.Web.Automapper;
 using RDMG.Web.Services;
 using Serilog;
 
@@ -16,7 +17,7 @@ public static class ConfigureServices
         services.Configure<CookiePolicyOptions>(options =>
         {
             // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-            options.CheckConsentNeeded = _ => true; 
+            options.CheckConsentNeeded = _ => true;
             options.MinimumSameSitePolicy = SameSiteMode.None;
         });
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -25,7 +26,7 @@ public static class ConfigureServices
                 options.LoginPath = new PathString("/Auth/Login");
                 options.AccessDeniedPath = new PathString("/Auth/Forbidden/");
             });
-
+        services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; }, typeof(AuthProfile));
         services.AddMemoryCache();
 
         services.AddMvc()
@@ -56,7 +57,7 @@ public static class ConfigureServices
             default:
                 throw new ServiceException(
                     string.Format(Resources.Error.DbProviderError,
-                    configuration.GetConnectionString(AppDbContext.DbProvider)));
+                        configuration.GetConnectionString(AppDbContext.DbProvider)));
         }
 
         return host;

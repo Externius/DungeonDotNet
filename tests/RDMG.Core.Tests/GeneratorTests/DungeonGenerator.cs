@@ -2,7 +2,6 @@
 using Shouldly;
 using System.Linq;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace RDMG.Core.Tests.GeneratorTests;
 

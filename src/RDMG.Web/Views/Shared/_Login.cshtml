@@ -1,11 +1,12 @@
 ﻿@using RDMG.Web.Helpers
-@if (User?.Identity?.IsAuthenticated == true)
+@if (User.Identity?.IsAuthenticated == true)
 {
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="menuProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="#" id="menuProfile" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
             <i class="fa fa-user fa-fw"></i>
             <span class="">
-                @UserHelper.GetUserName(User?.Claims)
+                @UserHelper.GetUserName(User.Claims)
             </span>
         </a>
         <div class="dropdown-menu" aria-labelledby="menuProfile">

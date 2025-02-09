@@ -17,18 +17,20 @@ public class List(TestFixture fixture) : IClassFixture<TestFixture>
     [Fact]
     public async Task ListOptionsAsync_WithNoFilter_ReturnsAllOptions()
     {
-        var expectedCount = (await _optionRepository.ListAsync()).Count();
-        var result = await _optionService.ListOptionsAsync();
+        var expectedCount =
+            (await _optionRepository.ListAsync(cancellationToken: TestContext.Current.CancellationToken)).Count();
+        var result = await _optionService.ListOptionsAsync(cancellationToken: TestContext.Current.CancellationToken);
         result.Count().ShouldBe(expectedCount);
     }
 
     public static TheoryData<OptionKey> GetOptionKeys()
     {
         var result = new TheoryData<OptionKey>();
-        foreach (OptionKey key in Enum.GetValues(typeof(OptionKey)))
+        foreach (var key in Enum.GetValues<OptionKey>())
         {
             result.Add(key);
         }
+
         return result;
     }
 
@@ -36,8 +38,8 @@ public class List(TestFixture fixture) : IClassFixture<TestFixture>
     [MemberData(nameof(GetOptionKeys), MemberType = typeof(List))]
     public async Task ListOptionsAsync_WithFilter_ReturnsFilteredOptions(OptionKey filter)
     {
-        var expectedCount = (await _optionRepository.ListAsync(filter)).Count();
-        var result = await _optionService.ListOptionsAsync(filter);
+        var expectedCount = (await _optionRepository.ListAsync(filter, TestContext.Current.CancellationToken)).Count();
+        var result = await _optionService.ListOptionsAsync(filter, TestContext.Current.CancellationToken);
         result.Count().ShouldBe(expectedCount);
     }
 }
