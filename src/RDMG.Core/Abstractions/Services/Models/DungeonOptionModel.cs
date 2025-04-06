@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace RDMG.Core.Abstractions.Services.Models;
+﻿namespace RDMG.Core.Abstractions.Services.Models;
 
 public class DungeonOptionModel : EditModel
 {

@@ -1,7 +1,4 @@
 ﻿using RDMG.Core.Abstractions.Services.Models;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RDMG.Core.Abstractions.Services;
 
@@ -10,7 +7,7 @@ public interface IDungeonService
     Task<IEnumerable<DungeonOptionModel>> GetAllDungeonOptionsAsync(CancellationToken cancellationToken);
     Task<IEnumerable<DungeonOptionModel>> GetAllDungeonOptionsForUserAsync(int userId, CancellationToken cancellationToken);
     Task<DungeonOptionModel> GetDungeonOptionAsync(int id, CancellationToken cancellationToken);
-    Task<DungeonOptionModel> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
+    Task<DungeonOptionModel?> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken);
     Task<DungeonModel> GetDungeonAsync(int id, CancellationToken cancellationToken);
     Task<DungeonModel> CreateOrUpdateDungeonAsync(DungeonOptionModel optionModel, bool addDungeon, int level, CancellationToken cancellationToken);
     Task UpdateDungeonAsync(DungeonModel model, CancellationToken cancellationToken);

@@ -2,9 +2,6 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Domain;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RDMG.Infrastructure.Interceptors;
 public class AuditEntitiesSaveChangesInterceptor(ICurrentUserService currentUserService) : SaveChangesInterceptor

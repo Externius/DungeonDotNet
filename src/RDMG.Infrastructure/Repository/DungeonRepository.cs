@@ -4,10 +4,6 @@ using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Data;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Domain;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RDMG.Infrastructure.Repository;
 

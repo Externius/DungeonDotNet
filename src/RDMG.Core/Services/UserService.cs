@@ -6,10 +6,6 @@ using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Core.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RDMG.Core.Services;
 
@@ -98,9 +94,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
         {
             var result = await _userRepository.ListAsync(deleted);
 
-            return result.Select(_mapper.Map<UserModel>)
-                .OrderBy(um => um.Username)
-                .ToList();
+            return [.. result.Select(_mapper.Map<UserModel>).OrderBy(um => um.Username)];
         }
         catch (Exception ex)
         {

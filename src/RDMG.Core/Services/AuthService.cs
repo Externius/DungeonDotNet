@@ -4,8 +4,6 @@ using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Helpers;
-using System;
-using System.Threading.Tasks;
 
 namespace RDMG.Core.Services;
 

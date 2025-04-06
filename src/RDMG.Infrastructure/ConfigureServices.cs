@@ -9,8 +9,6 @@ using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Infrastructure.Data;
 using RDMG.Infrastructure.Interceptors;
 using RDMG.Infrastructure.Repository;
-using System;
-using System.IO;
 using System.Reflection;
 using RDMG.Infrastructure.Repository.Automapper;
 

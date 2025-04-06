@@ -2,9 +2,6 @@ using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 
 namespace RDMG.Core.Generator;
@@ -474,9 +471,9 @@ public class Dungeon(IDungeonHelper dungeonHelper) : IDungeon
         var imgSizeY = DungeonHeight / DungeonSize;
         _roomCount = (int)Math.Round((float)DungeonSize / 100 * optionModel.RoomDensity);
         RoomSize = (int)Math.Round((float)(DungeonSize - Math.Round(DungeonSize * 0.35)) / 100 * RoomSizePercent);
-        RoomDescription = new List<RoomDescription>();
-        TrapDescription = new List<TrapDescription>();
-        RoamingMonsterDescription = new List<RoamingMonsterDescription>();
+        RoomDescription = [];
+        TrapDescription = [];
+        RoamingMonsterDescription = [];
         _trapCount = DungeonSize * optionModel.TrapPercent / 100;
         _roamingCount = DungeonSize * optionModel.RoamingPercent / 100;
         DungeonSize += 2; // because of boundaries

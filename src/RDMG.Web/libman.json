@@ -11,7 +11,7 @@
       "destination": "wwwroot/lib/bootstrap"
     },
     {
-      "library": "bootbox.js@6.0.0",
+      "library": "bootbox.js@6.0.2",
       "destination": "wwwroot/lib/bootbox"
     },
     {

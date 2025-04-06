@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace RDMG.Core.Abstractions.Services.Models;
+﻿namespace RDMG.Core.Abstractions.Services.Models;
 
 public class EditModel
 {

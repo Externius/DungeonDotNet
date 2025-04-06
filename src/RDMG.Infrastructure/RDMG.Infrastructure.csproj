@@ -1,8 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
@@ -11,10 +7,5 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\RDMG.Core\RDMG.Core.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Migrations\" />
-		<Folder Include="Migrations\SqliteMigrations\" />
-		<Folder Include="Migrations\SqlServerMigrations\" />
 	</ItemGroup>
 </Project>
