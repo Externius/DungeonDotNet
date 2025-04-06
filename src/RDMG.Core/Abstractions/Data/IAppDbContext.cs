@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using RDMG.Core.Domain;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RDMG.Core.Abstractions.Data;
 

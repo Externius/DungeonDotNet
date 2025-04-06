@@ -2,9 +2,6 @@
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Domain;
 using Shouldly;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace RDMG.Core.Tests.OptionServiceTests;

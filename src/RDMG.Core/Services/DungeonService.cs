@@ -7,11 +7,6 @@ using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Resources;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RDMG.Core.Services;
 
@@ -125,9 +120,8 @@ public class DungeonService(
     private async Task<DungeonModel> CreateOptionAndAddDungeonToItAsync(DungeonOptionModel optionModel,
         CancellationToken cancellationToken)
     {
-        await CreateDungeonOptionAsync(optionModel, cancellationToken);
-        var created = await GetDungeonOptionByNameAsync(optionModel.DungeonName, optionModel.UserId, cancellationToken);
-        var dungeon = await GenerateDungeonAsync(optionModel, created.Id);
+        var createdId = await CreateDungeonOptionAsync(optionModel, cancellationToken);
+        var dungeon = await GenerateDungeonAsync(optionModel, createdId);
         dungeon.Level = 1;
         var id = await AddDungeonAsync(dungeon, cancellationToken);
         dungeon.Id = id;
@@ -209,7 +203,7 @@ public class DungeonService(
         }
     }
 
-    public async Task<DungeonOptionModel> GetDungeonOptionByNameAsync(string dungeonName, int userId,
+    public async Task<DungeonOptionModel?> GetDungeonOptionByNameAsync(string dungeonName, int userId,
         CancellationToken cancellationToken)
     {
         try

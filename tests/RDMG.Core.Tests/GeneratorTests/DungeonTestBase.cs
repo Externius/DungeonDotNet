@@ -1,7 +1,6 @@
 using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Domain;
-using System.Collections.Generic;
 using System.Text;
 using Xunit;
 

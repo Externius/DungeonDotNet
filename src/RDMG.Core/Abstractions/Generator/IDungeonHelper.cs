@@ -1,6 +1,5 @@
 ﻿using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Abstractions.Services.Models;
-using System.Collections.Generic;
 
 namespace RDMG.Core.Abstractions.Generator;
 

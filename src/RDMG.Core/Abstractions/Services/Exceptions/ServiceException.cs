@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace RDMG.Core.Abstractions.Services.Exceptions;
+﻿namespace RDMG.Core.Abstractions.Services.Exceptions;
 
 public class ServiceException : Exception
 {

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace RDMG.Core.Domain;
 
 public class DungeonOption : AuditableEntity

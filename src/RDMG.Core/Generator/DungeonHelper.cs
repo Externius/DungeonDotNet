@@ -4,10 +4,6 @@ using RDMG.Core.Abstractions.Generator.Models.Json;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
 using RDMG.Core.Helpers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -408,14 +404,14 @@ public class DungeonHelper : IDungeonHelper
     {
         if (MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
         {
-            return TreasureList
-                .Where(item => item.Rarity <= ItemsRarity && item.Cost < _sumValue)
-                .ToList();
+            return [.. TreasureList.Where(item => item.Rarity <= ItemsRarity && item.Cost < _sumValue)];
         }
 
-        return TreasureList
-            .Where(item => item.Rarity <= ItemsRarity && item.Cost < _sumValue && item.Types.Contains(MonsterType))
-            .ToList();
+        return
+        [
+            .. TreasureList.Where(item =>
+                item.Rarity <= ItemsRarity && item.Cost < _sumValue && item.Types.Contains(MonsterType))
+        ];
     }
 
     private void GetAllCost()

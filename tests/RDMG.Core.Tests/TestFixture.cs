@@ -1,7 +1,6 @@
 ﻿using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
-using System;
 
 namespace RDMG.Core.Tests;
 

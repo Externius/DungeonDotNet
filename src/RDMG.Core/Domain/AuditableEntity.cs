@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace RDMG.Core.Domain;
+﻿namespace RDMG.Core.Domain;
 public abstract class AuditableEntity : BaseEntity
 {
     public string CreatedBy { get; set; } = string.Empty;

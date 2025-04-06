@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace RDMG.Core.Abstractions.Generator.Models.Json;

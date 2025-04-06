@@ -7,10 +7,6 @@ using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Infrastructure;
 using RDMG.Infrastructure.Data;
 using RDMG.Web.Services;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RDMG.Core.Tests;
 
