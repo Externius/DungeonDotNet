@@ -13,6 +13,7 @@
   <Folder Name="/Solution Items/">
     <File Path=".dockerignore" />
     <File Path=".env" />
+    <File Path=".github/workflows/dev.yml" />
     <File Path=".github/workflows/main.yml" />
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />
