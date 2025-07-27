@@ -2,6 +2,7 @@
 using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Generator;
+using RDMG.Infrastructure.Data;
 using Shouldly;
 using Xunit;
 
@@ -83,7 +84,7 @@ public class Create(TestFixture fixture) : IClassFixture<TestFixture>
     {
         var optionsModel = new DungeonOptionModel
         {
-            DungeonName = "UT Dungeon 2",
+            DungeonName = AppDbContextInitializer.UtDungeonName2,
             Created = DateTime.UtcNow,
             ItemsRarity = 1,
             DeadEnd = true,

@@ -143,15 +143,20 @@ public class DungeonHelper : IDungeonHelper
     {
         if (MonsterType.Equals("any", StringComparison.OrdinalIgnoreCase))
         {
-            return monsters.Where(monster => Parse(monster.ChallengeRating) <= PartyLevel + 2 &&
+            return
+            [
+                .. monsters.Where(monster => Parse(monster.ChallengeRating) <= PartyLevel + 2 &&
                                              Parse(monster.ChallengeRating) >= PartyLevel / 4.0)
-                .ToList();
+            ];
         }
 
-        return monsters.Where(monster => Parse(monster.ChallengeRating) <= PartyLevel + 2 &&
+        return
+        [
+            .. monsters.Where(monster => Parse(monster.ChallengeRating) <= PartyLevel + 2 &&
                                          Parse(monster.ChallengeRating) >= PartyLevel / 4.0 &&
-                                         MonsterType.Contains(monster.Type))
-            .ToList();
+                                         MonsterType.Contains(monster.Type,
+                                             StringComparison.InvariantCultureIgnoreCase))
+        ];
     }
 
     public string GetMonsterDescription()

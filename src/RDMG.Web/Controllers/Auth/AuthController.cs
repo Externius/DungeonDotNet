@@ -1,4 +1,4 @@
-using AutoMapper;
+using MapsterMapper;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

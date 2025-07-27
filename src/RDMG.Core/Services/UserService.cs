@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;
@@ -18,7 +18,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
     public async Task<int> CreateAsync(UserModel model)
     {
         ValidateModel(model);
-        await CheckUserExist(model);
+        await CheckUserExistAsync(model);
         try
         {
             model.Password = PasswordHelper.EncryptPassword(model.Password);
@@ -53,7 +53,7 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
             throw new ServiceAggregateException(errors);
     }
 
-    private async Task CheckUserExist(UserModel model)
+    private async Task CheckUserExistAsync(UserModel model)
     {
         var user = await _userRepository.GetByUsernameAsync(model.Username, null);
         if (user is not null)
@@ -77,7 +77,8 @@ public class UserService(IMapper mapper, IUserRepository userRepository, ILogger
     {
         try
         {
-            var user = await _userRepository.GetAsync(id);
+            var user = await _userRepository.GetAsync(id) ??
+                       throw new ServiceException(Resources.Error.NotFound);
 
             return _mapper.Map<UserModel>(user);
         }

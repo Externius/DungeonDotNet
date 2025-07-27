@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Repository;
@@ -208,8 +208,9 @@ public class DungeonService(
     {
         try
         {
-            return _mapper.Map<DungeonOptionModel>(
-                await _dungeonOptionRepository.GetDungeonOptionByNameAsync(dungeonName, userId, cancellationToken));
+            var model = await _dungeonOptionRepository.GetDungeonOptionByNameAsync(dungeonName, userId,
+                cancellationToken);
+            return model is not null ? _mapper.Map<DungeonOptionModel>(model) : null;
         }
         catch (Exception ex)
         {
@@ -278,7 +279,8 @@ public class DungeonService(
     {
         try
         {
-            return _mapper.Map<DungeonModel>(await _dungeonRepository.GetDungeonAsync(id, cancellationToken));
+            return _mapper.Map<DungeonModel>(await _dungeonRepository.GetDungeonAsync(id, cancellationToken) ??
+                                             throw new ServiceException(Error.NotFound));
         }
         catch (Exception ex)
         {
@@ -310,7 +312,8 @@ public class DungeonService(
         try
         {
             return _mapper.Map<DungeonOptionModel>(
-                await _dungeonOptionRepository.GetDungeonOptionAsync(id, cancellationToken));
+                await _dungeonOptionRepository.GetDungeonOptionAsync(id, cancellationToken) ??
+                throw new ServiceException(Error.NotFound));
         }
         catch (Exception ex)
         {

@@ -10,7 +10,7 @@ using RDMG.Infrastructure.Data;
 using RDMG.Infrastructure.Interceptors;
 using RDMG.Infrastructure.Repository;
 using System.Reflection;
-using RDMG.Infrastructure.Repository.Automapper;
+using Mapster;
 
 namespace RDMG.Infrastructure;
 
@@ -77,7 +77,8 @@ public static class ConfigureServices
             .AddScoped<IDungeonOptionRepository, DungeonOptionRepository>()
             .AddScoped<IOptionRepository, OptionRepository>()
             .AddScoped<IUserRepository, UserRepository>();
-        services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; }, typeof(DungeonProfile));
+
+        services.AddMapster();
     }
 
     public static IServiceCollection AddTestInfrastructureServices(this IServiceCollection services,
