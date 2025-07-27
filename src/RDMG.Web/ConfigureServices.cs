@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Globalization;
+using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Exceptions;
+using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Infrastructure.Data;
-using RDMG.Web.Automapper;
+using RDMG.Web.Models.Dungeon;
 using RDMG.Web.Services;
 using Serilog;
 
@@ -26,8 +29,8 @@ public static class ConfigureServices
                 options.LoginPath = new PathString("/Auth/Login");
                 options.AccessDeniedPath = new PathString("/Auth/Forbidden/");
             });
-        services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; }, typeof(AuthProfile));
-        services.AddMemoryCache();
+        services.ConfigureMapster()
+            .AddMemoryCache();
 
         services.AddMvc()
 #if DEBUG
@@ -38,6 +41,40 @@ public static class ConfigureServices
         services.AddHealthChecks();
 
         return services;
+    }
+
+    private static IServiceCollection ConfigureMapster(this IServiceCollection services)
+    {
+        services.AddMapster();
+        TypeAdapterConfig<DungeonOptionModel, DungeonOptionCreateViewModel>
+            .NewConfig()
+            .Ignore(dest => dest.DeadEnds)
+            .Ignore(dest => dest.Corridors)
+            .Ignore(dest => dest.DungeonSizes)
+            .Ignore(dest => dest.DungeonDifficulties)
+            .Ignore(dest => dest.PartyLevels)
+            .Ignore(dest => dest.PartySizes)
+            .Ignore(dest => dest.TreasureValues)
+            .Ignore(dest => dest.ItemsRarities)
+            .Ignore(dest => dest.RoomDensities)
+            .Ignore(dest => dest.RoomSizes)
+            .Ignore(dest => dest.MonsterTypes)
+            .Ignore(dest => dest.TrapPercents)
+            .Ignore(dest => dest.Themes)
+            .Ignore(dest => dest.RoamingPercents)
+            .Map(dest => dest.MonsterType, src => GetMonsters(src))
+            .Map(dest => dest.TreasureValue, src => src.TreasureValue.ToString(CultureInfo.InvariantCulture));
+        TypeAdapterConfig<DungeonOptionCreateViewModel, DungeonOptionModel>
+            .NewConfig()
+            .Ignore(dest => dest.MonsterType)
+            .Map(dest => dest.TreasureValue, src => Convert.ToDouble(src.TreasureValue, CultureInfo.InvariantCulture));
+
+        return services;
+    }
+
+    private static string[] GetMonsters(DungeonOptionModel model)
+    {
+        return model.MonsterType.Split(',');
     }
 
     public static IHostBuilder AddSerilog(this IHostBuilder host,

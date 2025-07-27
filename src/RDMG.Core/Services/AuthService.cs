@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Repository;
 using RDMG.Core.Abstractions.Services;

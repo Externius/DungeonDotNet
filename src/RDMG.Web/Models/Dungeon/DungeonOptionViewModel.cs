@@ -33,5 +33,5 @@ public class DungeonOptionViewModel : EditViewModel
     public bool Corridor { get; set; }
     [Required]
     public int RoamingPercent { get; set; }
-    public IEnumerable<DungeonViewModel> Dungeons { get; set; } = new List<DungeonViewModel>();
+    public List<DungeonViewModel> Dungeons { get; set; } = [];
 }

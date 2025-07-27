@@ -8,10 +8,13 @@ using RDMG.Core.Domain;
 using RDMG.Core.Helpers;
 
 namespace RDMG.Infrastructure.Data;
+
 public class AppDbContextInitializer(IAppDbContext context, IDungeonService dungeonService, IOptions<AppConfig> config)
 {
     private readonly IAppDbContext _context = context;
     private readonly IDungeonService _dungeonService = dungeonService;
+    private const string UtDungeonName1 = "Test 1";
+    public const string UtDungeonName2 = "Test 2";
 
     public async Task UpdateAsync(CancellationToken cancellationToken)
     {
@@ -24,13 +27,14 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
             await _context.Database.EnsureCreatedAsync(cancellationToken);
         }
     }
+
     public async Task SeedDataAsync(CancellationToken cancellationToken)
     {
         if (!_context.Users.Any())
         {
             await SeedUsersAsync(cancellationToken);
             await SeedOptionsAsync(cancellationToken);
-            await SeedDungeonsAsync(cancellationToken, 1);
+            await SeedDungeonsAsync(1, cancellationToken);
         }
     }
 
@@ -40,8 +44,8 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
         {
             await SeedUsersAsync(cancellationToken);
             await SeedOptionsAsync(cancellationToken);
-            await SeedDungeonsAsync(cancellationToken, 1);
-            await SeedDungeonsAsync(cancellationToken, 2);
+            await SeedDungeonsAsync(1, cancellationToken);
+            await SeedDungeonsAsync(2, cancellationToken);
         }
     }
 
@@ -345,7 +349,7 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
             new()
             {
                 Key = OptionKey.TreasureValue,
-                Name =  Resources.Common.Standard,
+                Name = Resources.Common.Standard,
                 Value = "1"
             },
             new()
@@ -419,13 +423,12 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
         await _context.SaveChangesAsync(token);
     }
 
-    private async Task SeedDungeonsAsync(CancellationToken token,
-        int userId)
+    private async Task SeedDungeonsAsync(int userId, CancellationToken token)
     {
         var dungeonOption = new DungeonOption
         {
             UserId = userId,
-            DungeonName = "Test 1",
+            DungeonName = UtDungeonName1,
             Created = DateTime.UtcNow,
             ItemsRarity = 1,
             DeadEnd = true,
@@ -473,7 +476,7 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
         dungeonOption = new DungeonOption
         {
             UserId = userId,
-            DungeonName = "Test 2",
+            DungeonName = UtDungeonName2,
             Created = DateTime.UtcNow,
             ItemsRarity = 1,
             DeadEnd = true,

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Mapster;
+using Microsoft.Extensions.DependencyInjection;
 using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Generator;
 using RDMG.Core.Services;
-using RDMG.Core.Services.Automapper;
 
 namespace RDMG.Core;
 
@@ -22,7 +22,7 @@ public static class ConfigureServices
             .AddScoped<IDungeonNoCorridor, DungeonNoCorridor>()
             .AddScoped<IDungeonService, DungeonService>();
 
-        services.AddAutoMapper(cfg => { cfg.AllowNullCollections = true; }, typeof(DungeonProfile));
+        services.AddMapster();
 
         return services;
     }

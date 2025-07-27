@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RDMG.Core.Abstractions.Data;
@@ -43,7 +43,7 @@ public class DungeonOptionRepository(IAppDbContext context, IMapper mapper, ILog
 
     public async Task<DungeonOption?> GetDungeonOptionByNameAsync(string dungeonName, int userId, CancellationToken cancellationToken)
     {
-        return await _context.DungeonOptions
+            return await _context.DungeonOptions
             .Include(d => d.Dungeons)
             .AsNoTracking()
             .Where(d => d.DungeonName == dungeonName && d.UserId == userId)

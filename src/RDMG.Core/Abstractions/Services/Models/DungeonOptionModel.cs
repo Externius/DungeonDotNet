@@ -19,5 +19,5 @@ public class DungeonOptionModel : EditModel
     public int RoamingPercent { get; set; }
     public int Width { get; set; } = 800;
     public int Height { get; set; } = 800;
-    public IEnumerable<DungeonModel> Dungeons { get; } = new List<DungeonModel>();
+    public List<DungeonModel> Dungeons { get; set; } = [];
 }

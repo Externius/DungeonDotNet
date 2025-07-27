@@ -19,5 +19,5 @@ public class DungeonOption : AuditableEntity
 
     public int UserId { get; set; }
     public User? User { get; set; }
-    public IEnumerable<Dungeon> Dungeons { get; } = new List<Dungeon>();
+    public List<Dungeon> Dungeons { get; } = [];
 }
