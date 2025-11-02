@@ -1,80 +1,76 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <None Remove="Data\5e-SRD-Monsters.json" />
-    <None Remove="Data\treasures.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Data\5e-SRD-Monsters.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="Data\treasures.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Common.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Common.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Dungeon.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Dungeon.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Error.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Error.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Home.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Home.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Profile.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Profile.resx</DependentUpon>
-    </Compile>
-    <Compile Update="User.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>User.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Common.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Common.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Dungeon.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Dungeon.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Error.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Error.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Home.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Home.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Profile.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Profile.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="User.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>User.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
+    <ItemGroup>
+        <None Remove="Data\5e-SRD-Monsters.json"/>
+        <None Remove="Data\treasures.json"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Data\5e-SRD-Monsters.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+        <Content Include="Data\treasures.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Update="Common.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Common.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Dungeon.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Dungeon.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Error.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Error.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Home.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Home.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Profile.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Profile.resx</DependentUpon>
+        </Compile>
+        <Compile Update="User.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>User.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Common.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Common.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Dungeon.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Dungeon.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Error.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Error.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Home.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Home.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Profile.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Profile.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="User.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>User.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
 </Project>

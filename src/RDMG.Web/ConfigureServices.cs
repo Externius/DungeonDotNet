@@ -38,6 +38,11 @@ public static class ConfigureServices
 #endif
             ;
 
+        services.AddWebOptimizer(pipeline =>
+        {
+            pipeline.AddJavaScriptBundle("js/site.min.js", "js/site.js", "js/password.js");
+            pipeline.AddCssBundle("css/site.min.css", "css/site.css");
+        });
         services.AddHealthChecks();
 
         return services;

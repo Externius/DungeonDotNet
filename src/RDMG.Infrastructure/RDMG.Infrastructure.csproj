@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\RDMG.Core\RDMG.Core.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\RDMG.Core\RDMG.Core.csproj"/>
+    </ItemGroup>
 </Project>
