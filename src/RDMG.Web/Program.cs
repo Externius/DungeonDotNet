@@ -52,6 +52,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+app.UseWebOptimizer();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCookiePolicy();

@@ -7,7 +7,7 @@
       "destination": "wwwroot/lib/jquery"
     },
     {
-      "library": "twitter-bootstrap@5.3.3",
+      "library": "twitter-bootstrap@5.3.8",
       "destination": "wwwroot/lib/bootstrap"
     },
     {
@@ -27,7 +27,7 @@
       "destination": "wwwroot/lib/jquery-validation"
     },
     {
-      "library": "font-awesome@6.7.2",
+      "library": "font-awesome@7.0.1",
       "destination": "wwwroot/lib/font-awesome"
     }
   ]
