@@ -9,6 +9,7 @@ using RDMG.Web.Models.Dungeon;
 using System.Text.Json;
 using RDMG.Core.Abstractions.Services.Exceptions;
 using RDMG.Resources;
+using RDMG.Web.Extensions;
 
 namespace RDMG.Web.Controllers.Web;
 
@@ -68,7 +69,7 @@ public class DungeonController(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting dungeon.");
+            this.HandleException(ex, _logger, "Error deleting dungeon.");
         }
 
         return RedirectToAction("Index");
@@ -107,7 +108,7 @@ public class DungeonController(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error renaming dungeon.");
+            this.HandleException(ex, _logger, "Error renaming dungeon.");
         }
 
         return View(model);
@@ -123,7 +124,7 @@ public class DungeonController(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting dungeon option.");
+            this.HandleException(ex, _logger, "Error deleting dungeon option.");
         }
 
         return RedirectToAction("Index");
@@ -166,7 +167,7 @@ public class DungeonController(
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating dungeon.");
+                this.HandleException(ex, _logger, "Error creating dungeon.");
             }
         }
 

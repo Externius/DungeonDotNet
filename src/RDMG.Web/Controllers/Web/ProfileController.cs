@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
+using RDMG.Web.Extensions;
 using RDMG.Web.Models.Profile;
 
 namespace RDMG.Web.Controllers.Web;
@@ -44,8 +45,7 @@ public class ProfileController(IUserService userService,
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error changing password.");
-                ModelState.AddModelError("", ex.Message);
+                this.HandleException(ex, _logger, "Error changing password.");
             }
         }
         return View(model);
