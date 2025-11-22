@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RDMG.Core.Abstractions.Services;
 using RDMG.Core.Abstractions.Services.Models;
 using RDMG.Core.Domain;
+using RDMG.Web.Extensions;
 using RDMG.Web.Models.User;
 
 namespace RDMG.Web.Controllers.Web;
@@ -44,10 +45,10 @@ public class UserController(IUserService userService, IMapper mapper, ILogger<Us
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating user.");
-                ModelState.AddModelError("", ex.Message);
+                this.HandleException(ex, _logger, "Error creating user.");
             }
         }
+
         return View(model);
     }
 
@@ -73,10 +74,10 @@ public class UserController(IUserService userService, IMapper mapper, ILogger<Us
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error editing user.");
-                ModelState.AddModelError("", ex.Message);
+                    this.HandleException(ex, _logger, "Error editing user.");
             }
         }
+
         return View(model);
     }
 
@@ -90,8 +91,9 @@ public class UserController(IUserService userService, IMapper mapper, ILogger<Us
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting user.");
+            this.HandleException(ex, _logger, "Error deleting user.");
         }
+
         return RedirectToAction("Index");
     }
 
@@ -105,8 +107,9 @@ public class UserController(IUserService userService, IMapper mapper, ILogger<Us
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error restoring user.");
+            this.HandleException(ex, _logger, "Error restoring user.");
         }
+
         return RedirectToAction("Index");
     }
 }
