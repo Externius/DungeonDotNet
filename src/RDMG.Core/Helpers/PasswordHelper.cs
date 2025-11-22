@@ -4,16 +4,20 @@ namespace RDMG.Core.Helpers;
 
 public static class PasswordHelper
 {
+    private const int Iterations = 10000;
+    private const int HashLength = 20;
+    private const int SaltLength = 16;
+    private static readonly HashAlgorithmName HashAlgorithmName = HashAlgorithmName.SHA512;
+
     public static string EncryptPassword(string password)
     {
         using var randomNumberGenerator = RandomNumberGenerator.Create();
-        var salt = new byte[16];
+        var salt = new byte[SaltLength];
         randomNumberGenerator.GetBytes(salt);
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA512);
-        var hash = pbkdf2.GetBytes(20);
-        var hashBytes = new byte[36];
-        Array.Copy(salt, 0, hashBytes, 0, 16);
-        Array.Copy(hash, 0, hashBytes, 16, 20);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithmName, HashLength);
+        var hashBytes = new byte[SaltLength + HashLength];
+        Array.Copy(salt, 0, hashBytes, 0, SaltLength);
+        Array.Copy(hash, 0, hashBytes, SaltLength, HashLength);
         return Convert.ToBase64String(hashBytes);
     }
 
@@ -21,14 +25,13 @@ public static class PasswordHelper
     {
         var result = true;
         var hashBytes = Convert.FromBase64String(savedPasswordHash);
-        var salt = new byte[16];
-        Array.Copy(hashBytes, 0, salt, 0, 16);
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA512);
-        var hash = pbkdf2.GetBytes(20);
+        var salt = new byte[SaltLength];
+        Array.Copy(hashBytes, 0, salt, 0, SaltLength);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithmName, HashLength);
 
-        for (var i = 0; i < 20; i++)
+        for (var i = 0; i < HashLength; i++)
         {
-            if (hashBytes[i + 16] == hash[i])
+            if (hashBytes[i + SaltLength] == hash[i])
                 continue;
             result = false;
             break;
