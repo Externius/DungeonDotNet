@@ -19,13 +19,15 @@ public class OptionService(
     private readonly IMapper _mapper = mapper;
     private readonly ILogger _logger = logger;
 
-    public async Task<IEnumerable<OptionModel>> ListOptionsAsync(OptionKey? filter = null,
+    public async Task<OptionModel[]> ListOptionsAsync(OptionKey? filter = null,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            if (_memoryCache.TryGetValue(nameof(ListOptionsAsync), out List<OptionModel>? cacheEntry))
-                return filter.HasValue ? cacheEntry?.Where(o => o.Key == filter.Value) ?? [] : cacheEntry ?? [];
+            if (_memoryCache.TryGetValue(nameof(ListOptionsAsync), out OptionModel[]? cacheEntry))
+                return filter.HasValue
+                    ? cacheEntry?.Where(o => o.Key == filter.Value).ToArray() ?? []
+                    : cacheEntry ?? [];
 
             var options = await _optionRepository.ListAsync(null, cancellationToken);
             cacheEntry = [.. options.Select(_mapper.Map<OptionModel>)];
@@ -35,7 +37,7 @@ public class OptionService(
 
             _memoryCache.Set(nameof(ListOptionsAsync), cacheEntry, cacheEntryOptions);
 
-            return filter.HasValue ? cacheEntry.Where(o => o.Key == filter.Value) : cacheEntry;
+            return filter.HasValue ? [.. cacheEntry.Where(o => o.Key == filter.Value)] : cacheEntry;
         }
         catch (Exception ex)
         {

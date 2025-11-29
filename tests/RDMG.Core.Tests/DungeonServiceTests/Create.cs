@@ -45,7 +45,7 @@ public class Create(TestFixture fixture) : IClassFixture<TestFixture>
     {
         var optionsModel =
             (await _dungeonService.GetAllDungeonOptionsForUserAsync(1, TestContext.Current.CancellationToken)).First();
-        var dungeon = await _dungeonService.GenerateDungeonAsync(optionsModel);
+        var dungeon = await _dungeonService.GenerateDungeonAsync(optionsModel, TestContext.Current.CancellationToken);
 
         var result = await _dungeonService.AddDungeonAsync(dungeon, TestContext.Current.CancellationToken);
         result.ShouldBeGreaterThan(1);

@@ -30,7 +30,7 @@ public class Generate(TestFixture fixture) : IClassFixture<TestFixture>
             RoomSize = 20,
             Corridor = false,
             UserId = 1
-        });
+        }, TestContext.Current.CancellationToken);
 
         result.DungeonTiles.ShouldNotBeNull();
     }
