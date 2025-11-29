@@ -5,5 +5,5 @@ namespace RDMG.Core.Abstractions.Services;
 
 public interface IOptionService
 {
-    Task<IEnumerable<OptionModel>> ListOptionsAsync(OptionKey? filter = null, CancellationToken cancellationToken = default);
+    Task<OptionModel[]> ListOptionsAsync(OptionKey? filter = null, CancellationToken cancellationToken = default);
 }

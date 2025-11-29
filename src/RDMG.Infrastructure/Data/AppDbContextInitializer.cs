@@ -15,6 +15,10 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
     private readonly IDungeonService _dungeonService = dungeonService;
     private const string UtDungeonName1 = "Test 1";
     public const string UtDungeonName2 = "Test 2";
+    public const int TestAdminUserId = 1;
+    public const int TestUserId = 2;
+    public const int TestDeletedUserId = 3;
+    public const int TestNotExistingUserId = 999;
 
     public async Task UpdateAsync(CancellationToken cancellationToken)
     {
@@ -34,7 +38,7 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
         {
             await SeedUsersAsync(cancellationToken);
             await SeedOptionsAsync(cancellationToken);
-            await SeedDungeonsAsync(1, cancellationToken);
+            await SeedDungeonsAsync(TestAdminUserId, cancellationToken);
         }
     }
 
@@ -42,10 +46,10 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
     {
         if (!_context.Users.Any())
         {
-            await SeedUsersAsync(cancellationToken);
+            await SeedUsersAsync(cancellationToken, true);
             await SeedOptionsAsync(cancellationToken);
-            await SeedDungeonsAsync(1, cancellationToken);
-            await SeedDungeonsAsync(2, cancellationToken);
+            await SeedDungeonsAsync(TestAdminUserId, cancellationToken);
+            await SeedDungeonsAsync(TestUserId, cancellationToken);
         }
     }
 
@@ -469,7 +473,7 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
             UserId = dungeonOption.UserId
         };
 
-        var sd = await _dungeonService.GenerateDungeonAsync(model);
+        var sd = await _dungeonService.GenerateDungeonAsync(model, token);
         sd.Level = 1;
         await _dungeonService.AddDungeonAsync(sd, token);
 
@@ -516,15 +520,16 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
             UserId = dungeonOption.UserId
         };
 
-        sd = await _dungeonService.GenerateDungeonAsync(model);
+        sd = await _dungeonService.GenerateDungeonAsync(model, token);
         sd.Level = 1;
         await _dungeonService.AddDungeonAsync(sd, token);
     }
 
-    private async Task SeedUsersAsync(CancellationToken token)
+    private async Task SeedUsersAsync(CancellationToken token, bool seedDeletedUtUser = false)
     {
         _context.Users.Add(new User
         {
+            Id = TestAdminUserId,
             Username = "TestAdmin",
             Password = PasswordHelper.EncryptPassword(config.Value.DefaultAdminPassword),
             FirstName = "Test",
@@ -535,6 +540,7 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
 
         _context.Users.Add(new User
         {
+            Id = TestUserId,
             Username = "TestUser",
             Password = PasswordHelper.EncryptPassword(config.Value.DefaultUserPassword),
             FirstName = "Test",
@@ -542,6 +548,22 @@ public class AppDbContextInitializer(IAppDbContext context, IDungeonService dung
             Email = "user@user.com",
             Role = Role.User
         });
+
+        if (seedDeletedUtUser)
+        {
+            _context.Users.Add(new User
+            {
+                Id = TestDeletedUserId,
+                Username = "UT Deleted User",
+                Password = PasswordHelper.EncryptPassword(config.Value.DefaultUserPassword),
+                FirstName = "Test",
+                LastName = "User",
+                Email = "user@user.com",
+                Role = Role.User,
+                IsDeleted = true
+            });
+        }
+
         await _context.SaveChangesAsync(token);
     }
 }

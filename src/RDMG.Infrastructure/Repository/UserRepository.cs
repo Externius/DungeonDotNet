@@ -13,37 +13,40 @@ public class UserRepository(IAppDbContext context, IMapper mapper, ILogger<UserR
     private readonly ILogger<UserRepository> _logger = logger;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<User> CreateAsync(User user)
+    public async Task<User> CreateAsync(User user, CancellationToken cancellationToken = default)
     {
         _context.Users.Add(user);
-        await _context.SaveChangesAsync(CancellationToken.None);
+        await _context.SaveChangesAsync(cancellationToken);
         return user;
     }
 
-    public async Task<User?> GetAsync(int id)
+    public async Task<User?> GetAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+        return await _context.Users.AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken: cancellationToken);
     }
 
-    public async Task<User?> UpdateAsync(User user)
+    public async Task<User?> UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
-        var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+        var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id,
+            cancellationToken: cancellationToken);
 
         if (local is null)
             return null;
         _mapper.Map(user, local);
-        await _context.SaveChangesAsync(CancellationToken.None);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return local;
     }
-    public async Task<bool> DeleteAsync(int id)
+
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        var local = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken: cancellationToken);
 
         if (local is not null)
         {
             local.IsDeleted = true;
-            await _context.SaveChangesAsync(CancellationToken.None);
+            await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
 
@@ -51,23 +54,24 @@ public class UserRepository(IAppDbContext context, IMapper mapper, ILogger<UserR
         return false;
     }
 
-    public async Task<User?> GetByUsernameAsync(string username, bool? deleted = false)
+    public async Task<User?> GetByUsernameAsync(string username, bool? deleted = false,
+        CancellationToken cancellationToken = default)
     {
         var query = _context.Users.AsNoTracking();
 
         if (deleted.HasValue)
             query = query.Where(x => x.IsDeleted == deleted.Value);
 
-        return await query.FirstOrDefaultAsync(u => u.Username == username);
+        return await query.FirstOrDefaultAsync(u => u.Username == username, cancellationToken: cancellationToken);
     }
 
-    public async Task<IEnumerable<User>> ListAsync(bool? deleted = false)
+    public async Task<User[]> ListAsync(bool? deleted = false, CancellationToken cancellationToken = default)
     {
         var query = _context.Users.AsNoTracking();
 
         if (deleted.HasValue)
             query = query.Where(x => x.IsDeleted == deleted.Value);
 
-        return await query.ToListAsync();
+        return await query.ToArrayAsync(cancellationToken);
     }
 }
