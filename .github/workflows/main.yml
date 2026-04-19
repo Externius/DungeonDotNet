@@ -26,7 +26,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Set up dependency caching for faster builds
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -43,7 +43,7 @@ jobs:
         run: dotnet publish ./src/RDMG.Web/RDMG.Web.csproj -c Release -o ${{env.DOTNET_ROOT}}/RDMG
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/RDMG
@@ -53,12 +53,11 @@ jobs:
     needs: build
     steps:
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
           tag_name: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ secrets.RELEASE_TOKEN }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -69,7 +68,7 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: .net-app
 
