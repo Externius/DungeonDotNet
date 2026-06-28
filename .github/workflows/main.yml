@@ -1,9 +1,9 @@
 name: Release CI/CD
 
 env:
-  AZURE_WEBAPP_NAME: app-rdmg 
-  AZURE_WEBAPP_PACKAGE_PATH: '.'    
-  DOTNET_VERSION: '10.x'    
+  AZURE_WEBAPP_NAME: app-rdmg
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSION: '10.x'
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v5
@@ -26,7 +26,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Set up dependency caching for faster builds
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -37,7 +37,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Run Tests
-        run: dotnet test --no-restore --verbosity normal         
+        run: dotnet test --no-restore --verbosity normal
 
       - name: dotnet publish
         run: dotnet publish ./src/RDMG.Web/RDMG.Web.csproj -c Release -o ${{env.DOTNET_ROOT}}/RDMG

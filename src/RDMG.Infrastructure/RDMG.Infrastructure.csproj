@@ -6,6 +6,10 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools"/>
     </ItemGroup>
     <ItemGroup>
+        <!-- Temporary workaround -->
+        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" VersionOverride="3.0.3"/>
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="..\RDMG.Core\RDMG.Core.csproj"/>
     </ItemGroup>
 </Project>
