@@ -1,3 +1,4 @@
+using System.Globalization;
 using RDMG.Core.Abstractions.Generator;
 using RDMG.Core.Abstractions.Generator.Models;
 using RDMG.Core.Abstractions.Generator.Models.Json;
@@ -175,10 +176,10 @@ public class DungeonHelper : IDungeonHelper
     private static double Parse(string ratio)
     {
         if (!ratio.Contains('/'))
-            return double.Parse(ratio);
+            return double.Parse(ratio, CultureInfo.InvariantCulture);
 
         var rat = ratio.Split("/");
-        return double.Parse(rat[0]) / double.Parse(rat[1]);
+        return double.Parse(rat[0], CultureInfo.InvariantCulture) / double.Parse(rat[1], CultureInfo.InvariantCulture);
     }
 
     public void Init(DungeonOptionModel model)
@@ -446,17 +447,14 @@ public class DungeonHelper : IDungeonHelper
 
     private string GetDoorText(Texture texture, int x)
     {
+        var state = GetState(texture, x) + Constants.LineBreak;
         if (RoomPosition.Up)
-            return Constants.SouthEntry + _southCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] +
-                   GetState(texture, x) + Constants.LineBreak;
+            return Constants.SouthEntry + _southCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + state;
         if (RoomPosition.Down)
-            return Constants.NorthEntry + _northCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] +
-                   GetState(texture, x) + Constants.LineBreak;
+            return Constants.NorthEntry + _northCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + state;
         if (RoomPosition.Right)
-            return Constants.WestEntry + _westCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] +
-                   GetState(texture, x) + Constants.LineBreak;
-        return Constants.EastEntry + _eastCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] +
-               GetState(texture, x) + Constants.LineBreak;
+            return Constants.WestEntry + _westCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + state;
+        return Constants.EastEntry + _eastCount++ + Constants.ColonWithSpace + Constants.DoorTypes[x] + state;
     }
 
     private string GetState(Texture texture, int x)

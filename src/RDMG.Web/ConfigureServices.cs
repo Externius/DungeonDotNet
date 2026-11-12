@@ -13,68 +13,67 @@ namespace RDMG.Web;
 
 public static class ConfigureServices
 {
-    public static IServiceCollection AddWebServices(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddHttpContextAccessor()
-            .AddScoped<ICurrentUserService, CurrentUserService>();
-        services.Configure<CookiePolicyOptions>(options =>
+        public IServiceCollection AddWebServices()
         {
-            // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-            options.CheckConsentNeeded = _ => true;
-            options.MinimumSameSitePolicy = SameSiteMode.None;
-        });
-        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options =>
+            services.AddHttpContextAccessor()
+                .AddScoped<ICurrentUserService, CurrentUserService>();
+            services.Configure<CookiePolicyOptions>(options =>
             {
-                options.LoginPath = new PathString("/Auth/Login");
-                options.AccessDeniedPath = new PathString("/Auth/Forbidden/");
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = _ => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-        services.ConfigureMapster()
-            .AddMemoryCache();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/Auth/Login");
+                    options.AccessDeniedPath = new PathString("/Auth/Forbidden/");
+                });
+            services.ConfigureMapster()
+                .AddMemoryCache();
 
-        services.AddMvc()
-#if DEBUG
-            .AddRazorRuntimeCompilation()
-#endif
-            ;
+            services.AddMvc();
+            services.AddWebOptimizer(pipeline =>
+            {
+                pipeline.AddJavaScriptBundle("js/site.min.js", "js/site.js", "js/password.js");
+                pipeline.AddCssBundle("css/site.min.css", "css/site.css");
+            });
+            services.AddHealthChecks();
 
-        services.AddWebOptimizer(pipeline =>
+            return services;
+        }
+
+        private IServiceCollection ConfigureMapster()
         {
-            pipeline.AddJavaScriptBundle("js/site.min.js", "js/site.js", "js/password.js");
-            pipeline.AddCssBundle("css/site.min.css", "css/site.css");
-        });
-        services.AddHealthChecks();
+            services.AddMapster();
+            TypeAdapterConfig<DungeonOptionModel, DungeonOptionCreateViewModel>
+                .NewConfig()
+                .Ignore(dest => dest.DeadEnds)
+                .Ignore(dest => dest.Corridors)
+                .Ignore(dest => dest.DungeonSizes)
+                .Ignore(dest => dest.DungeonDifficulties)
+                .Ignore(dest => dest.PartyLevels)
+                .Ignore(dest => dest.PartySizes)
+                .Ignore(dest => dest.TreasureValues)
+                .Ignore(dest => dest.ItemsRarities)
+                .Ignore(dest => dest.RoomDensities)
+                .Ignore(dest => dest.RoomSizes)
+                .Ignore(dest => dest.MonsterTypes)
+                .Ignore(dest => dest.TrapPercents)
+                .Ignore(dest => dest.Themes)
+                .Ignore(dest => dest.RoamingPercents)
+                .Map(dest => dest.MonsterType, src => GetMonsters(src))
+                .Map(dest => dest.TreasureValue, src => src.TreasureValue.ToString(CultureInfo.InvariantCulture));
+            TypeAdapterConfig<DungeonOptionCreateViewModel, DungeonOptionModel>
+                .NewConfig()
+                .Ignore(dest => dest.MonsterType)
+                .Map(dest => dest.TreasureValue,
+                    src => Convert.ToDouble(src.TreasureValue, CultureInfo.InvariantCulture));
 
-        return services;
-    }
-
-    private static IServiceCollection ConfigureMapster(this IServiceCollection services)
-    {
-        services.AddMapster();
-        TypeAdapterConfig<DungeonOptionModel, DungeonOptionCreateViewModel>
-            .NewConfig()
-            .Ignore(dest => dest.DeadEnds)
-            .Ignore(dest => dest.Corridors)
-            .Ignore(dest => dest.DungeonSizes)
-            .Ignore(dest => dest.DungeonDifficulties)
-            .Ignore(dest => dest.PartyLevels)
-            .Ignore(dest => dest.PartySizes)
-            .Ignore(dest => dest.TreasureValues)
-            .Ignore(dest => dest.ItemsRarities)
-            .Ignore(dest => dest.RoomDensities)
-            .Ignore(dest => dest.RoomSizes)
-            .Ignore(dest => dest.MonsterTypes)
-            .Ignore(dest => dest.TrapPercents)
-            .Ignore(dest => dest.Themes)
-            .Ignore(dest => dest.RoamingPercents)
-            .Map(dest => dest.MonsterType, src => GetMonsters(src))
-            .Map(dest => dest.TreasureValue, src => src.TreasureValue.ToString(CultureInfo.InvariantCulture));
-        TypeAdapterConfig<DungeonOptionCreateViewModel, DungeonOptionModel>
-            .NewConfig()
-            .Ignore(dest => dest.MonsterType)
-            .Map(dest => dest.TreasureValue, src => Convert.ToDouble(src.TreasureValue, CultureInfo.InvariantCulture));
-
-        return services;
+            return services;
+        }
     }
 
     private static string[] GetMonsters(DungeonOptionModel model)
@@ -82,10 +81,9 @@ public static class ConfigureServices
         return model.MonsterType.Split(',');
     }
 
-    public static IHostBuilder AddSerilog(this IHostBuilder host,
-        IConfiguration configuration)
+    public static IHostBuilder AddSerilog(this IHostBuilder host, IConfiguration configuration)
     {
-        switch (configuration.GetConnectionString(AppDbContext.DbProvider)?.ToLower())
+        switch (configuration.GetConnectionString(AppDbContext.DbProvider)?.ToLowerInvariant())
         {
             case AppDbContext.SqlServerContext:
                 host.UseSerilog((ctx, lc) => lc
